@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31424.327
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IGS", "IGS\IGS.vcxproj", "{08637BE7-AB23-4BE8-9356-B45097B91E95}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{08637BE7-AB23-4BE8-9356-B45097B91E95}.Debug|x64.ActiveCfg = Debug|x64
+		{08637BE7-AB23-4BE8-9356-B45097B91E95}.Debug|x64.Build.0 = Debug|x64
+		{08637BE7-AB23-4BE8-9356-B45097B91E95}.Debug|x86.ActiveCfg = Debug|Win32
+		{08637BE7-AB23-4BE8-9356-B45097B91E95}.Debug|x86.Build.0 = Debug|Win32
+		{08637BE7-AB23-4BE8-9356-B45097B91E95}.Release|x64.ActiveCfg = Release|x64
+		{08637BE7-AB23-4BE8-9356-B45097B91E95}.Release|x64.Build.0 = Release|x64
+		{08637BE7-AB23-4BE8-9356-B45097B91E95}.Release|x86.ActiveCfg = Release|Win32
+		{08637BE7-AB23-4BE8-9356-B45097B91E95}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6288ED6F-0527-4982-946D-743A30012175}
+	EndGlobalSection
+EndGlobal
