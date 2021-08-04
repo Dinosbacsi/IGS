@@ -4,7 +4,7 @@
 ======================================================================================
     Épület kezelõ függvények
 */
-void Building_Types_From_File(char* filename, Building* building_types)
+void Building_Types_From_File(char* filename)
 {
     FILE* bc_file;
     char bc_line[100];

@@ -35,13 +35,15 @@ typedef struct Building
     Material* order_list[10];
 }Building;
 
+Building building_types[50];
+
 
 /*
 ======================================================================================
     Épület kezelõ függvények
 */
 // Épület létrehozása
-void Building_Types_From_File(char* filename, Building* building_types);
+void Building_Types_From_File(char* filename);
 //void Make_Building_Type(Building* building_type, char name[50], struct Model building_model, building_category category, int size_x, int size_y);
 void Make_Building_Type(Building* building_type, char name[50], char model_file_name[50], char texture_name[50], building_category category, int size_x, int size_y);
 // Épület elhelyezés

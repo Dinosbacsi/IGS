@@ -140,7 +140,7 @@ Node test_B;
 Road_Type road_normal;
 Road_Type road_main;
 //Épület kategóriák, típusok
-Building building_types[50];
+//Building building_types[50];
 char building_category_names_UPPER_CASE[][30] = { "SEMMI", "RAKTAR", "FELDOLGOZO UZEM", "GYAR", "IRODA" };
 building_category building_category_list[] = { nothing, warehouse, processing_plant, factory, office };
 //Utak
@@ -495,14 +495,8 @@ void Initialize_Map()
             road_nodes[i][j].exists = false;
         }
     }
-    // Épületek inicializálása
-    /*
-    Make_Building_Type(&building_types[1], "KIS RAKTAR", igs_warehouse_1, warehouse, 1, 1);
-    Make_Building_Type(&building_types[2], "KOZEPES RAKTAR", igs_warehouse_2, warehouse, 3, 3);
-    Make_Building_Type(&building_types[3], "KIS TARTALY", igs_tank_1, warehouse, 1, 1);
-    Make_Building_Type(&building_types[4], "KIS GYAR", igs_factory_1, factory, 2, 2);
-    */
-    Building_Types_From_File("building_categories.txt", building_types);
+    // Épülettípusok inicializálása
+    Building_Types_From_File("building_categories.txt");
     /*
     FILE* bc_file;
     char* bc_filename = "building_categories.txt";
@@ -534,6 +528,11 @@ void Initialize_Map()
         }
     }
     */
+
+    // Anyagtípusok inicializáláas
+    Make_Material_Type(&material_types[0], "Alapanyag", solid, raw, NULL, NULL);
+    Make_Material_Type(&material_types[1], "Kesztermek", solid, finished, &material_types[1], NULL);
+
     // Porta
     char kis_porta[50] = "KIS_PORTA";
     Place_Building_By_Name(kis_porta, 99, 149, north, building_types, buildings, building_limit, tiles);
