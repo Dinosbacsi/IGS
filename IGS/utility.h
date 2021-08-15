@@ -1,5 +1,6 @@
 #ifndef UTILITY_H_INCLUDED
 #define UTILITY_H_INCLUDED
+
 #pragma warning(disable : 4996) //_CRT_SECURE_NO_WARNINGS
 
 //Általános headerek
@@ -20,6 +21,16 @@
 #include <SOIL.h>
 
 #define PI 3.14159
+
+//#define max(a,b) \
+//   ({ __typeof__ (a) _a = (a); \
+//       __typeof__ (b) _b = (b); \
+//     _a > _b ? _a : _b; })
+//
+//#define min(a,b) \
+//   ({ __typeof__ (a) _a = (a); \
+//       __typeof__ (b) _b = (b); \
+//     _a < _b ? _a : _b; })
 
 //Irányváltozók (kamera mozgásához)
 enum cam_direction { up, down, left, right };

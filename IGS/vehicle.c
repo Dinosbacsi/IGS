@@ -67,18 +67,18 @@ void Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int ti
         new_vehicle->current_tile = &tiles[tile_x][tile_y];
         if (new_vehicle->next_node->pos.x == tile_x)
         {
-            new_vehicle->pos.y = tile_y;
-            if (new_vehicle->next_node->pos.y > tile_y)
+            new_vehicle->pos.y = (float)tile_y;
+            if (new_vehicle->next_node->pos.y > (float)tile_y)
             {
-                new_vehicle->pos.x = tile_x + 0.2;
-                new_vehicle->rotate.z = 90;
+                new_vehicle->pos.x = tile_x + 0.2f;
+                new_vehicle->rotate.z = 90.0f;
                 new_vehicle->facing = south;
                 new_vehicle->previous_facing = south;
             }
             else
             {
-                new_vehicle->pos.x = tile_x - 0.2;
-                new_vehicle->rotate.z = 270;
+                new_vehicle->pos.x = tile_x - 0.2f;
+                new_vehicle->rotate.z = 270.0f;
                 new_vehicle->facing = north;
                 new_vehicle->previous_facing = north;
             }
@@ -88,15 +88,15 @@ void Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int ti
             new_vehicle->pos.x = tile_x;
             if (new_vehicle->next_node->pos.x > tile_x)
             {
-                new_vehicle->pos.y = tile_y - 0.2;
-                new_vehicle->rotate.z = 0;
+                new_vehicle->pos.y = tile_y - 0.2f;
+                new_vehicle->rotate.z = 0.0f;
                 new_vehicle->facing = east;
                 new_vehicle->previous_facing = east;
             }
             else
             {
-                new_vehicle->pos.y = tile_y + 0.2;
-                new_vehicle->rotate.z = 180;
+                new_vehicle->pos.y = tile_y + 0.2f;
+                new_vehicle->rotate.z = 180.0f;
                 new_vehicle->facing = west;
                 new_vehicle->previous_facing = west;
             }
@@ -578,24 +578,24 @@ void Animate_Vehicle_Turning(Vehicle* vehicle)
             pivot_point.x = vehicle->next_node->pos.x;
 
             Vehicle_Turn_Left(vehicle);
-            vehicle->pos.x = pivot_point.x + (0.2 * sin(vehicle->rotate.z * M_PI / 180));
-            vehicle->pos.y = pivot_point.y - (0.2 * cos(vehicle->rotate.z * M_PI / 180));
+            vehicle->pos.x = pivot_point.x + (0.2f * sinf(vehicle->rotate.z * M_PI / 180.0f));
+            vehicle->pos.y = pivot_point.y - (0.2f * cosf(vehicle->rotate.z * M_PI / 180.0f));
         }
         else if (vehicle->facing == east)
         {
             pivot_point.x = vehicle->next_node->pos.x + 0.49;
 
             Vehicle_Turn_Left(vehicle);
-            vehicle->pos.x = pivot_point.x + (0.7 * sin(vehicle->rotate.z * M_PI / 180));
-            vehicle->pos.y = pivot_point.y - (0.7 * cos(vehicle->rotate.z * M_PI / 180));
+            vehicle->pos.x = pivot_point.x + (0.7f * sinf(vehicle->rotate.z * M_PI / 180.0f));
+            vehicle->pos.y = pivot_point.y - (0.7f * cosf(vehicle->rotate.z * M_PI / 180.0f));
         }
         else if (vehicle->facing == west)
         {
             pivot_point.x = vehicle->next_node->pos.x - 0.49;
             //
             Vehicle_Turn_Right(vehicle);
-            vehicle->pos.x = pivot_point.x - (0.3 * sin(vehicle->rotate.z * M_PI / 180));
-            vehicle->pos.y = pivot_point.y + (0.3 * cos(vehicle->rotate.z * M_PI / 180));
+            vehicle->pos.x = pivot_point.x - (0.3f * sinf(vehicle->rotate.z * M_PI / 180.0f));
+            vehicle->pos.y = pivot_point.y + (0.3f * cosf(vehicle->rotate.z * M_PI / 180.0f));
         }
         break;
     case east:
@@ -606,24 +606,24 @@ void Animate_Vehicle_Turning(Vehicle* vehicle)
             pivot_point.y = vehicle->next_node->pos.y;
 
             Vehicle_Turn_Left(vehicle);
-            vehicle->pos.x = pivot_point.x + (0.2 * sin(vehicle->rotate.z * M_PI / 180));
-            vehicle->pos.y = pivot_point.y - (0.2 * cos(vehicle->rotate.z * M_PI / 180));
+            vehicle->pos.x = pivot_point.x + (0.2f * sinf(vehicle->rotate.z * M_PI / 180.0f));
+            vehicle->pos.y = pivot_point.y - (0.2f * cosf(vehicle->rotate.z * M_PI / 180.0f));
         }
         else if (vehicle->facing == north)
         {
             pivot_point.y = vehicle->next_node->pos.y - 0.49;
             //
             Vehicle_Turn_Right(vehicle);
-            vehicle->pos.x = pivot_point.x - (0.3 * sin(vehicle->rotate.z * M_PI / 180));
-            vehicle->pos.y = pivot_point.y + (0.3 * cos(vehicle->rotate.z * M_PI / 180));
+            vehicle->pos.x = pivot_point.x - (0.3f * sinf(vehicle->rotate.z * M_PI / 180.0f));
+            vehicle->pos.y = pivot_point.y + (0.3f * cosf(vehicle->rotate.z * M_PI / 180.0f));
         }
         else if (vehicle->facing == south)
         {
             pivot_point.y = vehicle->next_node->pos.y + 0.49;
 
             Vehicle_Turn_Left(vehicle);
-            vehicle->pos.x = pivot_point.x + (0.7 * sin(vehicle->rotate.z * M_PI / 180));
-            vehicle->pos.y = pivot_point.y - (0.7 * cos(vehicle->rotate.z * M_PI / 180));
+            vehicle->pos.x = pivot_point.x + (0.7f * sinf(vehicle->rotate.z * M_PI / 180.0f));
+            vehicle->pos.y = pivot_point.y - (0.7f * cosf(vehicle->rotate.z * M_PI / 180.0f));
         }
         break;
     case south:
@@ -634,24 +634,24 @@ void Animate_Vehicle_Turning(Vehicle* vehicle)
             pivot_point.x = vehicle->next_node->pos.x;
 
             Vehicle_Turn_Left(vehicle);
-            vehicle->pos.x = pivot_point.x + (0.2 * sin(vehicle->rotate.z * M_PI / 180));
-            vehicle->pos.y = pivot_point.y - (0.2 * cos(vehicle->rotate.z * M_PI / 180));
+            vehicle->pos.x = pivot_point.x + (0.2f * sinf(vehicle->rotate.z * M_PI / 180.0f));
+            vehicle->pos.y = pivot_point.y - (0.2f * cosf(vehicle->rotate.z * M_PI / 180.0f));
         }
         else if (vehicle->facing == east)
         {
             pivot_point.x = vehicle->next_node->pos.x + 0.49;
             //
             Vehicle_Turn_Right(vehicle);
-            vehicle->pos.x = pivot_point.x - (0.3 * sin(vehicle->rotate.z * M_PI / 180));
-            vehicle->pos.y = pivot_point.y + (0.3 * cos(vehicle->rotate.z * M_PI / 180));
+            vehicle->pos.x = pivot_point.x - (0.3f * sinf(vehicle->rotate.z * M_PI / 180.0f));
+            vehicle->pos.y = pivot_point.y + (0.3f * cosf(vehicle->rotate.z * M_PI / 180.0f));
         }
         else if (vehicle->facing == west)
         {
             pivot_point.x = vehicle->next_node->pos.x - 0.49;
 
             Vehicle_Turn_Left(vehicle);
-            vehicle->pos.x = pivot_point.x + (0.7 * sin(vehicle->rotate.z * M_PI / 180));
-            vehicle->pos.y = pivot_point.y - (0.7 * cos(vehicle->rotate.z * M_PI / 180));
+            vehicle->pos.x = pivot_point.x + (0.7f * sinf(vehicle->rotate.z * M_PI / 180.0f));
+            vehicle->pos.y = pivot_point.y - (0.7f * cosf(vehicle->rotate.z * M_PI / 180.0f));
         }
         break;
     case west:
@@ -662,24 +662,24 @@ void Animate_Vehicle_Turning(Vehicle* vehicle)
             pivot_point.y = vehicle->next_node->pos.y;
 
             Vehicle_Turn_Left(vehicle);
-            vehicle->pos.x = pivot_point.x + (0.2 * sin(vehicle->rotate.z * M_PI / 180));
-            vehicle->pos.y = pivot_point.y - (0.2 * cos(vehicle->rotate.z * M_PI / 180));
+            vehicle->pos.x = pivot_point.x + (0.2f * sin(vehicle->rotate.z * M_PI / 180.0f));
+            vehicle->pos.y = pivot_point.y - (0.2f * cos(vehicle->rotate.z * M_PI / 180.0f));
         }
         else if (vehicle->facing == north)
         {
-            pivot_point.y = vehicle->next_node->pos.y - 0.49;
+            pivot_point.y = vehicle->next_node->pos.y - 0.49f;
 
             Vehicle_Turn_Left(vehicle);
-            vehicle->pos.x = pivot_point.x + (0.7 * sin(vehicle->rotate.z * M_PI / 180));
-            vehicle->pos.y = pivot_point.y - (0.7 * cos(vehicle->rotate.z * M_PI / 180));
+            vehicle->pos.x = pivot_point.x + (0.7f * sin(vehicle->rotate.z * M_PI / 180.0f));
+            vehicle->pos.y = pivot_point.y - (0.7f * cos(vehicle->rotate.z * M_PI / 180.0f));
         }
         else if (vehicle->facing == south)
         {
-            pivot_point.y = vehicle->next_node->pos.y + 0.49;
+            pivot_point.y = vehicle->next_node->pos.y + 0.49f;
             //
             Vehicle_Turn_Right(vehicle);
-            vehicle->pos.x = pivot_point.x - (0.3 * sin(vehicle->rotate.z * M_PI / 180));
-            vehicle->pos.y = pivot_point.y + (0.3 * cos(vehicle->rotate.z * M_PI / 180));
+            vehicle->pos.x = pivot_point.x - (0.3f * sin(vehicle->rotate.z * M_PI / 180.0f));
+            vehicle->pos.y = pivot_point.y + (0.3f * cos(vehicle->rotate.z * M_PI / 180.0f));
         }
         break;
     }

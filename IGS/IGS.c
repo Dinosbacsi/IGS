@@ -153,7 +153,6 @@ Road_Segment new_segment;
 Vehicle test_vehicle;
 Vehicle vehicles[vehicle_limit];
 //Anyagok
-Material material_types[50];
 //Felirat
 char test[50] = "TESZT FELIRAT";
 char text[50];
@@ -212,8 +211,8 @@ int main(int argc, char* args[])
     camera.angle_h = 0;
     camera.angle_v = 1;
     camera.distance = 5;
-    camera.speed = 0.01;
-    camera.sensitivity = 0.005;
+    camera.speed = 0.01f;
+    camera.sensitivity = 0.005f;
     camera.field_of_view = 30;
 
     // Program futása
@@ -531,7 +530,7 @@ void Initialize_Map()
 
     // Anyagtípusok inicializáláas
     Make_Material_Type(&material_types[0], "Alapanyag", solid, raw, NULL, NULL);
-    Make_Material_Type(&material_types[1], "Kesztermek", solid, finished, &material_types[1], NULL);
+    Make_Material_Type(&material_types[1], "Kesztermek", solid, finished, &material_types[0], NULL);
 
     // Porta
     char kis_porta[50] = "KIS_PORTA";
@@ -540,27 +539,27 @@ void Initialize_Map()
     // JÁRMŰ STRUKTÚRA TESZT
     test_vehicle.vehicle_model = test_truck;
     test_vehicle.wheel_model = test_wheel;
-    test_vehicle.pos.x = 25;
-    test_vehicle.pos.y = 50.8;
-    test_vehicle.pos.z = 0;
-    test_vehicle.rotate.z = -10;
-    test_vehicle.max_speed = 0.02;
-    test_vehicle.acceleration_rate = 0.0001;
+    test_vehicle.pos.x = 25.0f;
+    test_vehicle.pos.y = 50.8f;
+    test_vehicle.pos.z = 0.0f;
+    test_vehicle.rotate.z = -10.0f;
+    test_vehicle.max_speed = 0.02f;
+    test_vehicle.acceleration_rate = 0.0001f;
 
-    test_vehicle.wheel[0].x = 0.32;
-    test_vehicle.wheel[1].x = 0.32;
-    test_vehicle.wheel[2].x = 0;
-    test_vehicle.wheel[3].x = 0;
+    test_vehicle.wheel[0].x = 0.32f;
+    test_vehicle.wheel[1].x = 0.32f;
+    test_vehicle.wheel[2].x = 0.0f;
+    test_vehicle.wheel[3].x = 0.0f;
 
-    test_vehicle.wheel[0].y = 0.065;
-    test_vehicle.wheel[1].y = -0.065;
-    test_vehicle.wheel[2].y = 0.065;
-    test_vehicle.wheel[3].y = -0.065;
+    test_vehicle.wheel[0].y = 0.065f;
+    test_vehicle.wheel[1].y = -0.065f;
+    test_vehicle.wheel[2].y = 0.065f;
+    test_vehicle.wheel[3].y = -0.065f;
 
-    test_vehicle.wheel[0].z = 0.03;
-    test_vehicle.wheel[1].z = 0.03;
-    test_vehicle.wheel[2].z = 0.03;
-    test_vehicle.wheel[3].z = 0.03;
+    test_vehicle.wheel[0].z = 0.03f;
+    test_vehicle.wheel[1].z = 0.03f;
+    test_vehicle.wheel[2].z = 0.03f;
+    test_vehicle.wheel[3].z = 0.03f;
 
     // Út típusok inicializáció
     sprintf(road_normal.name, "Atlagos ut");
@@ -601,19 +600,21 @@ void Initialize_Map()
         while (i < tree_limit && fgets(line, sizeof(line), file) != NULL)
         {
             int tree_model;
-            sscanf(line, "%f\t%f\t%f\t%f\t%d", &trees[i].pos.x, &trees[i].pos.y, &trees[i].pos.z, &trees[i].rotate, &tree_model);
-
-            switch (tree_model)
+            if (sscanf(line, "%f\t%f\t%f\t%f\t%d", &trees[i].pos.x, &trees[i].pos.y, &trees[i].pos.z, &trees[i].rotate, &tree_model))
             {
-            case 1:
-                trees[i].model = &igs_tree_1;
-                break;
-            case 2:
-                trees[i].model = &igs_shrubline_1;
-                break;
+                switch (tree_model)
+                {
+                case 1:
+                    trees[i].model = &igs_tree_1;
+                    break;
+                case 2:
+                    trees[i].model = &igs_shrubline_1;
+                    break;
+                }
+
+                trees[i].exsists = true;
             }
 
-            trees[i].exsists = true;
             i++;
         }
     }
@@ -906,8 +907,8 @@ void Build_Mode_Handler()
         }
 
         // Új épület pozíciójának meghatározása
-        new_building.pos.x = roundf(v_cursor.pos.x);
-        new_building.pos.y = roundf(v_cursor.pos.y);
+        new_building.pos.x = (int)roundf(v_cursor.pos.x);
+        new_building.pos.y = (int)roundf(v_cursor.pos.y);
 
         if (new_building.pos.x < 0 + (new_building.size.x / 2))
         {
@@ -945,20 +946,20 @@ void Road_Mode_Handler()
 
     if (new_segment.exists)
     {
-        new_segment.B->pos.x = roundf(v_cursor.pos.x);
-        new_segment.B->pos.y = roundf(v_cursor.pos.y);
+        new_segment.B->pos.x = (int)roundf(v_cursor.pos.x);
+        new_segment.B->pos.y = (int)roundf(v_cursor.pos.y);
 
         if (!(new_segment.A->pos.x == new_segment.B->pos.x) && !(new_segment.A->pos.y == new_segment.B->pos.y))
         {
-            if (fabs(new_segment.A->pos.x - roundf(v_cursor.pos.x)) > fabs(new_segment.A->pos.y - roundf(v_cursor.pos.y)))
+            if (abs(new_segment.A->pos.x - (int)roundf(v_cursor.pos.x)) > abs(new_segment.A->pos.y - (int)roundf(v_cursor.pos.y)))
             {
-                new_segment.B->pos.x = roundf(v_cursor.pos.x);
+                new_segment.B->pos.x = (int)roundf(v_cursor.pos.x);
                 new_segment.B->pos.y = new_segment.A->pos.y;
             }
             else
             {
                 new_segment.B->pos.x = new_segment.A->pos.x;
-                new_segment.B->pos.y = roundf(v_cursor.pos.y);
+                new_segment.B->pos.y = (int)roundf(v_cursor.pos.y);
             }
         }
 
@@ -966,10 +967,10 @@ void Road_Mode_Handler()
             new_segment.length = 0;
         else if (new_segment.A->pos.x == new_segment.B->pos.x)
         {
-            new_segment.length = fabsf(new_segment.A->pos.y - new_segment.B->pos.y);
+            new_segment.length = abs(new_segment.A->pos.y - new_segment.B->pos.y);
 
-            int y = fminf(new_segment.A->pos.y, new_segment.B->pos.y);
-            for (; y <= fmaxf(new_segment.A->pos.y, new_segment.B->pos.y); y++)
+            int y = min(new_segment.A->pos.y, new_segment.B->pos.y);
+            for (; y <= max(new_segment.A->pos.y, new_segment.B->pos.y); y++)
             {
                 if (Check_Tile(new_segment.A->pos.x, y, tiles) == 1)
                 {
@@ -980,10 +981,10 @@ void Road_Mode_Handler()
         }
         else
         {
-            new_segment.length = fabsf(new_segment.A->pos.x - new_segment.B->pos.x);
+            new_segment.length = abs(new_segment.A->pos.x - new_segment.B->pos.x);
 
-            int x = fminf(new_segment.A->pos.x, new_segment.B->pos.x);
-            for (; x <= fmaxf(new_segment.A->pos.x, new_segment.B->pos.x); x++)
+            int x = min(new_segment.A->pos.x, new_segment.B->pos.x);
+            for (; x <= max(new_segment.A->pos.x, new_segment.B->pos.x); x++)
             {
                 if (Check_Tile(x, new_segment.A->pos.y, tiles) == 1)
                 {
@@ -1000,9 +1001,9 @@ void Road_Mode_Handler()
         {
             if (new_segment.A->pos.x == new_segment.B->pos.x)
             {
-                int start_y = fminf(new_segment.A->pos.y, new_segment.B->pos.y);
-                int mid_y = fminf(new_segment.A->pos.y, new_segment.B->pos.y);
-                int end_y = fmaxf(new_segment.A->pos.y, new_segment.B->pos.y);
+                int start_y = min(new_segment.A->pos.y, new_segment.B->pos.y);
+                int mid_y = min(new_segment.A->pos.y, new_segment.B->pos.y);
+                int end_y = max(new_segment.A->pos.y, new_segment.B->pos.y);
 
                 for (mid_y = start_y; mid_y < end_y; mid_y++)
                 {
@@ -1016,9 +1017,9 @@ void Road_Mode_Handler()
             }
             else if (new_segment.A->pos.y == new_segment.B->pos.y)
             {
-                int start_x = fminf(new_segment.A->pos.x, new_segment.B->pos.x);
-                int mid_x = fminf(new_segment.A->pos.x, new_segment.B->pos.x);
-                int end_x = fmaxf(new_segment.A->pos.x, new_segment.B->pos.x);
+                int start_x = min(new_segment.A->pos.x, new_segment.B->pos.x);
+                int mid_x = min(new_segment.A->pos.x, new_segment.B->pos.x);
+                int end_x = max(new_segment.A->pos.x, new_segment.B->pos.x);
 
                 for (mid_x = start_x; mid_x < end_x; mid_x++)
                 {
@@ -1038,8 +1039,8 @@ void Road_Mode_Handler()
             new_segment.exists = true;
             new_segment.A = &new_segment_A;
             new_segment.B = &new_segment_B;
-            new_segment.A->pos.x = roundf(v_cursor.pos.x);
-            new_segment.A->pos.y = roundf(v_cursor.pos.y);
+            new_segment.A->pos.x = (int)roundf(v_cursor.pos.x);
+            new_segment.A->pos.y = (int)roundf(v_cursor.pos.y);
             new_segment.road_type = &road_normal;
         }
 
@@ -1051,7 +1052,7 @@ void Bulldoze_Mode_Handler()
 {
     if (v_cursor.pos.x > 0 && v_cursor.pos.y > 0 && v_cursor.pos.x < map_width && v_cursor.pos.y < map_length)
     {
-        int tile_is_occupied = Check_Tile(roundf(v_cursor.pos.x), roundf(v_cursor.pos.y), tiles);
+        int tile_is_occupied = Check_Tile((int)roundf(v_cursor.pos.x), (int)roundf(v_cursor.pos.y), tiles);
         if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(1) && tile_is_occupied != 0)
         {
             switch (tile_is_occupied)
@@ -1154,13 +1155,13 @@ void Render_Scene()
                 if (new_segment.A->pos.x == new_segment.B->pos.x)
                 {
                     glPushMatrix();
-                    glTranslatef(new_segment.A->pos.x, fminf(new_segment.A->pos.y, new_segment.B->pos.y), 0);
+                    glTranslatef(new_segment.A->pos.x, min(new_segment.A->pos.y, new_segment.B->pos.y), 0);
                     glRotatef(90, 0, 0, 1);
                     Draw_Model(&igs_road_dead_end);
                     glPopMatrix();
 
                     glPushMatrix();
-                    glTranslatef(new_segment.A->pos.x, fmaxf(new_segment.A->pos.y, new_segment.B->pos.y), 0);
+                    glTranslatef(new_segment.A->pos.x, max(new_segment.A->pos.y, new_segment.B->pos.y), 0);
                     glRotatef(-90, 0, 0, 1);
                     Draw_Model(&igs_road_dead_end);
                     glPopMatrix();
@@ -1168,12 +1169,12 @@ void Render_Scene()
                 else if (new_segment.A->pos.y == new_segment.B->pos.y)
                 {
                     glPushMatrix();
-                    glTranslatef(fminf(new_segment.A->pos.x, new_segment.B->pos.x), new_segment.A->pos.y, 0);
+                    glTranslatef(min(new_segment.A->pos.x, new_segment.B->pos.x), new_segment.A->pos.y, 0);
                     Draw_Model(&igs_road_dead_end);
                     glPopMatrix();
 
                     glPushMatrix();
-                    glTranslatef(fmaxf(new_segment.A->pos.x, new_segment.B->pos.x), new_segment.A->pos.y, 0);
+                    glTranslatef(max(new_segment.A->pos.x, new_segment.B->pos.x), new_segment.A->pos.y, 0);
                     glRotatef(180, 0, 0, 1);
                     Draw_Model(&igs_road_dead_end);
                     glPopMatrix();
@@ -1311,30 +1312,30 @@ void Render_Interface()
     {
         // Alaphelyzet
     case normal:
-        Render_Bitmap_String_With_Backdrop(10, 30, 0, GLUT_BITMAP_HELVETICA_18, "EPITES (N)", 1, 1, 1, 0, 0, 0);
-        Render_Bitmap_String_With_Backdrop(10, 55, 0, GLUT_BITMAP_HELVETICA_18, "UT EPITES (M)", 1, 1, 1, 0, 0, 0);
-        Render_Bitmap_String_With_Backdrop(10, 80, 0, GLUT_BITMAP_HELVETICA_18, "LEBONTAS (B)", 1, 1, 1, 0, 0, 0);
+        Render_Bitmap_String_With_Backdrop(10, 30, 0, GLUT_BITMAP_HELVETICA_18, "EPITES (N)", 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
+        Render_Bitmap_String_With_Backdrop(10, 55, 0, GLUT_BITMAP_HELVETICA_18, "UT EPITES (M)", 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
+        Render_Bitmap_String_With_Backdrop(10, 80, 0, GLUT_BITMAP_HELVETICA_18, "LEBONTAS (B)", 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
         break;
 
         // Építő mód
     case build:
-        Render_Bitmap_String_With_Backdrop(10, 30, 0, GLUT_BITMAP_HELVETICA_18, "EPITES (N)", 1, 1, 0, 0, 0, 0);
-        Render_Bitmap_String_With_Backdrop(10, 55, 0, GLUT_BITMAP_HELVETICA_18, "UT EPITES (M)", 0.8, 0.8, 0.8, 0, 0, 0);
-        Render_Bitmap_String_With_Backdrop(10, 80, 0, GLUT_BITMAP_HELVETICA_18, "LEBONTAS (B)", 0.8, 0.8, 0.8, 0, 0, 0);
+        Render_Bitmap_String_With_Backdrop(10, 30, 0, GLUT_BITMAP_HELVETICA_18, "EPITES (N)", 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+        Render_Bitmap_String_With_Backdrop(10, 55, 0, GLUT_BITMAP_HELVETICA_18, "UT EPITES (M)", 0.8f, 0.8f, 0.8f, 0.0f, 0.0f, 0.0f);
+        Render_Bitmap_String_With_Backdrop(10, 80, 0, GLUT_BITMAP_HELVETICA_18, "LEBONTAS (B)", 0.8f, 0.8f, 0.8f, 0.0f, 0.0f, 0.0f);
         break;
 
         // Út építő mód
     case road:
-        Render_Bitmap_String_With_Backdrop(10, 30, 0, GLUT_BITMAP_HELVETICA_18, "EPITES (N)", 0.8, 0.8, 0.8, 0, 0, 0);
-        Render_Bitmap_String_With_Backdrop(10, 55, 0, GLUT_BITMAP_HELVETICA_18, "UT EPITES (M)", 1, 1, 0, 0, 0, 0);
-        Render_Bitmap_String_With_Backdrop(10, 80, 0, GLUT_BITMAP_HELVETICA_18, "LEBONTAS (B)", 0.8, 0.8, 0.8, 0, 0, 0);
+        Render_Bitmap_String_With_Backdrop(10, 30, 0, GLUT_BITMAP_HELVETICA_18, "EPITES (N)", 0.8f, 0.8f, 0.8f, 0.0f, 0.0f, 0.0f);
+        Render_Bitmap_String_With_Backdrop(10, 55, 0, GLUT_BITMAP_HELVETICA_18, "UT EPITES (M)", 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+        Render_Bitmap_String_With_Backdrop(10, 80, 0, GLUT_BITMAP_HELVETICA_18, "LEBONTAS (B)", 0.8f, 0.8f, 0.8f, 0.0f, 0.0f, 0.0f);
         break;
 
         // Bontó mód
     case bulldoze:
-        Render_Bitmap_String_With_Backdrop(10, 30, 0, GLUT_BITMAP_HELVETICA_18, "EPITES (N)", 0.8, 0.8, 0.8, 0, 0, 0);
-        Render_Bitmap_String_With_Backdrop(10, 55, 0, GLUT_BITMAP_HELVETICA_18, "UT EPITES (M)", 0.8, 0.8, 0.8, 0, 0, 0);
-        Render_Bitmap_String_With_Backdrop(10, 80, 0, GLUT_BITMAP_HELVETICA_18, "LEBONTAS (B)", 1, 0, 0, 0, 0, 0);
+        Render_Bitmap_String_With_Backdrop(10, 30, 0, GLUT_BITMAP_HELVETICA_18, "EPITES (N)", 0.8f, 0.8f, 0.8f, 0.0f, 0.0f, 0.0f);
+        Render_Bitmap_String_With_Backdrop(10, 55, 0, GLUT_BITMAP_HELVETICA_18, "UT EPITES (M)", 0.8f, 0.8f, 0.8f, 0.0f, 0.0f, 0.0f);
+        Render_Bitmap_String_With_Backdrop(10, 80, 0, GLUT_BITMAP_HELVETICA_18, "LEBONTAS (B)", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
     }
     // Épületkategóriák kiíráas
@@ -1387,7 +1388,7 @@ void Render_Interface()
         // FPS kiszámítása és kiírása
         static float fps;
         static float last_time = 0;
-        float current_time = GetTickCount() * 0.001f;
+        float current_time = GetTickCount64() * 0.001f;
         fps++;
         if (current_time - last_time > 1)
         {

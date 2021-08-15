@@ -12,6 +12,21 @@ void Make_Material_Type(Material* material_type, char name[50], material_state s
 	material_type->requirement1 = requirement1;
 	material_type->requirement2 = requirement2;
 	material_type->exists = true;
+
+	printf("%s anyagtipus letrehozva!\n", material_type->name);
+}
+
+Material* Material_Type_From_Name(Material** material_types, char material_name[50])
+{
+	for (int i = 0; i < sizeof(material_types); i++)
+	{
+		if (material_types[i]->name == material_name)
+		{
+			return material_types[i];
+		}
+	}
+
+	return NULL;
 }
 
 material_state Material_State_Enum(char* sval)

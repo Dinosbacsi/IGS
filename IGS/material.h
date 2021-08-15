@@ -21,7 +21,9 @@ typedef struct Material
 	Material* requirement2;
 	// Állapot
 	bool exists;
-};
+}Material;
+
+Material material_types[50];
 
 /*
 ======================================================================================
@@ -29,6 +31,7 @@ typedef struct Material
 */
 void Make_Material_Type(Material* material_type, char name[50], material_state state, material_category category, Material* requirement1, Material* requirement2);
 
+Material* Material_Type_From_Name(Material** material_types, char material_name[50]);
 material_state Material_State_Enum(char* sval);
 material_category Material_Category_Enum(char* sval);
 #endif // MATERIAL_H_INCLUDED

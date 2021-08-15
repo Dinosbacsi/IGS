@@ -25,11 +25,13 @@ void Building_Types_From_File(char* filename)
             char building_category_name[50];
             int building_size_x;
             int building_size_y;
-            sscanf(bc_line, "%s\t%s\t%s\t%d\t%d\t%s", building_name, model_name, texture_name, &building_size_x, &building_size_y, building_category_name);
 
-            building_category new_building_type_category = Building_Type_Enum(building_category_name);
+            if (sscanf(bc_line, "%s\t%s\t%s\t%d\t%d\t%s", building_name, model_name, texture_name, &building_size_x, &building_size_y, building_category_name))
+            {
+                building_category new_building_type_category = Building_Type_Enum(building_category_name);
 
-            Make_Building_Type(&building_types[i + 1], building_name, model_name, texture_name, new_building_type_category, building_size_x, building_size_y);
+                Make_Building_Type(&building_types[i + 1], building_name, model_name, texture_name, new_building_type_category, building_size_x, building_size_y);
+            }
 
             i++;
         }
