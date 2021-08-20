@@ -89,6 +89,12 @@ void Place_Building_OLD(struct Model building_model, building_category category,
         buildings[i].size.y = size_y;
         buildings[i].facing_direction = direction;
 
+        // IDEGLENES - ha gyár, akkor termel készterméket
+        if (category == factory)
+        {
+            buildings[i].produces = &material_types[1];
+        }
+
         // Tile-ok lefoglalása
         if (direction == north || direction == south)
         {
@@ -246,14 +252,15 @@ void Building_Produce(Building* building)
     int requirement2_i;
     bool requirement1_fulfilled = false;
     bool requirement2_fulfilled = false;
-    for (int i = 0; i < sizeof(building->storage)/sizeof(Material*); i++)
+    for (int i = 0; i < sizeof(building->storage) - 1; i++)
     {
         if (building->storage[i] == building->produces->requirement1)
         {
             requirement1_fulfilled = true;
             requirement1_i = i;
         }
-        else if (building->produces->requirement2->exists && building->storage[i] == building->produces->requirement2)
+        //else if (building->produces->requirement2->exists && building->storage[i] == building->produces->requirement2)
+        else if (building->produces->requirement2 != NULL && building->storage[i] == building->produces->requirement2)
         {
             requirement2_fulfilled = true;
             requirement2_i = i;
@@ -263,22 +270,24 @@ void Building_Produce(Building* building)
     // Ha nincs készlet, rendelés
     if (!requirement1_fulfilled)
     {
-        for (int i = 0; i < sizeof(building->order_list)/sizeof(Material*); i++)
+        for (int i = 0; i < sizeof(building->order_list); i++)
         {
-            if (!building->order_list[i]->exists)
+            if (building->order_list[i] == NULL)
             {
                 building->order_list[i] = building->produces->requirement1;
+                printf("\n%s. epulet rendelt %s alapanyagot!", building->name, building->produces->requirement1->name);
                 break;
             }
         }
     }
-    if (building->produces->requirement2->exists && !requirement2_fulfilled)
+    if (building->produces->requirement2 != NULL && !requirement2_fulfilled)
     {
-        for (int i = 0; i < sizeof(building->order_list) / sizeof(Material*); i++)
+        for (int i = 0; i < sizeof(building->order_list); i++)
         {
-            if (!building->order_list[i]->exists)
+            if (building->order_list[i] == NULL)
             {
                 building->order_list[i] = building->produces->requirement2;
+                printf("\n%s. epulet rendelt %s alapanyagot!", building->name, building->produces->requirement2->name);
                 break;
             }
         }
@@ -288,10 +297,10 @@ void Building_Produce(Building* building)
     if (requirement1_fulfilled && requirement2_fulfilled)
     {
         // Alapanyag felhasználása
-        building->storage[requirement1_i]->exists = false;
-        if (building->produces->requirement2->exists)
+        building->storage[requirement1_i] = NULL;
+        if (building->produces->requirement2 != NULL)
         {
-            building->storage[requirement2_i]->exists = false;
+            building->storage[requirement2_i] = NULL;
         }
 
         // Új anyag előállítása

@@ -146,6 +146,7 @@
     <ClCompile Include="material.c" />
     <ClCompile Include="model.c" />
     <ClCompile Include="road.c" />
+    <ClCompile Include="simulation.c" />
     <ClCompile Include="utility.c" />
     <ClCompile Include="vehicle.c" />
   </ItemGroup>
@@ -155,6 +156,7 @@
     <ClInclude Include="material.h" />
     <ClInclude Include="model.h" />
     <ClInclude Include="road.h" />
+    <ClInclude Include="simulation.h" />
     <ClInclude Include="utility.h" />
     <ClInclude Include="vehicle.h" />
   </ItemGroup>

@@ -30,7 +30,7 @@ typedef struct Building
 
     // Termelés
     int storage_capacity;
-    Material** storage;
+    Material* storage[10];
     Material* produces;
     Material* order_list[10];
 }Building;

@@ -1127,6 +1127,8 @@ void Render_Scene()
     {
         Draw_Building(new_building);
     }
+
+    // Szimuláció
     for (int i = 0; i < vehicle_limit; i++)
     {
         if (vehicles[i].exists == true)
@@ -1135,6 +1137,13 @@ void Render_Scene()
             Vehicle_Cruise(&vehicles[i], road_nodes, tiles);
         }
 
+    }
+    for (int i = 0; i < sizeof(buildings) / sizeof(Building); i++)
+    {
+        if (buildings[i].category == factory && Check_Tile(buildings[i].entry_point.x, buildings[i].entry_point.y, tiles) == 3)
+        {
+            Building_Produce(&buildings[i]);
+        }
     }
 
     // Utak kirajzolása
