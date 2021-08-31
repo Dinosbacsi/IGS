@@ -155,6 +155,11 @@ void Place_Building_OLD(struct Model building_model, building_category category,
                 buildings[i].entry_point.y = roundf(y + size_x / 2) + 1;
             }
         }
+
+        if (Check_Tile(buildings[i].entry_point.x, buildings[i].entry_point.y, tiles) == 3)
+        {
+            Split_Road_Segment(Check_Tile(buildings[i].entry_point.x, buildings[i].entry_point.y, tiles), road_segments, road_nodes, tiles, buildings[i].entry_point.x, buildings[i].entry_point.y);
+        }
     }
 }
 void Place_Building_By_Name(char building_name[], int x, int y, direction direction, Building building_types[], Building buildings[], int building_limit, struct Tile tiles[map_width][map_length])
@@ -307,4 +312,17 @@ void Building_Produce(Building* building)
         building->storage[requirement1_i]->exists = true;
         building->storage[requirement1_i] = building->produces;
     }
+}
+
+Material* Get_Order(Building* building)
+{
+    // Ha talál rendelést, visszatér azzal
+    for (int i = 0; i < sizeof(building->order_list); i++)
+    {
+        if (building->order_list[i] != NULL)
+            return building->order_list[i];
+    }
+
+    // Ha nem volt rendelés, akkor visszatér NULL-al
+    return NULL;
 }

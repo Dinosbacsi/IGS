@@ -48,6 +48,13 @@ typedef struct Road_Segment
     bool exists;
 }Road_Segment;
 
+//Utak
+Node road_nodes[map_width][map_length];
+Road_Segment road_segments[segment_limit];
+Node new_segment_A;
+Node new_segment_B;
+Road_Segment new_segment;
+
 /*
 ======================================================================================
     Út kezelõ függvények

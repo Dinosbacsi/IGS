@@ -7,6 +7,7 @@
 #include "model.h"
 #include "utility.h"
 #include "material.h"
+#include "road.h"
 
 //Épület típusok
 typedef enum { nothing, warehouse, processing_plant, factory, office, last } building_category;
@@ -61,6 +62,7 @@ building_category Building_Type_Enum(char* sval);
     Épület szimuláció függvények
 */
 void Building_Produce(Building* building);
+Material* Get_Order(Building* building);
 
 
 #endif // BUILDING_H_INCLUDED

@@ -4,41 +4,41 @@
 ======================================================================================
     Jármű kezelõ függvények
 */
-void Draw_Vehicle(struct Vehicle vehicle)
+void Draw_Vehicle(Vehicle* vehicle)
 {
     glPushMatrix();
     // Jármű pozícionálása
-    glTranslatef(vehicle.pos.x, vehicle.pos.y, vehicle.pos.z);
-    glRotatef(vehicle.rotate.z, 0, 0, 1);
-    glRotatef(vehicle.rotate.y, 0, 1, 0);
-    glRotatef(vehicle.rotate.x, 1, 0, 0);
+    glTranslatef(vehicle->pos.x, vehicle->pos.y, vehicle->pos.z);
+    glRotatef(vehicle->rotate.z, 0, 0, 1);
+    glRotatef(vehicle->rotate.y, 0, 1, 0);
+    glRotatef(vehicle->rotate.x, 1, 0, 0);
 
     // Jármű modell kirajzolása
-    Draw_Model(&vehicle.vehicle_model);
+    Draw_Model(&vehicle->vehicle_model);
     // Jármű kerekeinek kirajzolása
     for (int i = 0; i <= 3; i++)
     {
         glPushMatrix();
-        glTranslatef(vehicle.wheel[i].x, vehicle.wheel[i].y, vehicle.wheel[i].z);
+        glTranslatef(vehicle->wheel[i].x, vehicle->wheel[i].y, vehicle->wheel[i].z);
         if (i == 0 || i == 1)
         {
-            glRotatef(vehicle.wheel_turn, 0, 0, 1);
+            glRotatef(vehicle->wheel_turn, 0, 0, 1);
         }
         if (i == 1 || i == 3)
         {
             glRotatef(180, 0, 0, 1);
-            glRotatef(vehicle.wheel_rotate, 0, -1, 0);
+            glRotatef(vehicle->wheel_rotate, 0, -1, 0);
         }
         else
         {
-            glRotatef(vehicle.wheel_rotate, 0, 1, 0);
+            glRotatef(vehicle->wheel_rotate, 0, 1, 0);
         }
-        Draw_Model(&vehicle.wheel_model);
+        Draw_Model(&vehicle->wheel_model);
         glPopMatrix();
     }
     glPopMatrix();
 }
-void Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int tile_y, Road_Segment road_segments[], Tile tiles[map_width][map_length], Node road_nodes[map_width][map_length])
+Vehicle* Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int tile_y, Road_Segment road_segments[], Tile tiles[map_width][map_length], Node road_nodes[map_width][map_length])
 {
     int new_vehicle_index = 0;
     while (vehicles[new_vehicle_index].exists == true && new_vehicle_index <= vehicle_limit)
@@ -101,10 +101,12 @@ void Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int ti
                 new_vehicle->previous_facing = west;
             }
         }
-        printf("\nJarmu elhelyezve!");
 
         new_vehicle->destination_node = &road_nodes[104][299];
         Find_Path(new_vehicle, road_nodes);
+
+        printf("\nJarmu elhelyezve!");
+        return new_vehicle;
     }
 }
 void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length], Tile tiles[map_width][map_length])

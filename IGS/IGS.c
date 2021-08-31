@@ -143,15 +143,7 @@ Road_Type road_main;
 //Building building_types[50];
 char building_category_names_UPPER_CASE[][30] = { "SEMMI", "RAKTAR", "FELDOLGOZO UZEM", "GYAR", "IRODA" };
 building_category building_category_list[] = { nothing, warehouse, processing_plant, factory, office };
-//Utak
-Node road_nodes[map_width][map_length];
-Road_Segment road_segments[segment_limit];
-Node new_segment_A;
-Node new_segment_B;
-Road_Segment new_segment;
-//Járművek
-Vehicle test_vehicle;
-Vehicle vehicles[vehicle_limit];
+
 //Anyagok
 //Felirat
 char test[50] = "TESZT FELIRAT";
@@ -173,6 +165,7 @@ void Mouse_Handler();
 void Build_Mode_Handler();
 void Road_Mode_Handler();
 void Bulldoze_Mode_Handler();
+void Simulation();
 void Render_Scene();
 void Render_Interface();
 void Render_Bitmap_String(int x, int y, int z, void* font, char* string, float r, float g, float b);
@@ -237,6 +230,8 @@ int main(int argc, char* args[])
             Bulldoze_Mode_Handler();
         }
 
+        // Szimuláció
+        Simulation();
         // Renderelés
         Render_Scene();
         // Ablak átméretezés
@@ -711,7 +706,7 @@ void Event_Handler()
             case SDLK_2:
                 if (debug == 1)
                 {
-                    Place_Vehicle(vehicles, &test_vehicle, (int)roundf(v_cursor.pos.x), (int)roundf(v_cursor.pos.y), road_segments, tiles, road_nodes);
+                    Place_Vehicle(&vehicles, &test_vehicle, (int)roundf(v_cursor.pos.x), (int)roundf(v_cursor.pos.y), road_segments, tiles, road_nodes);
                 }
                 break;
 
@@ -1075,6 +1070,22 @@ void Bulldoze_Mode_Handler()
 
 }
 
+void Simulation()
+{
+    // Majd mehetne simulation-be saját függvényként
+    for (int i = 0; i < building_limit; i++)
+    {
+        Material* order = Get_Order(&buildings[i]);
+
+        if (order != NULL)
+        {
+            Vehicle* new_vehicle = Place_Vehicle(vehicles, &test_vehicle, 104, 299, road_segments, tiles, road_nodes);
+            new_vehicle->destination_node = &road_nodes[buildings[i].entry_point.x][buildings[i].entry_point.y];
+            Find_Path(new_vehicle, road_nodes);
+        }
+    }
+}
+
 void Render_Scene()
 {
     // Buffer kiürítése
@@ -1115,7 +1126,7 @@ void Render_Scene()
 
     // Objektum Kirajzolása
     Draw_Building(test_building);
-    Draw_Vehicle(test_vehicle);
+    Draw_Vehicle(&test_vehicle);
     for (int i = 0; i < building_limit; i++)
     {
         if (buildings[i].exists != 0)
@@ -1133,7 +1144,7 @@ void Render_Scene()
     {
         if (vehicles[i].exists == true)
         {
-            Draw_Vehicle(vehicles[i]);
+            Draw_Vehicle(&vehicles[i]);
             Vehicle_Cruise(&vehicles[i], road_nodes, tiles);
         }
 
