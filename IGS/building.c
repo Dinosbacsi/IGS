@@ -94,6 +94,11 @@ void Place_Building_OLD(struct Model building_model, building_category category,
         {
             buildings[i].produces = &material_types[1];
         }
+        // Rendelési lista NULL alapérték
+        for (int j = 0; j < 10; j++)
+        {
+            buildings[i].order_list[j] = NULL;
+        }
 
         // Tile-ok lefoglalása
         if (direction == north || direction == south)
@@ -158,7 +163,8 @@ void Place_Building_OLD(struct Model building_model, building_category category,
 
         if (Check_Tile(buildings[i].entry_point.x, buildings[i].entry_point.y, tiles) == 3)
         {
-            Split_Road_Segment(Check_Tile(buildings[i].entry_point.x, buildings[i].entry_point.y, tiles), road_segments, road_nodes, tiles, buildings[i].entry_point.x, buildings[i].entry_point.y);
+            Road_Segment* road_segment_to_split = tiles[buildings[i].entry_point.x][buildings[i].entry_point.y].occupied_by_road_segment;
+            Split_Road_Segment(road_segment_to_split, road_segments, road_nodes, tiles, buildings[i].entry_point.x, buildings[i].entry_point.y);
         }
     }
 }

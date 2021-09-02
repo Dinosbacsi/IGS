@@ -491,37 +491,12 @@ void Initialize_Map()
     }
     // Épülettípusok inicializálása
     Building_Types_From_File("building_categories.txt");
-    /*
-    FILE* bc_file;
-    char* bc_filename = "building_categories.txt";
-    char bc_line[100];
-
-    bc_file = fopen(bc_filename, "r");
-    if (!bc_file)
+    // Épületek tömb inicializálása
+    for (int i = 0; i < sizeof(buildings)/sizeof(Building); i++)
     {
-        printf("Nem lehetett megnyitni a(z) %s fajlt!\n", bc_filename);
+        buildings[i].exists = false;
+        buildings[i].category = nothing;
     }
-    else
-    {
-        int i = 0;
-        while (i < sizeof(building_types) && fgets(bc_line, sizeof(bc_line), bc_file) != NULL)
-        {
-            char building_name[50];
-            char model_name[50];
-            char texture_name[50];
-            char building_category_name[50];
-            int building_size_x;
-            int building_size_y;
-            sscanf(bc_line, "%s\t%s\t%s\t%d\t%d\t%s", building_name, model_name, texture_name, &building_size_x, &building_size_y, building_category_name);
-
-            building_category new_building_type_category = Building_Type_Enum(building_category_name);
-
-            Make_Building_Type(&building_types[i + 1], building_name, model_name, texture_name, new_building_type_category, building_size_x, building_size_y);
-
-            i++;
-        }
-    }
-    */
 
     // Anyagtípusok inicializáláas
     Make_Material_Type(&material_types[0], "Alapanyag", solid, raw, NULL, NULL);
@@ -538,7 +513,7 @@ void Initialize_Map()
     test_vehicle.pos.y = 50.8f;
     test_vehicle.pos.z = 0.0f;
     test_vehicle.rotate.z = -10.0f;
-    test_vehicle.max_speed = 0.02f;
+    test_vehicle.max_speed = 0.20f;
     test_vehicle.acceleration_rate = 0.0001f;
 
     test_vehicle.wheel[0].x = 0.32f;
@@ -571,6 +546,20 @@ void Initialize_Map()
     road_main.intersection_4_way = &igs_road_main_4_way;
     road_main.dead_end = &igs_road_dead_end;
 
+    // Utak tömb inicializálása
+    for (int x = 0; x < map_width; x++)
+    {
+        for (int y = 0; y < map_length; y++)
+        {
+            road_nodes[x][y].exists = false;
+            road_nodes[x][y].checked = false;
+        }
+    }
+
+    for (int i = 0; i < sizeof(road_segments) / sizeof(Road_Segment); i++)
+    {
+        road_segments[i].exists = false;
+    }
 
     // Fúót elhelyezése
     Place_Road_Segment(road_segments, road_nodes, &road_main, tiles, 104, 60, 104, 299);
@@ -706,7 +695,7 @@ void Event_Handler()
             case SDLK_2:
                 if (debug == 1)
                 {
-                    Place_Vehicle(&vehicles, &test_vehicle, (int)roundf(v_cursor.pos.x), (int)roundf(v_cursor.pos.y), road_segments, tiles, road_nodes);
+                    Place_Vehicle(&vehicles, &test_vehicle, (int)roundf(v_cursor.pos.x), (int)roundf(v_cursor.pos.y), road_segments, tiles, road_nodes, NULL);
                 }
                 break;
 
@@ -1072,16 +1061,45 @@ void Bulldoze_Mode_Handler()
 
 void Simulation()
 {
+    // Szimuláció
+    for (int i = 0; i < vehicle_limit; i++)
+    {
+        if (vehicles[i].exists == true)
+        {
+            Vehicle_Cruise(&vehicles[i], road_nodes, tiles);
+        }
+
+    }
+    for (int i = 0; i < sizeof(buildings) / sizeof(Building); i++)
+    {
+        if (buildings[i].category == factory && (Check_Tile(buildings[i].entry_point.x, buildings[i].entry_point.y, tiles) == 3 || Check_Tile(buildings[i].entry_point.x, buildings[i].entry_point.y, tiles) == 2))
+        {
+            Building_Produce(&buildings[i]);
+        }
+    }
+
     // Majd mehetne simulation-be saját függvényként
     for (int i = 0; i < building_limit; i++)
     {
-        Material* order = Get_Order(&buildings[i]);
-
-        if (order != NULL)
+        if (buildings[i].exists == true && buildings[i].category == factory)
         {
-            Vehicle* new_vehicle = Place_Vehicle(vehicles, &test_vehicle, 104, 299, road_segments, tiles, road_nodes);
-            new_vehicle->destination_node = &road_nodes[buildings[i].entry_point.x][buildings[i].entry_point.y];
-            Find_Path(new_vehicle, road_nodes);
+            Material* order = Get_Order(&buildings[i]);
+
+            if (order != NULL)
+            {
+                int spawn_pos_x = 104;
+                int spawn_pos_y = 160;
+                int new_vehicle_index = Place_Vehicle(vehicles, &test_vehicle, spawn_pos_x, spawn_pos_y, road_segments, tiles, road_nodes);
+
+                if (new_vehicle_index != -1)
+                {
+                    vehicles[new_vehicle_index].destination_node = &road_nodes[buildings[i].entry_point.x][buildings[i].entry_point.y];
+                    Find_Path(&vehicles[new_vehicle_index], road_nodes);
+                }
+
+                //order = NULL;
+
+            }
         }
     }
 }
@@ -1138,23 +1156,13 @@ void Render_Scene()
     {
         Draw_Building(new_building);
     }
-
-    // Szimuláció
     for (int i = 0; i < vehicle_limit; i++)
     {
         if (vehicles[i].exists == true)
         {
             Draw_Vehicle(&vehicles[i]);
-            Vehicle_Cruise(&vehicles[i], road_nodes, tiles);
         }
 
-    }
-    for (int i = 0; i < sizeof(buildings) / sizeof(Building); i++)
-    {
-        if (buildings[i].category == factory && Check_Tile(buildings[i].entry_point.x, buildings[i].entry_point.y, tiles) == 3)
-        {
-            Building_Produce(&buildings[i]);
-        }
     }
 
     // Utak kirajzolása

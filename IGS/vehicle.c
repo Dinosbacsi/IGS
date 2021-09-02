@@ -38,14 +38,15 @@ void Draw_Vehicle(Vehicle* vehicle)
     }
     glPopMatrix();
 }
-Vehicle* Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int tile_y, Road_Segment road_segments[], Tile tiles[map_width][map_length], Node road_nodes[map_width][map_length])
+int Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int tile_y, Road_Segment road_segments[], Tile tiles[map_width][map_length], Node road_nodes[map_width][map_length])
 {
     int new_vehicle_index = 0;
+
     while (vehicles[new_vehicle_index].exists == true && new_vehicle_index <= vehicle_limit)
     {
         new_vehicle_index++;
     }
-    if (new_vehicle_index < vehicle_limit && Check_Tile(tile_x, tile_y, tiles) == 3)
+    if (new_vehicle_index < vehicle_limit && (Check_Tile(tile_x, tile_y, tiles) == 3 || Check_Tile(tile_x, tile_y, tiles) == 2))
     {
         // Jármű létrehozása
         Vehicle* new_vehicle = &vehicles[new_vehicle_index];
@@ -62,8 +63,34 @@ Vehicle* Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, in
         new_vehicle->acceleration_rate = vehicle_type->acceleration_rate;
 
         // Jármű elhelyezése
-        new_vehicle->next_node = tiles[tile_x][tile_y].occupied_by_road_segment->A;
-        new_vehicle->previous_node = tiles[tile_x][tile_y].occupied_by_road_segment->B;
+        if (Check_Tile(tile_x, tile_y, tiles) == 3)
+        {
+            new_vehicle->next_node = tiles[tile_x][tile_y].occupied_by_road_segment->A;
+            new_vehicle->previous_node = tiles[tile_x][tile_y].occupied_by_road_segment->B;
+        }
+        else
+        {
+            Node* start_node = &road_nodes[tile_x][tile_y];
+            if (start_node->connection_east.x != 0 && start_node->connection_east.y != 0)
+            {
+                new_vehicle->next_node = &road_nodes[start_node->connection_east.x][start_node->connection_east.y];
+            }
+            if (start_node->connection_north.x != 0 && start_node->connection_north.y != 0)
+            {
+                new_vehicle->next_node = &road_nodes[start_node->connection_north.x][start_node->connection_north.y];
+            }
+            if (start_node->connection_west.x != 0 && start_node->connection_west.y != 0)
+            {
+                new_vehicle->next_node = &road_nodes[start_node->connection_west.x][start_node->connection_west.y];
+            }
+            if (start_node->connection_south.x != 0 && start_node->connection_south.y != 0)
+            {
+                new_vehicle->next_node = &road_nodes[start_node->connection_south.x][start_node->connection_south.y];
+            }
+
+            new_vehicle->previous_node = start_node;
+        }
+        
         new_vehicle->current_tile = &tiles[tile_x][tile_y];
         if (new_vehicle->next_node->pos.x == tile_x)
         {
@@ -102,11 +129,15 @@ Vehicle* Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, in
             }
         }
 
-        new_vehicle->destination_node = &road_nodes[104][299];
-        Find_Path(new_vehicle, road_nodes);
+        //new_vehicle->destination_node = &road_nodes[104][299];
+        //Find_Path(new_vehicle, road_nodes);
 
         printf("\nJarmu elhelyezve!");
-        return new_vehicle;
+        return new_vehicle_index;
+    }
+    else
+    {
+        return -1;
     }
 }
 void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length], Tile tiles[map_width][map_length])
@@ -291,6 +322,12 @@ void Vehicle_Cruise_Choose_Direction(Vehicle* vehicle, Node road_nodes[map_width
 }
 void Vehicle_Follow_Path(Vehicle* vehicle)
 {
+    if (vehicle->path_nodes[vehicle->current_node_in_path + 1] == NULL)
+    {
+        vehicle->speed = 0;
+        return;
+    }
+
     if (vehicle->next_node->connection_east.x == vehicle->path_nodes[vehicle->current_node_in_path + 1]->pos.x && vehicle->next_node->connection_east.y == vehicle->path_nodes[vehicle->current_node_in_path + 1]->pos.y)
     {
         vehicle->previous_facing = vehicle->facing;
