@@ -132,7 +132,7 @@ int Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int til
         //new_vehicle->destination_node = &road_nodes[104][299];
         //Find_Path(new_vehicle, road_nodes);
 
-        printf("\nJarmu elhelyezve!");
+        //printf("\nJarmu elhelyezve!");
         return new_vehicle_index;
     }
     else
@@ -771,84 +771,84 @@ void Find_Path(Vehicle* vehicle, Node road_nodes[map_width][map_length])
     bool path_found = false;
     while (path_found == false && depth <= 100)
     {
-        printf("\n");
+        //printf("\n");
 
         if (road_nodes[vehicle->path_nodes[i]->connection_east.x][vehicle->path_nodes[i]->connection_east.y].exists &&
             road_nodes[vehicle->path_nodes[i]->connection_east.x][vehicle->path_nodes[i]->connection_east.y].checked == false)
         {
             road_nodes[vehicle->path_nodes[i]->connection_east.x][vehicle->path_nodes[i]->connection_east.y].checked = true;
-            printf("Kelet vizsgalat. ");
+            //printf("Kelet vizsgalat. ");
 
             if (i + 1 < depth)
             {
                 vehicle->path_nodes[i + 1] = &road_nodes[vehicle->path_nodes[i]->connection_east.x][vehicle->path_nodes[i]->connection_east.y];
                 i++;
-                printf("Kelet hozzaadva. ");
+                //printf("Kelet hozzaadva. ");
             }
             else if (i + 1 == depth && &road_nodes[vehicle->path_nodes[i]->connection_east.x][vehicle->path_nodes[i]->connection_east.y] == vehicle->destination_node)
             {
                 vehicle->path_nodes[i + 1] = &road_nodes[vehicle->path_nodes[i]->connection_east.x][vehicle->path_nodes[i]->connection_east.y];
                 path_found = true;
-                printf("Utvonal talalva! ");
+                //printf("Utvonal talalva! ");
             }
         }
         else if (road_nodes[vehicle->path_nodes[i]->connection_north.x][vehicle->path_nodes[i]->connection_north.y].exists &&
             road_nodes[vehicle->path_nodes[i]->connection_north.x][vehicle->path_nodes[i]->connection_north.y].checked == false)
         {
             road_nodes[vehicle->path_nodes[i]->connection_north.x][vehicle->path_nodes[i]->connection_north.y].checked = true;
-            printf("Eszak vizsgalat. ");
+            //printf("Eszak vizsgalat. ");
             if (i + 1 < depth)
             {
                 vehicle->path_nodes[i + 1] = &road_nodes[vehicle->path_nodes[i]->connection_north.x][vehicle->path_nodes[i]->connection_north.y];
                 i++;
-                printf("Eszak hozzaadva. ");
+                //printf("Eszak hozzaadva. ");
             }
             else if (i + 1 == depth && &road_nodes[vehicle->path_nodes[i]->connection_north.x][vehicle->path_nodes[i]->connection_north.y] == vehicle->destination_node)
             {
                 vehicle->path_nodes[i + 1] = &road_nodes[vehicle->path_nodes[i]->connection_north.x][vehicle->path_nodes[i]->connection_north.y];
                 path_found = true;
-                printf("Utvonal talalva! ");
+                //printf("Utvonal talalva! ");
             }
         }
         else if (road_nodes[vehicle->path_nodes[i]->connection_south.x][vehicle->path_nodes[i]->connection_south.y].exists &&
             road_nodes[vehicle->path_nodes[i]->connection_south.x][vehicle->path_nodes[i]->connection_south.y].checked == false)
         {
             road_nodes[vehicle->path_nodes[i]->connection_south.x][vehicle->path_nodes[i]->connection_south.y].checked = true;
-            printf("Del vizsgalat. ");
+            //printf("Del vizsgalat. ");
             if (i + 1 < depth)
             {
                 vehicle->path_nodes[i + 1] = &road_nodes[vehicle->path_nodes[i]->connection_south.x][vehicle->path_nodes[i]->connection_south.y];
                 i++;
-                printf("Del hozzaadva. ");
+                //printf("Del hozzaadva. ");
             }
             else if (i + 1 == depth && &road_nodes[vehicle->path_nodes[i]->connection_south.x][vehicle->path_nodes[i]->connection_south.y] == vehicle->destination_node)
             {
                 vehicle->path_nodes[i + 1] = &road_nodes[vehicle->path_nodes[i]->connection_south.x][vehicle->path_nodes[i]->connection_south.y];
                 path_found = true;
-                printf("Utvonal talalva! ");
+                //printf("Utvonal talalva! ");
             }
         }
         else if (road_nodes[vehicle->path_nodes[i]->connection_west.x][vehicle->path_nodes[i]->connection_west.y].exists &&
             road_nodes[vehicle->path_nodes[i]->connection_west.x][vehicle->path_nodes[i]->connection_west.y].checked == false)
         {
             road_nodes[vehicle->path_nodes[i]->connection_west.x][vehicle->path_nodes[i]->connection_west.y].checked = true;
-            printf("Nyugat vizsgalva. ");
+            //printf("Nyugat vizsgalva. ");
             if (i + 1 < depth)
             {
                 vehicle->path_nodes[i + 1] = &road_nodes[vehicle->path_nodes[i]->connection_west.x][vehicle->path_nodes[i]->connection_west.y];
                 i++;
-                printf("Nyugat hozzaadva. ");
+                //printf("Nyugat hozzaadva. ");
             }
             else if (i + 1 == depth && &road_nodes[vehicle->path_nodes[i]->connection_west.x][vehicle->path_nodes[i]->connection_west.y] == vehicle->destination_node)
             {
                 vehicle->path_nodes[i + 1] = &road_nodes[vehicle->path_nodes[i]->connection_west.x][vehicle->path_nodes[i]->connection_west.y];
                 path_found = true;
-                printf("Utvonal talalva! ");
+                //printf("Utvonal talalva! ");
             }
         }
         else
         {
-            printf("Egyik node sam szabad. ");
+            //printf("Egyik node sam szabad. ");
             if (i == 0)
             {
                 for (int i = 0; i < map_width; i++)
@@ -860,11 +860,11 @@ void Find_Path(Vehicle* vehicle, Node road_nodes[map_width][map_length])
                 }
 
                 depth++;
-                printf("Depth noveles. ");
+                //printf("Depth noveles. ");
             }
             else
             {
-                printf("\nVisszalepes. ");
+                //printf("\nVisszalepes. ");
                 i--;
             }
         }

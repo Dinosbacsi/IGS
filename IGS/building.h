@@ -34,6 +34,7 @@ typedef struct Building
     Material* storage[10];
     Material* produces;
     Material* order_list[10];
+    long order_cooldown;
 }Building;
 
 Building building_types[50];

@@ -440,8 +440,6 @@ void Initialize_Textures()
         SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB
     );
 
-
-
     glBindTexture(GL_TEXTURE_2D, tex_grass);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
@@ -496,6 +494,18 @@ void Initialize_Map()
     {
         buildings[i].exists = false;
         buildings[i].category = nothing;
+        
+        for (int l = 0; l < sizeof(buildings[i].storage) / sizeof(Material*); l++)
+        {
+            buildings[i].storage[l] = NULL;
+        }
+
+        for (int l = 0; l < sizeof(buildings[i].order_list) / sizeof(Material*); l++)
+        {
+            buildings[i].order_list[l] = NULL;
+        }
+
+        buildings[i].produces = NULL;
     }
 
     // Anyagtípusok inicializáláas
@@ -851,16 +861,6 @@ void Build_Mode_Handler()
     {
         //Tile-ok ellenőrzése
         bool tile_is_free = true;
-        /*int lx = (int)((float)new_building.pos.x - ((float)new_building.size.y)/2);
-        int ly = (int)((float)new_building.pos.y - ((float)new_building.size.y)/2);
-        for(int ix = 1; ix <= new_building.size.x; ix++)
-        {
-            for(int iy = 1; iy <= new_building.size.y; iy++)
-            {
-                if(Check_Tile(lx+ix, ly+iy, tiles) != 0)
-                    tile_is_free = false;
-            }
-        }*/
         if (new_building.facing_direction == north || new_building.facing_direction == south)
         {
             int lx = (int)((float)new_building.pos.x - ((float)new_building.size.x) / 2);
@@ -1074,7 +1074,16 @@ void Simulation()
     {
         if (buildings[i].category == factory && (Check_Tile(buildings[i].entry_point.x, buildings[i].entry_point.y, tiles) == 3 || Check_Tile(buildings[i].entry_point.x, buildings[i].entry_point.y, tiles) == 2))
         {
-            Building_Produce(&buildings[i]);
+            if (buildings[i].order_cooldown < 0)
+            {
+                Building_Produce(&buildings[i]);
+                buildings[i].order_cooldown = 10000;
+            }
+            else
+            {
+                buildings[i].order_cooldown -= Get_Elapsed_Time();
+            }
+            
         }
     }
 

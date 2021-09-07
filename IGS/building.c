@@ -270,7 +270,6 @@ void Building_Produce(Building* building)
             requirement1_fulfilled = true;
             requirement1_i = i;
         }
-        //else if (building->produces->requirement2->exists && building->storage[i] == building->produces->requirement2)
         else if (building->produces->requirement2 != NULL && building->storage[i] == building->produces->requirement2)
         {
             requirement2_fulfilled = true;
@@ -322,13 +321,16 @@ void Building_Produce(Building* building)
 
 Material* Get_Order(Building* building)
 {
-    // Ha talál rendelést, visszatér azzal
-    for (int i = 0; i < sizeof(building->order_list); i++)
+    Material* order = NULL;
+
+    for (int i = 0; i < sizeof(building->order_list)/sizeof(Material*); i++)
     {
         if (building->order_list[i] != NULL)
-            return building->order_list[i];
+        {
+            order = building->order_list[i];
+            building->order_list[i] = NULL;
+        }
     }
 
-    // Ha nem volt rendelés, akkor visszatér NULL-al
-    return NULL;
+    return order;
 }

@@ -4,4 +4,8 @@
 #include "building.h"
 #include "vehicle.h"
 
+long ftime, timebase;
+
+long Get_Elapsed_Time();
+
 #endif // SIMULATION_H_INCLUDED
