@@ -94,8 +94,13 @@ void Place_Building_OLD(struct Model building_model, building_category category,
         {
             buildings[i].produces = &material_types[1];
         }
+        // Tárhely lista nullázása
+        for (int j = 0; j < sizeof(buildings[i].storage) / sizeof(Material*); j++)
+        {
+            buildings[i].storage[j] = NULL;
+        }
         // Rendelési lista NULL alapérték
-        for (int j = 0; j < 10; j++)
+        for (int j = 0; j < sizeof(buildings[i].order_list)/sizeof(Material*); j++)
         {
             buildings[i].order_list[j] = NULL;
         }
@@ -258,12 +263,14 @@ building_category Building_Type_Enum(char* sval)
 */
 void Building_Produce(Building* building)
 {
+    printf("\n\n========== Epulet termeles / rendeles ==========\n");
+
     // Készlet ellenőrzése
     int requirement1_i;
     int requirement2_i;
     bool requirement1_fulfilled = false;
     bool requirement2_fulfilled = false;
-    for (int i = 0; i < sizeof(building->storage) - 1; i++)
+    for (int i = 0; i < sizeof(building->storage) / sizeof(Material*); i++)
     {
         if (building->storage[i] == building->produces->requirement1)
         {
@@ -280,24 +287,24 @@ void Building_Produce(Building* building)
     // Ha nincs készlet, rendelés
     if (!requirement1_fulfilled)
     {
-        for (int i = 0; i < sizeof(building->order_list); i++)
+        for (int i = 0; i < sizeof(building->order_list) / sizeof(Material*); i++)
         {
             if (building->order_list[i] == NULL)
             {
                 building->order_list[i] = building->produces->requirement1;
-                printf("\n%s. epulet rendelt %s alapanyagot!", building->name, building->produces->requirement1->name);
+                printf("\n%s. epulet rendelt %s alapanyagot a rendelesi lista %d. helyere!", building->name, building->produces->requirement1->name, i);
                 break;
             }
         }
     }
     if (building->produces->requirement2 != NULL && !requirement2_fulfilled)
     {
-        for (int i = 0; i < sizeof(building->order_list); i++)
+        for (int i = 0; i < sizeof(building->order_list) / sizeof(Material*); i++)
         {
             if (building->order_list[i] == NULL)
             {
                 building->order_list[i] = building->produces->requirement2;
-                printf("\n%s. epulet rendelt %s alapanyagot!", building->name, building->produces->requirement2->name);
+                printf("\n%s. epulet rendelt %s alapanyagot a rendelesi lista %d. helyere!", building->name, building->produces->requirement2->name, i);
                 break;
             }
         }
@@ -328,7 +335,7 @@ Material* Get_Order(Building* building)
         if (building->order_list[i] != NULL)
         {
             order = building->order_list[i];
-            building->order_list[i] = NULL;
+            //building->order_list[i] = NULL;
         }
     }
 

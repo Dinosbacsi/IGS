@@ -1077,7 +1077,7 @@ void Simulation()
             if (buildings[i].order_cooldown < 0)
             {
                 Building_Produce(&buildings[i]);
-                buildings[i].order_cooldown = 10000;
+                buildings[i].order_cooldown = 1000;
             }
             else
             {
@@ -1096,6 +1096,7 @@ void Simulation()
 
             if (order != NULL)
             {
+                /*
                 int spawn_pos_x = 104;
                 int spawn_pos_y = 160;
                 int new_vehicle_index = Place_Vehicle(vehicles, &test_vehicle, spawn_pos_x, spawn_pos_y, road_segments, tiles, road_nodes);
@@ -1105,9 +1106,7 @@ void Simulation()
                     vehicles[new_vehicle_index].destination_node = &road_nodes[buildings[i].entry_point.x][buildings[i].entry_point.y];
                     Find_Path(&vehicles[new_vehicle_index], road_nodes);
                 }
-
-                //order = NULL;
-
+                */
             }
         }
     }
