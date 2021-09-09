@@ -192,11 +192,11 @@ void Draw_Building(Building building)
     if (fmodf((float)building.size.x, 2.0) == 0)
     {
         //glTranslatef(building.pos.x + 0.25 * building.size.x, 0, 0);
-        glTranslatef(building.pos.x + 0.5, 0, 0);
+        glTranslatef((float)building.pos.x + 0.5f, 0, 0);
     }
     else
     {
-        glTranslatef(building.pos.x, 0, 0);
+        glTranslatef((float)building.pos.x, 0, 0);
     }
     if (fmodf((float)building.size.y, 2.0) == 0)
     {
@@ -229,8 +229,8 @@ void Draw_Building(Building building)
 
 void Bulldoze_Building_OLD(struct Virtual_Cursor v_cursor, struct Building buildings[], Tile tiles[map_width][map_length])
 {
-    int x = roundf(v_cursor.pos.x);
-    int y = roundf(v_cursor.pos.y);
+    int x = (int)roundf(v_cursor.pos.x);
+    int y = (int)roundf(v_cursor.pos.y);
     Building* bulldozed_building = tiles[x][y].occupied_by_building;
 
     // Tile-ok felszabadítása
@@ -335,7 +335,7 @@ Material* Get_Order(Building* building)
         if (building->order_list[i] != NULL)
         {
             order = building->order_list[i];
-            //building->order_list[i] = NULL;
+            building->order_list[i] = NULL;
         }
     }
 

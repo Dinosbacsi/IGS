@@ -206,7 +206,8 @@ void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length], Ti
         else
         {
             if (vehicle->turning == false)
-                Vehicle_Cruise_Choose_Direction(vehicle, road_nodes);
+                //Vehicle_Cruise_Choose_Direction(vehicle, road_nodes);
+                Vehicle_Follow_Path(vehicle);
             else
             {
                 switch (vehicle->facing)

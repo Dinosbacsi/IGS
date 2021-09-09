@@ -705,7 +705,7 @@ void Event_Handler()
             case SDLK_2:
                 if (debug == 1)
                 {
-                    Place_Vehicle(&vehicles, &test_vehicle, (int)roundf(v_cursor.pos.x), (int)roundf(v_cursor.pos.y), road_segments, tiles, road_nodes, NULL);
+                    Place_Vehicle(&vehicles, &test_vehicle, (int)roundf(v_cursor.pos.x), (int)roundf(v_cursor.pos.y), road_segments, tiles, road_nodes);
                 }
                 break;
 
@@ -1077,13 +1077,12 @@ void Simulation()
             if (buildings[i].order_cooldown < 0)
             {
                 Building_Produce(&buildings[i]);
-                buildings[i].order_cooldown = 1000;
+                buildings[i].order_cooldown = 10000;
             }
             else
             {
                 buildings[i].order_cooldown -= Get_Elapsed_Time();
             }
-            
         }
     }
 
@@ -1096,9 +1095,8 @@ void Simulation()
 
             if (order != NULL)
             {
-                /*
-                int spawn_pos_x = 104;
-                int spawn_pos_y = 160;
+                int spawn_pos_x = 110;
+                int spawn_pos_y = 1;
                 int new_vehicle_index = Place_Vehicle(vehicles, &test_vehicle, spawn_pos_x, spawn_pos_y, road_segments, tiles, road_nodes);
 
                 if (new_vehicle_index != -1)
@@ -1106,7 +1104,6 @@ void Simulation()
                     vehicles[new_vehicle_index].destination_node = &road_nodes[buildings[i].entry_point.x][buildings[i].entry_point.y];
                     Find_Path(&vehicles[new_vehicle_index], road_nodes);
                 }
-                */
             }
         }
     }

@@ -6,9 +6,9 @@
 */
 void Position_Camera(struct Camera* cam)
 {
-    cam->POV.x = cam->pos.x + (cam->distance * cos(cam->angle_h)) * cos(cam->angle_v);
-    cam->POV.y = cam->pos.y + (cam->distance * sin(cam->angle_h)) * cos(cam->angle_v);
-    cam->POV.z = cam->distance * sin(cam->angle_v);
+    cam->POV.x = cam->pos.x + (cam->distance * cosf(cam->angle_h)) * cosf(cam->angle_v);
+    cam->POV.y = cam->pos.y + (cam->distance * sinf(cam->angle_h)) * cosf(cam->angle_v);
+    cam->POV.z = cam->distance * sinf(cam->angle_v);
 
     gluLookAt(
         // Kamera nézõpontjának koordinátája
@@ -32,20 +32,20 @@ void Move_Camera_Relative(struct Camera* cam, enum cam_direction direction)
     switch (direction)
     {
     case up:
-        cam->pos.x -= cam->speed * -sin(cam->angle_h) * cam->distance;
-        cam->pos.y -= cam->speed * cos(cam->angle_h) * cam->distance;
+        cam->pos.x -= cam->speed * -sinf(cam->angle_h) * cam->distance;
+        cam->pos.y -= cam->speed * cosf(cam->angle_h) * cam->distance;
         break;
     case down:
-        cam->pos.x += cam->speed * -sin(cam->angle_h) * cam->distance;
-        cam->pos.y += cam->speed * cos(cam->angle_h) * cam->distance;
+        cam->pos.x += cam->speed * -sinf(cam->angle_h) * cam->distance;
+        cam->pos.y += cam->speed * cosf(cam->angle_h) * cam->distance;
         break;
     case left:
-        cam->pos.x -= cam->speed * cos(cam->angle_h) * cam->distance;
-        cam->pos.y -= cam->speed * sin(cam->angle_h) * cam->distance;
+        cam->pos.x -= cam->speed * cosf(cam->angle_h) * cam->distance;
+        cam->pos.y -= cam->speed * sinf(cam->angle_h) * cam->distance;
         break;
     case right:
-        cam->pos.x += cam->speed * cos(cam->angle_h) * cam->distance;
-        cam->pos.y += cam->speed * sin(cam->angle_h) * cam->distance;
+        cam->pos.x += cam->speed * cosf(cam->angle_h) * cam->distance;
+        cam->pos.y += cam->speed * sinf(cam->angle_h) * cam->distance;
         break;
     }
 
@@ -121,53 +121,53 @@ void Draw_3D_Cursor(struct Virtual_Cursor v_cursor)
         //piros
     glColor3f(1.0f, 0.0f, 0.0f);
     //y felöli oldal
-    glNormal3f(1, 1, 0.8);
-    glVertex3f(1, 0, 0);
-    glVertex3f(0, 0.2, 0);
-    glVertex3f(0, 0, 0.2);
+    glNormal3f(1.0f, 1.0f, 0.8f);
+    glVertex3f(1.0f, 0.0f, 0.0f);
+    glVertex3f(0.0f, 0.2f, 0.0f);
+    glVertex3f(0.0f, 0.0f, 0.2f);
     //-y felöli oldal
-    glNormal3f(1, -1, 0.8);
-    glVertex3f(0, -0.2, 0);
-    glVertex3f(1, 0, 0);
-    glVertex3f(0, 0, 0.2);
+    glNormal3f(1.0f, -1.0f, 0.8f);
+    glVertex3f(0.0f, -0.2f, 0.0f);
+    glVertex3f(1.0f, 0.0f, 0.0f);
+    glVertex3f(0.0f, 0.0f, 0.2f);
 
     //Y tengely
         //zöld
     glColor3f(0.0f, 1.0f, 0.0f);
     //x felöli oldal
-    glNormal3f(1, 1, 0.8);
-    glVertex3f(0, 1, 0);
-    glVertex3f(0, 0, 0.2);
-    glVertex3f(0.2, 0, 0);
+    glNormal3f(1.0f, 1.0f, 0.8f);
+    glVertex3f(0.0f, 1.0f, 0.0f);
+    glVertex3f(0.0f, 0.0f, 0.2f);
+    glVertex3f(0.2f, 0.0f, 0.0f);
     //-x felöli oldal
-    glNormal3f(-1, 1, 0.8);
-    glVertex3f(0, 1, 0);
-    glVertex3f(-0.2, 0, 0);
-    glVertex3f(0, 0, 0.2);
+    glNormal3f(-1.0f, 1.0f, 0.8f);
+    glVertex3f(0.0f, 1.0f, 0.0f);
+    glVertex3f(-0.2f, 0.0f, 0.0f);
+    glVertex3f(0.0f, 0.0f, 0.2f);
 
     //Z tengely
         //kék
     glColor3f(0.0f, 0.0f, 1.0f);
     //-x-y felöli oldal
-    glNormal3f(-1, -1, 0.2);
-    glVertex3f(0, 0, 0.5);
-    glVertex3f(-0.2, 0, 0);
-    glVertex3f(0, -0.2, 0);
+    glNormal3f(-1.0f, -1.0f, 0.2f);
+    glVertex3f(0.0f, 0.0f, 0.5f);
+    glVertex3f(-0.2f, 0.0f, 0.0f);
+    glVertex3f(0.0f, -0.2f, 0.0f);
     //x-y felöli oldal
-    glNormal3f(1, -1, 0.2);
-    glVertex3f(0, 0, 0.5);
-    glVertex3f(0, -0.2, 0);
-    glVertex3f(0.2, 0, 0);
+    glNormal3f(1.0f, -1.0f, 0.2f);
+    glVertex3f(0.0f, 0.0f, 0.5f);
+    glVertex3f(0.0f, -0.2f, 0.0f);
+    glVertex3f(0.2f, 0.0f, 0.0f);
     //xy felöli oldal
-    glNormal3f(1, 1, 0.2);
-    glVertex3f(0, 0, 0.5);
-    glVertex3f(0.2, 0, 0);
-    glVertex3f(0, 0.2, 0);
+    glNormal3f(1.0f, 1.0f, 0.2f);
+    glVertex3f(0.0f, 0.0f, 0.5f);
+    glVertex3f(0.2f, 0.0f, 0.0f);
+    glVertex3f(0.0f, 0.2f, 0.0f);
     //-xy felöli oldal
-    glNormal3f(-1, 1, 0.2);
-    glVertex3f(0, 0, 0.5);
-    glVertex3f(0, 0.2, 0);
-    glVertex3f(-0.2, 0, 0);
+    glNormal3f(-1.0f, 1.0f, 0.2f);
+    glVertex3f(0.0f, 0.0f, 0.5f);
+    glVertex3f(0.0f, 0.2f, 0.0f);
+    glVertex3f(-0.2f, 0.0f, 0.0f);
     glEnd();
     glPopMatrix();
     glColor3f(1.0f, 1.0f, 1.0f);
@@ -218,22 +218,22 @@ void Restrict_3D_Cursor_To_Player_Area(Virtual_Cursor* v_cursor)
 void Draw_Full_Grid(int w, int l)
 {
     // Ciklus változók
-    int i, j;
+    float i, j;
 
     glPushMatrix();
     glTranslatef(-0.5f, -0.5f, 0);
     for (i = 0; i < w; i++)
     {
         glBegin(GL_LINES);
-        glVertex3f(i, 0, 0.001);
-        glVertex3f(i, l, 0.001);
+        glVertex3f(i, 0, 0.001f);
+        glVertex3f(i, l, 0.001f);
         glEnd();
     }
     for (j = 0; j < l; j++)
     {
         glBegin(GL_LINES);
-        glVertex3f(0, j, 0.001);
-        glVertex3f(w, j, 0.001);
+        glVertex3f(0, j, 0.001f);
+        glVertex3f(w, j, 0.001f);
         glEnd();
     }
     glPopMatrix();
@@ -253,7 +253,7 @@ void Draw_Local_Grid(struct Virtual_Cursor v_cursor)
 
     // Kirajzolás
     glPushMatrix();
-    glTranslatef(x, y, 0.001);
+    glTranslatef(x, y, 0.001f);
 
     // X tengely menti vonalak
     glBegin(GL_LINES);
@@ -380,6 +380,6 @@ void Render_Bitmap_String_With_Backdrop(int x, int y, int z, void* font, char* s
 */
 float Distance(float x1, float x2, float y1, float y2)
 {
-    float distance = sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2));
+    float distance = sqrtf(powf(x1 - x2, 2) + powf(y1 - y2, 2));
     return distance;
 }
