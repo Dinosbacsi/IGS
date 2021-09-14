@@ -49,12 +49,12 @@ void Building_Types_From_File(char* filename);
 //void Make_Building_Type(Building* building_type, char name[50], struct Model building_model, building_category category, int size_x, int size_y);
 void Make_Building_Type(Building* building_type, char name[50], char model_file_name[50], char texture_name[50], building_category category, int size_x, int size_y);
 // Épület elhelyezés
-void Place_Building_OLD(struct Model building_model, building_category category, int x, int y, int size_x, int size_y, direction direction, struct Building buildings[], int building_limit, Tile tiles[map_width][map_length]);
-void Place_Building_By_Name(char building_name[], int x, int y, direction direction, Building building_types[], Building buildings[], int building_limit, struct Tile tiles[map_width][map_length]);
+void Place_Building_OLD(struct Model building_model, building_category category, int x, int y, int size_x, int size_y, direction direction, struct Building buildings[], int building_limit);
+void Place_Building_By_Name(char building_name[], int x, int y, direction direction, Building building_types[], Building buildings[], int building_limit);
 // Épület kirajzolása
 void Draw_Building(Building building);
 // Épület lebontása
-void Bulldoze_Building_OLD(struct Virtual_Cursor v_cursor, Building buildings[], Tile tiles[map_width][map_length]);
+void Bulldoze_Building_OLD(struct Virtual_Cursor v_cursor, Building buildings[]);
 
 building_category Building_Type_Enum(char* sval);
 

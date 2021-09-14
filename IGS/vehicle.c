@@ -22,7 +22,7 @@ void Draw_Vehicle(Vehicle* vehicle)
         glTranslatef(vehicle->wheel[i].x, vehicle->wheel[i].y, vehicle->wheel[i].z);
         if (i == 0 || i == 1)
         {
-            glRotatef(vehicle->wheel_turn, 0, 0, 1);
+            glRotatef((float)vehicle->wheel_turn, 0.0f, 0.0f, 1.0f);
         }
         if (i == 1 || i == 3)
         {
@@ -38,7 +38,7 @@ void Draw_Vehicle(Vehicle* vehicle)
     }
     glPopMatrix();
 }
-int Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int tile_y, Road_Segment road_segments[], Tile tiles[map_width][map_length], Node road_nodes[map_width][map_length])
+int Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int tile_y, Road_Segment road_segments[], Node road_nodes[map_width][map_length])
 {
     int new_vehicle_index = 0;
 
@@ -46,7 +46,7 @@ int Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int til
     {
         new_vehicle_index++;
     }
-    if (new_vehicle_index < vehicle_limit && (Check_Tile(tile_x, tile_y, tiles) == 3 || Check_Tile(tile_x, tile_y, tiles) == 2))
+    if (new_vehicle_index < vehicle_limit && (Check_Tile(tile_x, tile_y) == 3 || Check_Tile(tile_x, tile_y) == 2))
     {
         // Jármű létrehozása
         Vehicle* new_vehicle = &vehicles[new_vehicle_index];
@@ -63,7 +63,7 @@ int Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int til
         new_vehicle->acceleration_rate = vehicle_type->acceleration_rate;
 
         // Jármű elhelyezése
-        if (Check_Tile(tile_x, tile_y, tiles) == 3)
+        if (Check_Tile(tile_x, tile_y) == 3)
         {
             new_vehicle->next_node = tiles[tile_x][tile_y].occupied_by_road_segment->A;
             new_vehicle->previous_node = tiles[tile_x][tile_y].occupied_by_road_segment->B;
@@ -112,7 +112,7 @@ int Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int til
         }
         else
         {
-            new_vehicle->pos.x = tile_x;
+            new_vehicle->pos.x = (float)tile_x;
             if (new_vehicle->next_node->pos.x > tile_x)
             {
                 new_vehicle->pos.y = tile_y - 0.2f;
@@ -140,7 +140,7 @@ int Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int til
         return -1;
     }
 }
-void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length], Tile tiles[map_width][map_length])
+void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length])
 {
     if (vehicle->current_tile->pos.x == vehicle->next_node->pos.x)
     {
@@ -374,8 +374,8 @@ void Vehicle_Go_North(Vehicle* vehicle, Node road_nodes[map_width][map_length])
         }
         else
         {
-            vehicle->pos.x = vehicle->next_node->pos.x - 0.2;
-            vehicle->pos.y = vehicle->next_node->pos.y - 0.5;
+            vehicle->pos.x = vehicle->next_node->pos.x - 0.2f;
+            vehicle->pos.y = vehicle->next_node->pos.y - 0.5f;
             vehicle->rotate.z = 270;
 
             vehicle->previous_node = vehicle->next_node;
@@ -391,8 +391,8 @@ void Vehicle_Go_North(Vehicle* vehicle, Node road_nodes[map_width][map_length])
         }
         else
         {
-            vehicle->pos.x = vehicle->next_node->pos.x - 0.2;
-            vehicle->pos.y = vehicle->next_node->pos.y - 0.5;
+            vehicle->pos.x = vehicle->next_node->pos.x - 0.2f;
+            vehicle->pos.y = vehicle->next_node->pos.y - 0.5f;
             vehicle->rotate.z = 270;
 
             vehicle->previous_node = vehicle->next_node;
@@ -408,8 +408,8 @@ void Vehicle_Go_North(Vehicle* vehicle, Node road_nodes[map_width][map_length])
         }
         else
         {
-            vehicle->pos.x = vehicle->next_node->pos.x - 0.2;
-            vehicle->pos.y = vehicle->next_node->pos.y - 0.5;
+            vehicle->pos.x = vehicle->next_node->pos.x - 0.2f;
+            vehicle->pos.y = vehicle->next_node->pos.y - 0.5f;
             vehicle->rotate.z = 270;
 
             vehicle->previous_node = vehicle->next_node;
@@ -436,8 +436,8 @@ void Vehicle_Go_East(Vehicle* vehicle, Node road_nodes[map_width][map_length])
         }
         else
         {
-            vehicle->pos.x = vehicle->next_node->pos.x + 0.5;
-            vehicle->pos.y = vehicle->next_node->pos.y - 0.2;
+            vehicle->pos.x = vehicle->next_node->pos.x + 0.5f;
+            vehicle->pos.y = vehicle->next_node->pos.y - 0.2f;
             vehicle->rotate.z = 0;
 
             vehicle->previous_node = vehicle->next_node;
@@ -453,8 +453,8 @@ void Vehicle_Go_East(Vehicle* vehicle, Node road_nodes[map_width][map_length])
         }
         else
         {
-            vehicle->pos.x = vehicle->next_node->pos.x + 0.5;
-            vehicle->pos.y = vehicle->next_node->pos.y - 0.2;
+            vehicle->pos.x = vehicle->next_node->pos.x + 0.5f;
+            vehicle->pos.y = vehicle->next_node->pos.y - 0.2f;
             vehicle->rotate.z = 0;
 
             vehicle->previous_node = vehicle->next_node;
@@ -470,8 +470,8 @@ void Vehicle_Go_East(Vehicle* vehicle, Node road_nodes[map_width][map_length])
         }
         else
         {
-            vehicle->pos.x = vehicle->next_node->pos.x + 0.5;
-            vehicle->pos.y = vehicle->next_node->pos.y - 0.2;
+            vehicle->pos.x = vehicle->next_node->pos.x + 0.5f;
+            vehicle->pos.y = vehicle->next_node->pos.y - 0.2f;
             vehicle->rotate.z = 0;
 
             vehicle->previous_node = vehicle->next_node;
@@ -498,8 +498,8 @@ void Vehicle_Go_South(Vehicle* vehicle, Node road_nodes[map_width][map_length])
         }
         else
         {
-            vehicle->pos.x = vehicle->next_node->pos.x + 0.2;
-            vehicle->pos.y = vehicle->next_node->pos.y + 0.5;
+            vehicle->pos.x = vehicle->next_node->pos.x + 0.2f;
+            vehicle->pos.y = vehicle->next_node->pos.y + 0.5f;
             vehicle->rotate.z = 90;
 
             vehicle->previous_node = vehicle->next_node;
@@ -515,8 +515,8 @@ void Vehicle_Go_South(Vehicle* vehicle, Node road_nodes[map_width][map_length])
         }
         else
         {
-            vehicle->pos.x = vehicle->next_node->pos.x + 0.2;
-            vehicle->pos.y = vehicle->next_node->pos.y + 0.5;
+            vehicle->pos.x = vehicle->next_node->pos.x + 0.2f;
+            vehicle->pos.y = vehicle->next_node->pos.y + 0.5f;
             vehicle->rotate.z = 90;
 
             vehicle->previous_node = vehicle->next_node;
@@ -532,8 +532,8 @@ void Vehicle_Go_South(Vehicle* vehicle, Node road_nodes[map_width][map_length])
         }
         else
         {
-            vehicle->pos.x = vehicle->next_node->pos.x + 0.2;
-            vehicle->pos.y = vehicle->next_node->pos.y + 0.5;
+            vehicle->pos.x = vehicle->next_node->pos.x + 0.2f;
+            vehicle->pos.y = vehicle->next_node->pos.y + 0.5f;
             vehicle->rotate.z = 90;
 
             vehicle->previous_node = vehicle->next_node;
@@ -560,8 +560,8 @@ void Vehicle_Go_West(Vehicle* vehicle, Node road_nodes[map_width][map_length])
         }
         else
         {
-            vehicle->pos.x = vehicle->next_node->pos.x - 0.5;
-            vehicle->pos.y = vehicle->next_node->pos.y + 0.2;
+            vehicle->pos.x = vehicle->next_node->pos.x - 0.5f;
+            vehicle->pos.y = vehicle->next_node->pos.y + 0.2f;
             vehicle->rotate.z = 180;
 
             vehicle->previous_node = vehicle->next_node;
@@ -577,8 +577,8 @@ void Vehicle_Go_West(Vehicle* vehicle, Node road_nodes[map_width][map_length])
         }
         else
         {
-            vehicle->pos.x = vehicle->next_node->pos.x - 0.5;
-            vehicle->pos.y = vehicle->next_node->pos.y + 0.2;
+            vehicle->pos.x = vehicle->next_node->pos.x - 0.5f;
+            vehicle->pos.y = vehicle->next_node->pos.y + 0.2f;
             vehicle->rotate.z = 180;
 
             vehicle->previous_node = vehicle->next_node;
@@ -594,8 +594,8 @@ void Vehicle_Go_West(Vehicle* vehicle, Node road_nodes[map_width][map_length])
         }
         else
         {
-            vehicle->pos.x = vehicle->next_node->pos.x - 0.5;
-            vehicle->pos.y = vehicle->next_node->pos.y + 0.2;
+            vehicle->pos.x = vehicle->next_node->pos.x - 0.5f;
+            vehicle->pos.y = vehicle->next_node->pos.y + 0.2f;
             vehicle->rotate.z = 180;
 
             vehicle->previous_node = vehicle->next_node;
@@ -611,11 +611,11 @@ void Animate_Vehicle_Turning(Vehicle* vehicle)
     switch (vehicle->previous_facing)
     {
     case north:
-        pivot_point.y = vehicle->next_node->pos.y + 0.49;
+        pivot_point.y = vehicle->next_node->pos.y + 0.49f;
 
         if (vehicle->facing == south)
         {
-            pivot_point.x = vehicle->next_node->pos.x;
+            pivot_point.x = (float)vehicle->next_node->pos.x;
 
             Vehicle_Turn_Left(vehicle);
             vehicle->pos.x = pivot_point.x + (0.2f * sinf(vehicle->rotate.z * M_PI / 180.0f));
@@ -623,7 +623,7 @@ void Animate_Vehicle_Turning(Vehicle* vehicle)
         }
         else if (vehicle->facing == east)
         {
-            pivot_point.x = vehicle->next_node->pos.x + 0.49;
+            pivot_point.x = (float)vehicle->next_node->pos.x + 0.49f;
 
             Vehicle_Turn_Left(vehicle);
             vehicle->pos.x = pivot_point.x + (0.7f * sinf(vehicle->rotate.z * M_PI / 180.0f));
@@ -631,7 +631,7 @@ void Animate_Vehicle_Turning(Vehicle* vehicle)
         }
         else if (vehicle->facing == west)
         {
-            pivot_point.x = vehicle->next_node->pos.x - 0.49;
+            pivot_point.x = (float)vehicle->next_node->pos.x - 0.49f;
             //
             Vehicle_Turn_Right(vehicle);
             vehicle->pos.x = pivot_point.x - (0.3f * sinf(vehicle->rotate.z * M_PI / 180.0f));
@@ -639,11 +639,11 @@ void Animate_Vehicle_Turning(Vehicle* vehicle)
         }
         break;
     case east:
-        pivot_point.x = vehicle->next_node->pos.x - 0.49;
+        pivot_point.x = (float)vehicle->next_node->pos.x - 0.49f;
 
         if (vehicle->facing == west)
         {
-            pivot_point.y = vehicle->next_node->pos.y;
+            pivot_point.y = (float)vehicle->next_node->pos.y;
 
             Vehicle_Turn_Left(vehicle);
             vehicle->pos.x = pivot_point.x + (0.2f * sinf(vehicle->rotate.z * M_PI / 180.0f));
@@ -651,7 +651,7 @@ void Animate_Vehicle_Turning(Vehicle* vehicle)
         }
         else if (vehicle->facing == north)
         {
-            pivot_point.y = vehicle->next_node->pos.y - 0.49;
+            pivot_point.y = (float)vehicle->next_node->pos.y - 0.49f;
             //
             Vehicle_Turn_Right(vehicle);
             vehicle->pos.x = pivot_point.x - (0.3f * sinf(vehicle->rotate.z * M_PI / 180.0f));
@@ -659,7 +659,7 @@ void Animate_Vehicle_Turning(Vehicle* vehicle)
         }
         else if (vehicle->facing == south)
         {
-            pivot_point.y = vehicle->next_node->pos.y + 0.49;
+            pivot_point.y = (float)vehicle->next_node->pos.y + 0.49f;
 
             Vehicle_Turn_Left(vehicle);
             vehicle->pos.x = pivot_point.x + (0.7f * sinf(vehicle->rotate.z * M_PI / 180.0f));
@@ -667,11 +667,11 @@ void Animate_Vehicle_Turning(Vehicle* vehicle)
         }
         break;
     case south:
-        pivot_point.y = vehicle->next_node->pos.y - 0.49;
+        pivot_point.y = vehicle->next_node->pos.y - 0.49f;
 
         if (vehicle->facing == north)
         {
-            pivot_point.x = vehicle->next_node->pos.x;
+            pivot_point.x = (float)vehicle->next_node->pos.x;
 
             Vehicle_Turn_Left(vehicle);
             vehicle->pos.x = pivot_point.x + (0.2f * sinf(vehicle->rotate.z * M_PI / 180.0f));
@@ -679,7 +679,7 @@ void Animate_Vehicle_Turning(Vehicle* vehicle)
         }
         else if (vehicle->facing == east)
         {
-            pivot_point.x = vehicle->next_node->pos.x + 0.49;
+            pivot_point.x = (float)vehicle->next_node->pos.x + 0.49f;
             //
             Vehicle_Turn_Right(vehicle);
             vehicle->pos.x = pivot_point.x - (0.3f * sinf(vehicle->rotate.z * M_PI / 180.0f));
@@ -687,7 +687,7 @@ void Animate_Vehicle_Turning(Vehicle* vehicle)
         }
         else if (vehicle->facing == west)
         {
-            pivot_point.x = vehicle->next_node->pos.x - 0.49;
+            pivot_point.x = (float)vehicle->next_node->pos.x - 0.49f;
 
             Vehicle_Turn_Left(vehicle);
             vehicle->pos.x = pivot_point.x + (0.7f * sinf(vehicle->rotate.z * M_PI / 180.0f));
@@ -695,31 +695,31 @@ void Animate_Vehicle_Turning(Vehicle* vehicle)
         }
         break;
     case west:
-        pivot_point.x = vehicle->next_node->pos.x + 0.49;
+        pivot_point.x = (float)vehicle->next_node->pos.x + 0.49f;
 
         if (vehicle->facing == east)
         {
-            pivot_point.y = vehicle->next_node->pos.y;
+            pivot_point.y = (float)vehicle->next_node->pos.y;
 
             Vehicle_Turn_Left(vehicle);
-            vehicle->pos.x = pivot_point.x + (0.2f * sin(vehicle->rotate.z * M_PI / 180.0f));
-            vehicle->pos.y = pivot_point.y - (0.2f * cos(vehicle->rotate.z * M_PI / 180.0f));
+            vehicle->pos.x = pivot_point.x + (0.2f * sinf(vehicle->rotate.z * M_PI / 180.0f));
+            vehicle->pos.y = pivot_point.y - (0.2f * cosf(vehicle->rotate.z * M_PI / 180.0f));
         }
         else if (vehicle->facing == north)
         {
-            pivot_point.y = vehicle->next_node->pos.y - 0.49f;
+            pivot_point.y = (float)vehicle->next_node->pos.y - 0.49f;
 
             Vehicle_Turn_Left(vehicle);
-            vehicle->pos.x = pivot_point.x + (0.7f * sin(vehicle->rotate.z * M_PI / 180.0f));
-            vehicle->pos.y = pivot_point.y - (0.7f * cos(vehicle->rotate.z * M_PI / 180.0f));
+            vehicle->pos.x = pivot_point.x + (0.7f * sinf(vehicle->rotate.z * M_PI / 180.0f));
+            vehicle->pos.y = pivot_point.y - (0.7f * cosf(vehicle->rotate.z * M_PI / 180.0f));
         }
         else if (vehicle->facing == south)
         {
-            pivot_point.y = vehicle->next_node->pos.y + 0.49f;
+            pivot_point.y = (float)vehicle->next_node->pos.y + 0.49f;
             //
             Vehicle_Turn_Right(vehicle);
-            vehicle->pos.x = pivot_point.x - (0.3f * sin(vehicle->rotate.z * M_PI / 180.0f));
-            vehicle->pos.y = pivot_point.y + (0.3f * cos(vehicle->rotate.z * M_PI / 180.0f));
+            vehicle->pos.x = pivot_point.x - (0.3f * sinf(vehicle->rotate.z * M_PI / 180.0f));
+            vehicle->pos.y = pivot_point.y + (0.3f * cosf(vehicle->rotate.z * M_PI / 180.0f));
         }
         break;
     }
@@ -741,8 +741,8 @@ void Vehicle_Steer_Straight(Vehicle* vehicle)
 }
 void Move_Vehicle(Vehicle* vehicle)
 {
-    vehicle->pos.x += cos(vehicle->rotate.z * M_PI / 180) * vehicle->speed;
-    vehicle->pos.y += sin(vehicle->rotate.z * M_PI / 180) * vehicle->speed;
+    vehicle->pos.x += cosf(vehicle->rotate.z * M_PI / 180) * vehicle->speed;
+    vehicle->pos.y += sinf(vehicle->rotate.z * M_PI / 180) * vehicle->speed;
 }
 void Vehicle_Accelerate(Vehicle* vehicle)
 {

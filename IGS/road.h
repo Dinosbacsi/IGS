@@ -59,13 +59,13 @@ Road_Segment new_segment;
 ======================================================================================
     Út kezelõ függvények
 */
-void Place_Road_Segment(Road_Segment road_segments[], Node road_nodes[map_width][map_length], Road_Type* road_type, Tile tiles[map_width][map_length], int a_x, int a_y, int b_x, int b_y);
-void Split_Road_Segment(Road_Segment* road_to_split, Road_Segment road_segments[], Node road_nodes[map_width][map_length], Tile tiles[map_width][map_length], int x, int y);
-void Update_Road_Node(Node* road_node, Tile tiles[map_width][map_length]);
+void Place_Road_Segment(Road_Segment road_segments[], Node road_nodes[map_width][map_length], Road_Type* road_type, int a_x, int a_y, int b_x, int b_y);
+void Split_Road_Segment(Road_Segment* road_to_split, Road_Segment road_segments[], Node road_nodes[map_width][map_length], int x, int y);
+void Update_Road_Node(Node* road_node);
 void Draw_Road_Node(Node* node);
 //void Draw_Road_Segment(Road_Segment road, struct Model road_model);
 void Draw_Road_Segment(Road_Segment road);
-void Delete_Road_Segment(Road_Segment* deleted_road_segment, Node road_nodes[map_width][map_length], Tile tiles[map_width][map_length]);
-void Delete_Road_Node(int x, int y, Road_Segment road_segments[], Node road_nodes[map_width][map_length], Tile tiles[map_width][map_length]);
+void Delete_Road_Segment(Road_Segment* deleted_road_segment, Node road_nodes[map_width][map_length]);
+void Delete_Road_Node(int x, int y, Road_Segment road_segments[], Node road_nodes[map_width][map_length]);
 
 #endif // ROAD_H_INCLUDED

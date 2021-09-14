@@ -98,7 +98,7 @@ void Draw_Skybox(GLuint sky_texture)
     Tile kezelõ függvények
 */
 //bool Check_Tile(int x, int y, struct Tile tiles[map_width][map_length])
-int Check_Tile(int x, int y, struct Tile tiles[map_width][map_length])
+int Check_Tile(int x, int y)
 {
     if (tiles[x][y].occupied_by_building != NULL)
     {

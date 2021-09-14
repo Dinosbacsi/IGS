@@ -66,7 +66,7 @@ void Make_Building_Type(Building* building_type, char name[50], char model_file_
     printf("Epulet tipus letrehozva! \n");
 }
 
-void Place_Building_OLD(struct Model building_model, building_category category, int x, int y, int size_x, int size_y, direction direction, Building buildings[], int building_limit, struct Tile tiles[map_width][map_length])
+void Place_Building_OLD(struct Model building_model, building_category category, int x, int y, int size_x, int size_y, direction direction, Building buildings[], int building_limit)
 {
     int i = 0;
 
@@ -122,12 +122,12 @@ void Place_Building_OLD(struct Model building_model, building_category category,
             // Épület belépőpontjának elhelyezése
             if (direction == north)
             {
-                buildings[i].entry_point.x = roundf(x + size_x / 2) + 1;
+                buildings[i].entry_point.x = (int)(roundf((float)(x + size_x / 2)) + 1);
                 buildings[i].entry_point.y = y;
             }
             else if (direction == south)
             {
-                buildings[i].entry_point.x = roundf(x - size_x / 2) - 1;
+                buildings[i].entry_point.x = (int)(roundf((float)(x - size_x / 2)) - 1);
                 if (size_x % 2 == 0)
                 {
                     buildings[i].entry_point.x++;
@@ -166,20 +166,20 @@ void Place_Building_OLD(struct Model building_model, building_category category,
             }
         }
 
-        if (Check_Tile(buildings[i].entry_point.x, buildings[i].entry_point.y, tiles) == 3)
+        if (Check_Tile(buildings[i].entry_point.x, buildings[i].entry_point.y) == 3)
         {
             Road_Segment* road_segment_to_split = tiles[buildings[i].entry_point.x][buildings[i].entry_point.y].occupied_by_road_segment;
-            Split_Road_Segment(road_segment_to_split, road_segments, road_nodes, tiles, buildings[i].entry_point.x, buildings[i].entry_point.y);
+            Split_Road_Segment(road_segment_to_split, road_segments, road_nodes, buildings[i].entry_point.x, buildings[i].entry_point.y);
         }
     }
 }
-void Place_Building_By_Name(char building_name[], int x, int y, direction direction, Building building_types[], Building buildings[], int building_limit, struct Tile tiles[map_width][map_length])
+void Place_Building_By_Name(char building_name[], int x, int y, direction direction, Building building_types[], Building buildings[], int building_limit)
 {
     for (int i = 0; i < 50; i++)
     {
         if (strcmp(building_types[i].name, building_name) == 0)
         {
-            Place_Building_OLD(building_types[i].building_model, building_types[i].category, x, y, building_types[i].size.x, building_types[i].size.y, direction, buildings, building_limit, tiles);
+            Place_Building_OLD(building_types[i].building_model, building_types[i].category, x, y, building_types[i].size.x, building_types[i].size.y, direction, buildings, building_limit);
             printf("\nEpulel elhelyezve!");
         }
     }
@@ -201,11 +201,11 @@ void Draw_Building(Building building)
     if (fmodf((float)building.size.y, 2.0) == 0)
     {
         //glTranslatef(0, building.pos.y + 0.25 * building.size.y, 0);
-        glTranslatef(0, building.pos.y + 0.5, 0);
+        glTranslatef(0.0f, (float)building.pos.y + 0.5f, 0.0f);
     }
     else
     {
-        glTranslatef(0, building.pos.y, 0);
+        glTranslatef(0.0f, (float)building.pos.y, 0.0f);
     }
     switch (building.facing_direction)
     {
@@ -227,7 +227,7 @@ void Draw_Building(Building building)
     glPopMatrix();
 }
 
-void Bulldoze_Building_OLD(struct Virtual_Cursor v_cursor, struct Building buildings[], Tile tiles[map_width][map_length])
+void Bulldoze_Building_OLD(struct Virtual_Cursor v_cursor, struct Building buildings[])
 {
     int x = (int)roundf(v_cursor.pos.x);
     int y = (int)roundf(v_cursor.pos.y);

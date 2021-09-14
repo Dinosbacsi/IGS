@@ -45,10 +45,13 @@ void Draw_Skybox(GLuint sky_texture);
 ======================================================================================
     Tile kezelõ függvények
 */
+//Tile-ok
+Tile test_tile;
+Tile tiles[map_width][map_length];
 // Tile kirajzolása
 void Draw_Tile(struct Tile tile, GLuint tile_texture);
 // Tile állapotának ellenőrzése
-int Check_Tile(int x, int y, struct Tile tiles[map_width][map_length]);
+int Check_Tile(int x, int y);
 // Tile kijelölés kirajzolása
 void Draw_Highlight(struct Tile tile);
 

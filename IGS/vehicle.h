@@ -56,8 +56,8 @@ Vehicle vehicles[vehicle_limit];
     Jármű kezelõ függvények
 */
 void Draw_Vehicle(Vehicle* vehicle);
-int Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int tile_y, Road_Segment road_segments[], Tile tiles[map_width][map_length], Node road_nodes[map_width][map_length]);
-void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length], Tile tiles[map_width][map_length]);
+int Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int tile_y, Road_Segment road_segments[], Node road_nodes[map_width][map_length]);
+void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length]);
 void Vehicle_Cruise_Choose_Direction(Vehicle* vehicle, Node road_nodes[map_width][map_length]);
 void Vehicle_Follow_Path(Vehicle* vehicle);
 void Vehicle_Go_North(Vehicle* vehicle, Node road_nodes[map_width][map_length]);

@@ -4,7 +4,7 @@
 ======================================================================================
     Út kezelõ függvények
 */
-void Place_Road_Segment(Road_Segment road_segments[], Node road_nodes[map_width][map_length], Road_Type* road_type, Tile tiles[map_width][map_length], int a_x, int a_y, int b_x, int b_y)
+void Place_Road_Segment(Road_Segment road_segments[], Node road_nodes[map_width][map_length], Road_Type* road_type, int a_x, int a_y, int b_x, int b_y)
 {
     // Debug info kiíratás
     printf("\n========== Ut letrehozasa ==========\n");
@@ -113,11 +113,11 @@ void Place_Road_Segment(Road_Segment road_segments[], Node road_nodes[map_width]
     // Ha az új Útszakasz bármelyik Node-ja másik útszakaszban van benne, akkor annak az útszakasznak a kettéosztása
     if (tiles[road_segments[new_road_index].A->pos.x][road_segments[new_road_index].A->pos.y].occupied_by_road_segment != NULL)
     {
-        Split_Road_Segment(tiles[road_segments[new_road_index].A->pos.x][road_segments[new_road_index].A->pos.y].occupied_by_road_segment, road_segments, road_nodes, tiles, road_segments[new_road_index].A->pos.x, road_segments[new_road_index].A->pos.y);
+        Split_Road_Segment(tiles[road_segments[new_road_index].A->pos.x][road_segments[new_road_index].A->pos.y].occupied_by_road_segment, road_segments, road_nodes, road_segments[new_road_index].A->pos.x, road_segments[new_road_index].A->pos.y);
     }
     if (tiles[road_segments[new_road_index].B->pos.x][road_segments[new_road_index].B->pos.y].occupied_by_road_segment != NULL)
     {
-        Split_Road_Segment(tiles[road_segments[new_road_index].B->pos.x][road_segments[new_road_index].B->pos.y].occupied_by_road_segment, road_segments, road_nodes, tiles, road_segments[new_road_index].B->pos.x, road_segments[new_road_index].B->pos.y);
+        Split_Road_Segment(tiles[road_segments[new_road_index].B->pos.x][road_segments[new_road_index].B->pos.y].occupied_by_road_segment, road_segments, road_nodes, road_segments[new_road_index].B->pos.x, road_segments[new_road_index].B->pos.y);
     }
 
     // Tile-ok lefoglalása
@@ -156,7 +156,7 @@ void Place_Road_Segment(Road_Segment road_segments[], Node road_nodes[map_width]
         }
     }
 }
-void Update_Road_Node(Node* node, Tile tiles[map_width][map_length])
+void Update_Road_Node(Node* node)
 {
     node->number_of_connections = 0;
     bool connection_to_east = false;
@@ -356,7 +356,7 @@ void Draw_Road_Segment(Road_Segment road)
 
     glPopMatrix();
 }
-void Delete_Road_Segment(Road_Segment* deleted_road_segment, Node road_nodes[map_width][map_length], Tile tiles[map_width][map_length])
+void Delete_Road_Segment(Road_Segment* deleted_road_segment, Node road_nodes[map_width][map_length])
 {
     //Road_Segment* deleted_road_segment = tiles[x][y].occupied_by_road_segment;
 
@@ -415,8 +415,8 @@ void Delete_Road_Segment(Road_Segment* deleted_road_segment, Node road_nodes[map
     }
     deleted_road_segment->A->number_of_connections--;
     deleted_road_segment->B->number_of_connections--;
-    Update_Road_Node(deleted_road_segment->A, tiles);
-    Update_Road_Node(deleted_road_segment->B, tiles);
+    Update_Road_Node(deleted_road_segment->A);
+    Update_Road_Node(deleted_road_segment->B);
 
     // Út szakasz törlése
     deleted_road_segment->exists = 0;
@@ -424,7 +424,7 @@ void Delete_Road_Segment(Road_Segment* deleted_road_segment, Node road_nodes[map
     deleted_road_segment->A = NULL;
     deleted_road_segment->B = NULL;
 }
-void Split_Road_Segment(Road_Segment* road_to_split, Road_Segment road_segments[], Node road_nodes[map_width][map_length], Tile tiles[map_width][map_length], int x, int y)
+void Split_Road_Segment(Road_Segment* road_to_split, Road_Segment road_segments[], Node road_nodes[map_width][map_length], int x, int y)
 {
     // Eredeti Node koordináták megjegyzése
     int a_x = road_to_split->A->pos.x;
@@ -433,20 +433,20 @@ void Split_Road_Segment(Road_Segment* road_to_split, Road_Segment road_segments[
     int b_y = road_to_split->B->pos.y;
 
     // Eredeti szakasz törlése
-    Delete_Road_Segment(road_to_split, road_nodes, tiles);
+    Delete_Road_Segment(road_to_split, road_nodes);
 
     // Új szakaszok létrehozása
-    Place_Road_Segment(road_segments, road_nodes, road_to_split->road_type, tiles, a_x, a_y, x, y);
-    Place_Road_Segment(road_segments, road_nodes, road_to_split->road_type, tiles, x, y, b_x, b_y);
+    Place_Road_Segment(road_segments, road_nodes, road_to_split->road_type, a_x, a_y, x, y);
+    Place_Road_Segment(road_segments, road_nodes, road_to_split->road_type, x, y, b_x, b_y);
 }
 
-void Delete_Road_Node(int x, int y, Road_Segment road_segments[], Node road_nodes[map_width][map_length], Tile tiles[map_width][map_length])
+void Delete_Road_Node(int x, int y, Road_Segment road_segments[], Node road_nodes[map_width][map_length])
 {
     for (int i = 0; i < segment_limit; i++)
     {
         if (road_segments[i].A == &road_nodes[x][y] || road_segments[i].B == &road_nodes[x][y])
         {
-            Delete_Road_Segment(&road_segments[i], road_nodes, tiles);
+            Delete_Road_Segment(&road_segments[i], road_nodes);
         }
     }
 }
