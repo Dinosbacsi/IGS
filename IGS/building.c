@@ -17,7 +17,7 @@ void Building_Types_From_File(char* filename)
     else
     {
         int i = 0;
-        while (i < sizeof(building_types) && fgets(bc_line, sizeof(bc_line), bc_file) != NULL)
+        while (i < sizeof(building_types) / sizeof(Building) && fgets(bc_line, sizeof(bc_line), bc_file) != NULL)
         {
             char building_name[50];
             char model_name[50];
@@ -251,8 +251,7 @@ void Bulldoze_Building_OLD(struct Virtual_Cursor v_cursor, struct Building build
 building_category Building_Type_Enum(char* sval)
 {
     building_category result = nothing;
-    int i = 0;
-    for (i = 0; building_category_table[i] != NULL; ++i, ++result)
+    for (int i = 0; building_category_table[i] != NULL; ++i, ++result)
         if (0 == strcmp(sval, building_category_table[i])) return result;
     return -1;
 }

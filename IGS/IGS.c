@@ -141,8 +141,6 @@ Road_Type road_normal;
 Road_Type road_main;
 //Épület kategóriák, típusok
 //Building building_types[50];
-char building_category_names_UPPER_CASE[][30] = { "SEMMI", "RAKTAR", "FELDOLGOZO UZEM", "GYAR", "IRODA" };
-building_category building_category_list[] = { nothing, warehouse, processing_plant, factory, office };
 
 //Anyagok
 //Felirat
@@ -162,6 +160,7 @@ void Initialize_Models();
 void Initialize_Map();
 void Initialize_Interface();
 void Event_Handler();
+void Interface_Button_Handler();
 void Mouse_Handler();
 void Build_Mode_Handler();
 void Road_Mode_Handler();
@@ -517,7 +516,7 @@ void Initialize_Map()
     Make_Material_Type(&material_types[1], "Kesztermek", solid, finished, &material_types[0], NULL);
 
     // Porta
-    char kis_porta[50] = "KIS_PORTA";
+    char kis_porta[50] = "SMALL_GATE";
     Place_Building_By_Name(kis_porta, 99, 149, north, building_types, buildings, building_limit);
 
     // JÁRMŰ STRUKTÚRA TESZT
@@ -629,14 +628,18 @@ void Initialize_Interface()
         }
     }
 
-    char test_string[50];
-    sprintf(test_string, "KILEPES");
-    float text_color[4] = { 1.0f, 1.0f, 1.0f, 1.0f};
-    float bg_color[4] = { 0.0f, 0.0f, 0.0f, 0.5f };
-    float text_color_hover[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    float bg_color_hover[4] = { 0.0f, 0.0f, 0.0f, 0.9f };
+    char button_name[50];
+    char button_group[50];
+    sprintf(button_group, "sidemenu");
 
-    Create_Button(test_string, 10, 680, 250, 50, text_color, bg_color, text_color_hover, bg_color_hover);
+    sprintf(button_name, "NEW BUILDING");
+    Create_Button(button_name, button_group, 10, 30, 205, 50, text_color_white, bg_color, text_color_white, bg_color_hover);
+
+    sprintf(button_name, "NEW ROAD");
+    Create_Button(button_name, button_group, 10, 55, 205, 50, text_color_white, bg_color, text_color_white, bg_color_hover);
+
+    sprintf(button_name, "BULLDOZE");
+    Create_Button(button_name, button_group, 10, 80, 205, 50, text_color_white, bg_color, text_color_white, bg_color_hover);
 }
 
 void Event_Handler()
@@ -660,11 +663,68 @@ void Event_Handler()
         case SDL_MOUSEBUTTONDOWN:
             if (e.button.button == SDL_BUTTON_LEFT)
             {
-                mouse_left_clicked = true;
+                // Megnézni, melyik gomb lett megnyomva
+                Button* clicked_button = Clicked_Button(cursor.pos.x, cursor.pos.y);
 
-                if (strcmp(Clicked_Button(cursor.pos.x, cursor.pos.y)->name, "KILEPES") == 0) 
+                // Gombnyomás lekezelése
+                if (clicked_button != NULL)
                 {
-                    running = false;
+                    char* clicked_button_text = clicked_button->name;
+                    strcpy(clicked_button_text, clicked_button->name);
+
+                    if (!strcmp(clicked_button_text, "NEW BUILDING"))
+                    {
+                        game_mode = build;
+                        Create_Button_List(building_category_names_UPPER_CASE, sizeof(building_category_names_UPPER_CASE)/sizeof(building_category_names_UPPER_CASE[0]), "building categories", 230, 5);
+                    }
+                    else if (!strcmp(clicked_button_text, "NEW ROAD"))
+                    {
+                        game_mode = road;
+                    }
+                    else if (!strcmp(clicked_button_text, "BULLDOZE"))
+                    {
+                        game_mode = bulldoze;
+                    }
+                    else if (!strcmp(clicked_button->group, "building categories"))
+                    {
+                        Delete_Button_List("building types");
+
+                        for (int i = 0; i < sizeof(building_types) / sizeof(Building); i++)
+                        {
+                            if (building_types[i].category == Building_Type_Enum(clicked_button->name))
+                            {
+                                Add_To_Button_List(building_types[i].name, "building types", 450, 5);
+                            }
+                        }
+                    }
+                    else if (!strcmp(clicked_button->group, "building types"))
+                    {
+                        for (int i = 0; i < sizeof(building_types) / sizeof(Building); i++)
+                        {
+                            if (!strcmp(building_types[i].name, clicked_button->name))
+                            {
+                                printf("TEST");
+
+                                // A megtalált indexű épülettípus behelyezése az új épületbe
+                                new_building.category = building_types[i].category;
+                                new_building.building_model = building_types[i].building_model;
+                                new_building.size.x = building_types[i].size.x;
+                                new_building.size.y = building_types[i].size.y;
+                            }
+                        }
+                    }
+
+                    // Gomb színek visszaállítása alaphelyzetbe
+                    for (int i = 0; i < sizeof(buttons) / sizeof(Button); i++)
+                    {
+                        Change_Button_Text(&buttons[i], text_color_white, text_color_white);
+                    }
+                    // Megnyomott gomb kiemelés szín
+                    Change_Button_Text(clicked_button, text_color_yellow, text_color_yellow);
+                }
+                else
+                {
+                    mouse_left_clicked = true;
                 }
             }
             else if (e.button.button == SDL_BUTTON_RIGHT)
@@ -942,7 +1002,7 @@ void Build_Mode_Handler()
         }
 
         // Ha bal egérgomb és tile szabad
-        if (SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(1) && tile_is_free)
+        if (mouse_left_clicked && tile_is_free)
         {
             // Épület elhelyezése
             Place_Building_OLD(new_building.building_model, new_building.category, new_building.pos.x, new_building.pos.y, new_building.size.x, new_building.size.y, new_building.facing_direction, buildings, building_limit);
@@ -1057,8 +1117,6 @@ void Road_Mode_Handler()
             new_segment.A->pos.y = (int)roundf(v_cursor.pos.y);
             new_segment.road_type = &road_normal;
         }
-
-        mouse_left_clicked = false;
     }
 }
 
@@ -1091,6 +1149,8 @@ void Bulldoze_Mode_Handler()
 
 void Simulation()
 {
+    mouse_left_clicked = false;
+
     // Szimuláció
     for (int i = 0; i < vehicle_limit; i++)
     {
@@ -1366,21 +1426,22 @@ void Render_Interface()
     {
         if (buttons[i].exsists)
         {
+            bool highlight = false;
+
             if (cursor.pos.x > buttons[i].position.x - 5 &&
                 cursor.pos.x < buttons[i].position.x + buttons[i].size.x &&
                 cursor.pos.y > buttons[i].position.y - 20 &&
                 cursor.pos.y < buttons[i].position.y + 5)
             {
-                Render_Button(&buttons[i], true);
+                highlight = true;
             }
-            else
-            {
-                Render_Button(&buttons[i], false);
-            }
+
+            Render_Button(&buttons[i], highlight);
         }
     }
 
     // Kirajzolás
+    /*
     switch (game_mode)
     {
         // Alaphelyzet
@@ -1410,12 +1471,12 @@ void Render_Interface()
         Render_Bitmap_String_With_Backdrop(10, 55, 0, GLUT_BITMAP_HELVETICA_18, "UT EPITES (M)", 0.8f, 0.8f, 0.8f, 0.0f, 0.0f, 0.0f);
         Render_Bitmap_String_With_Backdrop(10, 80, 0, GLUT_BITMAP_HELVETICA_18, "LEBONTAS (B)", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
         break;
-    }
+    }*/
     // Épületkategóriák kiíráas
     if (game_mode == build)
     {
         // Végiglépkedés az épület kategóriákon, és kiíratás
-        for (int bc_i = warehouse; bc_i < last; bc_i++)
+        /*for (int bc_i = warehouse; bc_i < last; bc_i++)
         {
             if (menu_highlighted_building_category == bc_i)
             {
@@ -1425,10 +1486,10 @@ void Render_Interface()
             {
                 Render_Bitmap_String_With_Backdrop(230, 5 + (bc_i) * 25, 0, GLUT_BITMAP_HELVETICA_18, building_category_names_UPPER_CASE[bc_i], 0.5, 0.5, 0.5, 0, 0, 0);
             }
-        }
+        }*/
 
         // Kiválasztott kategória épülettípusának kiíratása
-        if (menu_selected_building_category != -1)
+        /*if (menu_selected_building_category != -1)
         {
             bt_c = 0;
             for (int bt_i = 0; bt_i < 50; bt_i++)
@@ -1446,7 +1507,7 @@ void Render_Interface()
                     }
                 }
             }
-        }
+        }*/
     }
 
     // Debug infó kiírása

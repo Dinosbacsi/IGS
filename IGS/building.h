@@ -11,7 +11,9 @@
 
 //Épület típusok
 typedef enum { nothing, warehouse, processing_plant, factory, office, last } building_category;
-static const char* const building_category_table[] = { "nothing", "warehouse", "processing_plant", "factory", "office", NULL };
+static const char* const building_category_table[50] = { "NOTHING", "WAREHOUSE", "PROCESSING_PLANT", "FACTORY", "OFFICE", NULL };
+static char* building_category_names_UPPER_CASE[] = { "NOTHING", "WAREHOUSE", "PROCESSING_PLANT", "FACTORY", "OFFICE" };
+static building_category building_category_list[] = { nothing, warehouse, processing_plant, factory, office };
 
 typedef struct Building
 {

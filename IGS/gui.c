@@ -1,28 +1,32 @@
 #include "gui.h"
 
-void Create_Button(char name[50], int pos_x, int pos_y, int size_x, int size_y, float* text_color, float* background_color, float* text_color_hover, float* background_color_hover)
+void Create_Button(char name[50], char group[50], int pos_x, int pos_y, int size_x, int size_y, float* text_color, float* background_color, float* text_color_hover, float* background_color_hover)
 {
-	for (int i = 0; i < sizeof(buttons) / sizeof(Button) && !buttons[i].exsists; i++)
+	for (int i = 0; i < sizeof(buttons) / sizeof(Button); i++)
 	{
-		sprintf(buttons[i].name, name);
-		buttons[i].position.x = pos_x;
-		buttons[i].position.y = pos_y;
-		buttons[i].size.x = size_x;
-		buttons[i].size.y = size_y;
-
-		for (int j = 0; j < 4; j++)
+		if (!buttons[i].exsists)
 		{
-			buttons[i].text_color[j] = text_color[j];
-			buttons[i].background_color[j] = background_color[j];
+			sprintf(buttons[i].name, name);
+			sprintf(buttons[i].group, group);
+			buttons[i].position.x = pos_x;
+			buttons[i].position.y = pos_y;
+			buttons[i].size.x = size_x;
+			buttons[i].size.y = size_y;
 
-			buttons[i].text_color_hover[j] = text_color_hover[j];
-			buttons[i].background_color_hover[j] = background_color_hover[j];
+			for (int j = 0; j < 4; j++)
+			{
+				buttons[i].text_color[j] = text_color[j];
+				buttons[i].background_color[j] = background_color[j];
+
+				buttons[i].text_color_hover[j] = text_color_hover[j];
+				buttons[i].background_color_hover[j] = background_color_hover[j];
+			}
+			buttons[i].exsists = true;
+
+			//printf("Gomb letrehozva! \n");
+
+			return;
 		}
-		buttons[i].exsists = true;
-
-		printf("Gomb letrehozva! \n");
-
-		break;
 	}
 
 	return;
@@ -31,6 +35,8 @@ void Create_Button(char name[50], int pos_x, int pos_y, int size_x, int size_y, 
 void Delete_Button(Button* button)
 {
 	sprintf(button->name, "");
+	sprintf(button->text, "");
+	sprintf(button->group, "");
 	button->position.x = 0;
 	button->position.y = 0;
 	button->size.x = 0;
@@ -44,6 +50,15 @@ void Delete_Button(Button* button)
 	button->exsists = false;
 
 	return;
+}
+
+void Change_Button_Text(Button* button, float* text_color, float* text_color_hover)
+{
+	for (int j = 0; j < 4; j++)
+	{
+		button->text_color[j] = text_color[j];
+		button->text_color_hover[j] = text_color_hover[j];
+	}
 }
 
 void Render_Button(Button* button, bool hightlight)
@@ -109,4 +124,54 @@ Button* Clicked_Button(int cursor_x, int cursor_y)
 	}
 
 	return NULL;
+}
+
+void Create_Button_List(char** list, int list_size, char* group_name, int pos_x, int pos_y)
+{
+	Delete_Button_List(group_name);
+
+	for (int i = 1; i < list_size; i++)
+	{
+		char name[50];
+		strcpy(name, list[i]);
+
+		char group[50];
+		strcpy(group, group_name);
+
+		Create_Button(name, group, pos_x, pos_y + i * 25, 205, 50, text_color_white, bg_color, text_color_white, bg_color_hover);
+	}
+}
+
+void Add_To_Button_List(char* button_name, char* group_name, int pos_x, int pos_y)
+{
+	// Csoporthoz tartozó korábbi gombok megszámolása
+	int previous_buttons = 1;
+
+	for (int i = 0; i < sizeof(buttons) / sizeof(Button); i++)
+	{
+		if (!strcmp(buttons[i].group, group_name))
+		{
+			previous_buttons++;
+		}
+	}
+
+	// Gomb létrehozása
+	char name[50];
+	strcpy(name, button_name);
+
+	char group[50];
+	strcpy(group, group_name);
+
+	Create_Button(name, group, pos_x, pos_y + previous_buttons * 25, 205, 50, text_color_white, bg_color, text_color_white, bg_color_hover);
+}
+
+void Delete_Button_List(char group_name[50])
+{
+	for (int i = 0; i < sizeof(buttons) / sizeof(Button); i++)
+	{
+		if (strcmp(buttons[i].group, group_name) == 0)
+		{
+			Delete_Button(&buttons[i]);
+		}
+	}
 }

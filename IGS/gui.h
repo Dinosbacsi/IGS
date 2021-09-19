@@ -6,6 +6,7 @@
 typedef struct Button {
 	char name[50];
 	char text[50];
+	char group[50];
 	vec2i position;
 	vec2i size;
 	float text_color[4];
@@ -15,11 +16,23 @@ typedef struct Button {
 	bool exsists;
 }Button;
 
+// Gombok
 Button buttons[100];
+// Gomb színek
+static float text_color_white[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+static float text_color_yellow[4] = { 1.0f, 1.0f, 0.0f, 1.0f };
 
-void Create_Button(char name[50], int pos_x, int pos_y, int size_x, int size_y, float* text_color, float* background_color, float* text_color_hover, float* background_color_hover);
+static float bg_color[4] = { 0.0f, 0.0f, 0.0f, 0.5f };
+static float bg_color_hover[4] = { 0.0f, 0.0f, 0.0f, 0.9f };
+
+void Create_Button(char name[50], char group[50], int pos_x, int pos_y, int size_x, int size_y, float* text_color, float* background_color, float* text_color_hover, float* background_color_hover);
 void Delete_Button(Button* button);
+void Change_Button_Text(Button* button, float* text_color, float* text_color_hover);
 void Render_Button(Button* button, bool highlight);
 Button* Clicked_Button(int cursor_x, int cursor_y);
+
+void Create_Button_List(char** list, int list_size, char* group_name, int pos_x, int pos_y);
+void Add_To_Button_List(char* button_name, char* group_name, int pos_x, int pos_y);
+void Delete_Button_List(char group_name[50]);
 
 #endif // GUI_H_INCLUDED
