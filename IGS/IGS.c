@@ -1480,6 +1480,20 @@ void Render_Scene()
             }
         }
     }
+    else
+    {
+        for (int i = 0; i < map_width; i++)
+        {
+            for (int j = 0; j < map_length; j++)
+            {
+                if (tiles[i][j].highlighted == true)
+                {
+                    Draw_Highlight(tiles[i][j]);
+                    tiles[i][j].highlighted = false;
+                }
+            }
+        }
+    }
 
     // Interface kirajzolása
     Render_Interface();
