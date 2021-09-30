@@ -2,7 +2,7 @@
 
 void Create_Button(char name[50], char group[50], int pos_x, int pos_y, int size_x, int size_y, float* text_color, float* background_color, float* text_color_hover, float* background_color_hover)
 {
-	for (int i = 0; i < sizeof(buttons) / sizeof(Button); i++)
+	for (int i = 1; i < sizeof(buttons) / sizeof(Button); i++)
 	{
 		if (!buttons[i].exsists)
 		{
@@ -22,8 +22,6 @@ void Create_Button(char name[50], char group[50], int pos_x, int pos_y, int size
 				buttons[i].background_color_hover[j] = background_color_hover[j];
 			}
 			buttons[i].exsists = true;
-
-			//printf("Gomb letrehozva! \n");
 
 			return;
 		}

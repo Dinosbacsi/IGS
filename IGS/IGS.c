@@ -672,18 +672,66 @@ void Event_Handler()
                     char* clicked_button_text = clicked_button->name;
                     strcpy(clicked_button_text, clicked_button->name);
 
-                    if (!strcmp(clicked_button_text, "NEW BUILDING"))
+                    // Oldal menü
+                    if (!strcmp(clicked_button->group, "sidemenu"))
                     {
-                        game_mode = build;
-                        Create_Button_List(building_category_names_UPPER_CASE, sizeof(building_category_names_UPPER_CASE)/sizeof(building_category_names_UPPER_CASE[0]), "building categories", 230, 5);
-                    }
-                    else if (!strcmp(clicked_button_text, "NEW ROAD"))
-                    {
-                        game_mode = road;
-                    }
-                    else if (!strcmp(clicked_button_text, "BULLDOZE"))
-                    {
-                        game_mode = bulldoze;
+                        // Gomb színek visszaállítása alaphelyzetbe
+                        for (int i = 0; i < sizeof(buttons) / sizeof(Button); i++)
+                        {
+                            Change_Button_Text(&buttons[i], text_color_white, text_color_white);
+                        }
+
+                        if (!strcmp(clicked_button_text, "NEW BUILDING"))
+                        {
+                            if (game_mode != build)
+                            {
+                                game_mode = build;
+                                Create_Button_List(building_category_names_UPPER_CASE, sizeof(building_category_names_UPPER_CASE) / sizeof(building_category_names_UPPER_CASE[0]), "building categories", 230, 5);
+
+                                // Megnyomott gomb kiemelés szín
+                                Change_Button_Text(clicked_button, text_color_yellow, text_color_yellow);
+                            }
+                            else
+                            {
+                                game_mode = normal;
+
+                                // Kilépés az adott menüből
+                                Delete_Button_List("building types");
+                                Delete_Button_List("building categories");
+                            }
+                        }
+                        else
+                        {
+                            Delete_Button_List("building types");
+                            Delete_Button_List("building categories");
+                        }
+                        
+                        if (!strcmp(clicked_button_text, "NEW ROAD"))
+                        {
+                            if (game_mode != road)
+                            {
+                                game_mode = road;
+
+                                // Megnyomott gomb kiemelés szín
+                                Change_Button_Text(clicked_button, text_color_yellow, text_color_yellow);
+                            }
+                            else
+                            {
+                                game_mode = normal;
+                            }
+                        }
+
+                        if (!strcmp(clicked_button_text, "BULLDOZE"))
+                        {
+                            if (game_mode != bulldoze)
+                            {
+                                game_mode = bulldoze;
+                            }
+                            else
+                            {
+                                game_mode = normal;
+                            }
+                        }
                     }
                     else if (!strcmp(clicked_button->group, "building categories"))
                     {
@@ -696,6 +744,19 @@ void Event_Handler()
                                 Add_To_Button_List(building_types[i].name, "building types", 450, 5);
                             }
                         }
+
+                        // Gomb színek visszaállítása alaphelyzetbe
+                        for (int i = 0; i < sizeof(buttons) / sizeof(Button); i++)
+                        {
+                            if (!strcmp(buttons[i].group, "building categories"))
+                            {
+                                Change_Button_Text(&buttons[i], text_color_white, text_color_white);
+                            }
+                            
+                        }
+
+                        // Megnyomott gomb kiemelés szín
+                        Change_Button_Text(clicked_button, text_color_yellow, text_color_yellow);
                     }
                     else if (!strcmp(clicked_button->group, "building types"))
                     {
@@ -703,8 +764,6 @@ void Event_Handler()
                         {
                             if (!strcmp(building_types[i].name, clicked_button->name))
                             {
-                                printf("TEST");
-
                                 // A megtalált indexű épülettípus behelyezése az új épületbe
                                 new_building.category = building_types[i].category;
                                 new_building.building_model = building_types[i].building_model;
@@ -712,15 +771,20 @@ void Event_Handler()
                                 new_building.size.y = building_types[i].size.y;
                             }
                         }
-                    }
 
-                    // Gomb színek visszaállítása alaphelyzetbe
-                    for (int i = 0; i < sizeof(buttons) / sizeof(Button); i++)
-                    {
-                        Change_Button_Text(&buttons[i], text_color_white, text_color_white);
+                        // Gomb színek visszaállítása alaphelyzetbe
+                        for (int i = 0; i < sizeof(buttons) / sizeof(Button); i++)
+                        {
+                            if (!strcmp(buttons[i].group, "building types"))
+                            {
+                                Change_Button_Text(&buttons[i], text_color_white, text_color_white);
+                            }
+
+                        }
+
+                        // Megnyomott gomb kiemelés szín
+                        Change_Button_Text(clicked_button, text_color_yellow, text_color_yellow);
                     }
-                    // Megnyomott gomb kiemelés szín
-                    Change_Button_Text(clicked_button, text_color_yellow, text_color_yellow);
                 }
                 else
                 {
@@ -1010,6 +1074,18 @@ void Build_Mode_Handler()
             // Építendő épület alaphelyzetbe állítása
             new_building.category = nothing;
             new_building.facing_direction = north;
+
+            game_mode = normal;
+
+            // Kilépés az adott menüből
+            Delete_Button_List("building types");
+            Delete_Button_List("building categories");
+
+            // Gomb színek visszaállítása alaphelyzetbe
+            for (int i = 0; i < sizeof(buttons) / sizeof(Button); i++)
+            {
+                Change_Button_Text(&buttons[i], text_color_white, text_color_white);
+            }
         }
     }
 }
@@ -1438,76 +1514,6 @@ void Render_Interface()
 
             Render_Button(&buttons[i], highlight);
         }
-    }
-
-    // Kirajzolás
-    /*
-    switch (game_mode)
-    {
-        // Alaphelyzet
-    case normal:
-        Render_Bitmap_String_With_Backdrop(10, 30, 0, GLUT_BITMAP_HELVETICA_18, "EPITES (N)", 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
-        Render_Bitmap_String_With_Backdrop(10, 55, 0, GLUT_BITMAP_HELVETICA_18, "UT EPITES (M)", 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
-        Render_Bitmap_String_With_Backdrop(10, 80, 0, GLUT_BITMAP_HELVETICA_18, "LEBONTAS (B)", 1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f);
-        break;
-
-        // Építő mód
-    case build:
-        Render_Bitmap_String_With_Backdrop(10, 30, 0, GLUT_BITMAP_HELVETICA_18, "EPITES (N)", 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-        Render_Bitmap_String_With_Backdrop(10, 55, 0, GLUT_BITMAP_HELVETICA_18, "UT EPITES (M)", 0.8f, 0.8f, 0.8f, 0.0f, 0.0f, 0.0f);
-        Render_Bitmap_String_With_Backdrop(10, 80, 0, GLUT_BITMAP_HELVETICA_18, "LEBONTAS (B)", 0.8f, 0.8f, 0.8f, 0.0f, 0.0f, 0.0f);
-        break;
-
-        // Út építő mód
-    case road:
-        Render_Bitmap_String_With_Backdrop(10, 30, 0, GLUT_BITMAP_HELVETICA_18, "EPITES (N)", 0.8f, 0.8f, 0.8f, 0.0f, 0.0f, 0.0f);
-        Render_Bitmap_String_With_Backdrop(10, 55, 0, GLUT_BITMAP_HELVETICA_18, "UT EPITES (M)", 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-        Render_Bitmap_String_With_Backdrop(10, 80, 0, GLUT_BITMAP_HELVETICA_18, "LEBONTAS (B)", 0.8f, 0.8f, 0.8f, 0.0f, 0.0f, 0.0f);
-        break;
-
-        // Bontó mód
-    case bulldoze:
-        Render_Bitmap_String_With_Backdrop(10, 30, 0, GLUT_BITMAP_HELVETICA_18, "EPITES (N)", 0.8f, 0.8f, 0.8f, 0.0f, 0.0f, 0.0f);
-        Render_Bitmap_String_With_Backdrop(10, 55, 0, GLUT_BITMAP_HELVETICA_18, "UT EPITES (M)", 0.8f, 0.8f, 0.8f, 0.0f, 0.0f, 0.0f);
-        Render_Bitmap_String_With_Backdrop(10, 80, 0, GLUT_BITMAP_HELVETICA_18, "LEBONTAS (B)", 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-        break;
-    }*/
-    // Épületkategóriák kiíráas
-    if (game_mode == build)
-    {
-        // Végiglépkedés az épület kategóriákon, és kiíratás
-        /*for (int bc_i = warehouse; bc_i < last; bc_i++)
-        {
-            if (menu_highlighted_building_category == bc_i)
-            {
-                Render_Bitmap_String_With_Backdrop(230, 5 + (bc_i) * 25, 0, GLUT_BITMAP_HELVETICA_18, building_category_names_UPPER_CASE[bc_i], 1, 1, 1, 0, 0, 0);
-            }
-            else
-            {
-                Render_Bitmap_String_With_Backdrop(230, 5 + (bc_i) * 25, 0, GLUT_BITMAP_HELVETICA_18, building_category_names_UPPER_CASE[bc_i], 0.5, 0.5, 0.5, 0, 0, 0);
-            }
-        }*/
-
-        // Kiválasztott kategória épülettípusának kiíratása
-        /*if (menu_selected_building_category != -1)
-        {
-            bt_c = 0;
-            for (int bt_i = 0; bt_i < 50; bt_i++)
-            {
-                if (building_types[bt_i].category == building_category_list[menu_selected_building_category])
-                {
-                    bt_c++;
-                    if (menu_highlighted_building_type == bt_c)
-                    {
-                        Render_Bitmap_String_With_Backdrop(450, 5 + (bt_c) * 25, 0, GLUT_BITMAP_HELVETICA_18, building_types[bt_i].name, 1, 1, 1, 0, 0, 0);
-                    }
-                    else
-                    {
-                        Render_Bitmap_String_With_Backdrop(450, 5 + (bt_c) * 25, 0, GLUT_BITMAP_HELVETICA_18, building_types[bt_i].name, 0.5, 0.5, 0.5, 0, 0, 0);
-                    }
-                }
-            }
-        }*/
     }
 
     // Debug infó kiírása
