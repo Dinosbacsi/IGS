@@ -142,12 +142,19 @@ int Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int til
 }
 void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length])
 {
+    if (vehicle->speed < vehicle->max_speed)
+        vehicle->speed += vehicle->acceleration_rate;
+    else if (vehicle->speed > vehicle->max_speed)
+        vehicle->speed -= vehicle->acceleration_rate;
+
     if (vehicle->current_tile->pos.x == vehicle->next_node->pos.x)
     {
         if (fabsf(vehicle->pos.y - vehicle->next_node->pos.y) >= 0.5)
         {
-            if (vehicle->speed < vehicle->max_speed)
+            /*if (vehicle->speed < vehicle->max_speed)
                 vehicle->speed += vehicle->acceleration_rate;
+            else if(vehicle->speed > vehicle->max_speed)
+                vehicle->speed -= vehicle->acceleration_rate;*/
 
             if (vehicle->pos.y > vehicle->next_node->pos.y)
             {
@@ -191,8 +198,8 @@ void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length])
     {
         if (fabsf(vehicle->pos.x - vehicle->next_node->pos.x) >= 0.5)
         {
-            if (vehicle->speed < vehicle->max_speed)
-                vehicle->speed += vehicle->acceleration_rate;
+            /*if (vehicle->speed < vehicle->max_speed)
+                vehicle->speed += vehicle->acceleration_rate;*/
 
             if (vehicle->pos.x > vehicle->next_node->pos.x)
             {
@@ -239,6 +246,12 @@ void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length])
         Vehicle_Steer_Straight(vehicle);
     }
     vehicle->current_tile = &tiles[(int)roundf(vehicle->pos.x)][(int)roundf(vehicle->pos.y)];
+
+    float distance_to_destinetion = Distance(vehicle->pos.x, vehicle->destination_node->pos.x, vehicle->pos.y, vehicle->destination_node->pos.y);
+    if (distance_to_destinetion < 5.0f)
+    {
+        vehicle->max_speed = distance_to_destinetion / 250;
+    }
 }
 
 void Vehicle_Cruise_Choose_Direction(Vehicle* vehicle, Node road_nodes[map_width][map_length])
