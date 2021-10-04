@@ -8,4 +8,6 @@ long ftime, timebase;
 
 long Get_Elapsed_Time();
 
+void Unload_Vehicle_Into_Building(Vehicle* vehicle, Building* building);
+
 #endif // SIMULATION_H_INCLUDED

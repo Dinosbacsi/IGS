@@ -14,7 +14,7 @@ void Draw_Vehicle(Vehicle* vehicle)
     glRotatef(vehicle->rotate.x, 1, 0, 0);
 
     // Jármű modell kirajzolása
-    Draw_Model(&vehicle->vehicle_model);
+    Draw_Model(vehicle->vehicle_model);
     // Jármű kerekeinek kirajzolása
     for (int i = 0; i <= 3; i++)
     {
@@ -33,7 +33,7 @@ void Draw_Vehicle(Vehicle* vehicle)
         {
             glRotatef(vehicle->wheel_rotate, 0, 1, 0);
         }
-        Draw_Model(&vehicle->wheel_model);
+        Draw_Model(vehicle->wheel_model);
         glPopMatrix();
     }
     glPopMatrix();
@@ -140,6 +140,54 @@ int Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int til
         return -1;
     }
 }
+
+void Delete_Vehicle(Vehicle* vehicle)
+{
+    vehicle->tile.x = 0;
+    vehicle->tile.y = 0;
+
+    vehicle->pos.x = 0.0f;
+    vehicle->pos.y = 0.0f;
+    vehicle->pos.z = 0.0f;
+
+    vehicle->rotate.x = 0.0f;
+    vehicle->rotate.y = 0.0f;
+    vehicle->rotate.z = 0.0f;
+
+    vehicle->facing = north;
+    vehicle->previous_facing = north;
+    vehicle->turning = false;
+
+    vehicle->speed = 0.0f;
+    vehicle->max_speed = 0.0f;
+    vehicle->target_speed = 0.0f;
+    vehicle->acceleration_rate = 0.0f;
+
+    vehicle->exists = false;
+    vehicle->destination_node = NULL;
+    vehicle->next_node = NULL;
+    vehicle->previous_node = NULL;
+    for (int i = 0; i < sizeof(vehicle->path_nodes) / sizeof(Node*); i++)
+    {
+        vehicle->path_nodes[i] = NULL;
+    }
+    vehicle->current_node_in_path = 0;
+    vehicle->current_tile = NULL;
+    vehicle->status = leaving_world;
+
+    vehicle->wheel_rotate = 0.0f;
+    vehicle->wheel_turn = 0;
+
+    vehicle->vehicle_model = NULL;
+    vehicle->wheel_model = NULL;
+
+    vehicle->capacity = 0;
+    for (int i = 0; i < sizeof(vehicle->cargo) / sizeof(Material*); i++)
+    {
+        vehicle->cargo[i] = NULL;
+    }
+}
+
 void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length])
 {
     if (vehicle->speed < vehicle->max_speed)
@@ -151,11 +199,6 @@ void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length])
     {
         if (fabsf(vehicle->pos.y - vehicle->next_node->pos.y) >= 0.5)
         {
-            /*if (vehicle->speed < vehicle->max_speed)
-                vehicle->speed += vehicle->acceleration_rate;
-            else if(vehicle->speed > vehicle->max_speed)
-                vehicle->speed -= vehicle->acceleration_rate;*/
-
             if (vehicle->pos.y > vehicle->next_node->pos.y)
             {
                 vehicle->pos.y -= vehicle->speed;
@@ -171,7 +214,6 @@ void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length])
         {
             if (vehicle->turning == false)
             {
-                //Vehicle_Cruise_Choose_Direction(vehicle, road_nodes);
                 Vehicle_Follow_Path(vehicle);
             }
             else
@@ -198,9 +240,6 @@ void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length])
     {
         if (fabsf(vehicle->pos.x - vehicle->next_node->pos.x) >= 0.5)
         {
-            /*if (vehicle->speed < vehicle->max_speed)
-                vehicle->speed += vehicle->acceleration_rate;*/
-
             if (vehicle->pos.x > vehicle->next_node->pos.x)
             {
                 vehicle->pos.x -= vehicle->speed;
@@ -213,7 +252,6 @@ void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length])
         else
         {
             if (vehicle->turning == false)
-                //Vehicle_Cruise_Choose_Direction(vehicle, road_nodes);
                 Vehicle_Follow_Path(vehicle);
             else
             {
@@ -247,7 +285,7 @@ void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length])
     }
     vehicle->current_tile = &tiles[(int)roundf(vehicle->pos.x)][(int)roundf(vehicle->pos.y)];
 
-    float distance_to_destinetion = Distance(vehicle->pos.x, vehicle->destination_node->pos.x, vehicle->pos.y, vehicle->destination_node->pos.y);
+    float distance_to_destinetion = Distance(vehicle->pos.x, (float)vehicle->destination_node->pos.x, vehicle->pos.y, (float)vehicle->destination_node->pos.y);
     if (distance_to_destinetion < 5.0f)
     {
         vehicle->max_speed = distance_to_destinetion / 250;
@@ -339,6 +377,16 @@ void Vehicle_Follow_Path(Vehicle* vehicle)
     if (vehicle->path_nodes[vehicle->current_node_in_path + 1] == NULL)
     {
         vehicle->speed = 0;
+
+        if (vehicle->status == going_to_destination && vehicle->current_tile->pos.x == vehicle->destination_node->pos.x && vehicle->current_tile->pos.y == vehicle->destination_node->pos.y)
+        {
+            vehicle->status = at_destination;
+        }
+        else if (vehicle->status == leaving_world)
+        {
+            Delete_Vehicle(vehicle);
+        }
+
         return;
     }
 

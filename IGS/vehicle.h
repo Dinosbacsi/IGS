@@ -10,6 +10,8 @@
 #define vehicle_limit 100
 #define vehicle_turning_treshold 2
 
+typedef enum { going_to_destination, at_destination, leaving_world } vehicle_status;
+
 typedef struct Vehicle
 {
     // Jármû pozíciója
@@ -21,6 +23,7 @@ typedef struct Vehicle
     bool turning;
     float speed;
     float max_speed;
+    float target_speed;
     float acceleration_rate;
 
     // Jármű célja
@@ -31,6 +34,7 @@ typedef struct Vehicle
     Node* path_nodes[100];
     Tile* current_tile;
     int current_node_in_path;
+    vehicle_status status;
 
     // Jármû kerekeinek pozíciója
     // sorrend: BE, JE, BH, JH
@@ -39,12 +43,12 @@ typedef struct Vehicle
     int wheel_turn;
 
     // Jármû modelljei
-    struct Model vehicle_model;
-    struct Model wheel_model;
+    struct Model* vehicle_model;
+    struct Model* wheel_model;
 
     // Anyag kapacitás
     int capacity;
-    Material** cargo;
+    Material* cargo[10];
 }Vehicle;
 
 //Járművek
@@ -57,6 +61,7 @@ Vehicle vehicles[vehicle_limit];
 */
 void Draw_Vehicle(Vehicle* vehicle);
 int Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int tile_y, Road_Segment road_segments[], Node road_nodes[map_width][map_length]);
+void Delete_Vehicle(Vehicle* vehicle);
 void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length]);
 void Vehicle_Cruise_Choose_Direction(Vehicle* vehicle, Node road_nodes[map_width][map_length]);
 void Vehicle_Follow_Path(Vehicle* vehicle);

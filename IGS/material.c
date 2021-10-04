@@ -16,6 +16,15 @@ void Make_Material_Type(Material* material_type, char name[50], material_state s
 	printf("%s anyagtipus letrehozva!\n", material_type->name);
 }
 
+void Transfer_Material(Material* from, Material* to)
+{
+	if (from != NULL && to != NULL)
+	{
+		to = from;
+		from = NULL;
+	}
+}
+
 Material* Material_Type_From_Name(Material** material_types, char material_name[50])
 {
 	for (int i = 0; i < sizeof(material_types); i++)

@@ -66,7 +66,7 @@ void Make_Building_Type(Building* building_type, char name[50], char model_file_
     printf("Epulet tipus letrehozva! \n");
 }
 
-void Place_Building_OLD(struct Model building_model, building_category category, int x, int y, int size_x, int size_y, direction direction, Building buildings[], int building_limit)
+void Place_Building_OLD(struct Model building_model, building_category category, int x, int y, int size_x, int size_y, direction direction)
 {
     int i = 0;
 
@@ -173,13 +173,13 @@ void Place_Building_OLD(struct Model building_model, building_category category,
         }
     }
 }
-void Place_Building_By_Name(char building_name[], int x, int y, direction direction, Building building_types[], Building buildings[], int building_limit)
+void Place_Building_By_Name(char building_name[], int x, int y, direction direction, Building building_types[])
 {
     for (int i = 0; i < 50; i++)
     {
         if (strcmp(building_types[i].name, building_name) == 0)
         {
-            Place_Building_OLD(building_types[i].building_model, building_types[i].category, x, y, building_types[i].size.x, building_types[i].size.y, direction, buildings, building_limit);
+            Place_Building_OLD(building_types[i].building_model, building_types[i].category, x, y, building_types[i].size.x, building_types[i].size.y, direction);
             printf("\nEpulel elhelyezve!");
         }
     }
@@ -227,7 +227,7 @@ void Draw_Building(Building building)
     glPopMatrix();
 }
 
-void Bulldoze_Building_OLD(struct Virtual_Cursor v_cursor, struct Building buildings[])
+void Bulldoze_Building_OLD(struct Virtual_Cursor v_cursor)
 {
     int x = (int)roundf(v_cursor.pos.x);
     int y = (int)roundf(v_cursor.pos.y);
@@ -322,6 +322,8 @@ void Building_Produce(Building* building)
         // Új anyag előállítása
         building->storage[requirement1_i]->exists = true;
         building->storage[requirement1_i] = building->produces;
+
+        printf("\n%s. epulet eloallitott %s termeket!", building->name, building->produces->name);
     }
 }
 
@@ -339,4 +341,30 @@ Material* Get_Order(Building* building)
     }
 
     return order;
+}
+
+Material* Get_Storage_Space(Building* building)
+{
+    Material* storage_space = NULL;
+
+    for (int i = 0; i < sizeof(building->storage) / sizeof(Material*); i++)
+    {
+        if (building->storage[i] != NULL)
+            storage_space = building->storage[i];
+    }
+
+    return storage_space;
+}
+
+Building* Get_Building_From_Entry_Point(int x, int y)
+{
+    Building* found_building = NULL;
+
+    for (int i = 0; i < sizeof(buildings) / sizeof(Building); i++)
+    {
+        if (buildings[i].entry_point.x == x && buildings[i].entry_point.y == y)
+            found_building = &buildings[i];
+    }
+
+    return found_building;
 }

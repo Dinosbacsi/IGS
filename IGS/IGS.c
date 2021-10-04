@@ -81,8 +81,6 @@ const Uint8* state;
 GLfloat light_pos_default[] = { 0.5f, 1.0f, 1.0f, 0.0f };           //fény pozíciója
 GLfloat light_color_default[] = { 1.0f, 1.0f, 1.0f, 1.0f };   //fény színe
 GLfloat global_ambient_light[] = { 0.3f, 0.3f, 0.3f, 1.0f };  //globális fény
-    //Épület limit
-#define building_limit 5000
     //Út node limit
 #define node_limit 5000
 #define segment_limit 5000
@@ -129,7 +127,6 @@ Building igs_warehouse_small;
 Building igs_warehouse_medium;
 Building igs_factory_small;
 Building igs_tank_small;
-Building buildings[building_limit];
 //Fák
 Scenery_Object trees[tree_limit];
 //Utak - IDEIGLENES
@@ -517,11 +514,11 @@ void Initialize_Map()
 
     // Porta
     char kis_porta[50] = "SMALL_GATE";
-    Place_Building_By_Name(kis_porta, 99, 149, north, building_types, buildings, building_limit);
+    Place_Building_By_Name(kis_porta, 99, 149, north, building_types);
 
     // JÁRMŰ STRUKTÚRA TESZT
-    test_vehicle.vehicle_model = test_truck;
-    test_vehicle.wheel_model = test_wheel;
+    test_vehicle.vehicle_model = &test_truck;
+    test_vehicle.wheel_model = &test_wheel;
     test_vehicle.pos.x = 25.0f;
     test_vehicle.pos.y = 50.8f;
     test_vehicle.pos.z = 0.0f;
@@ -543,6 +540,11 @@ void Initialize_Map()
     test_vehicle.wheel[1].z = 0.03f;
     test_vehicle.wheel[2].z = 0.03f;
     test_vehicle.wheel[3].z = 0.03f;
+
+    for (int i = 0; i < sizeof(vehicles) / sizeof(Vehicle); i++)
+    {
+        Delete_Vehicle(&vehicles[i]);
+    }
 
     // Út típusok inicializáció
     sprintf(road_normal.name, "Atlagos ut");
@@ -1069,7 +1071,7 @@ void Build_Mode_Handler()
         if (mouse_left_clicked && tile_is_free)
         {
             // Épület elhelyezése
-            Place_Building_OLD(new_building.building_model, new_building.category, new_building.pos.x, new_building.pos.y, new_building.size.x, new_building.size.y, new_building.facing_direction, buildings, building_limit);
+            Place_Building_OLD(new_building.building_model, new_building.category, new_building.pos.x, new_building.pos.y, new_building.size.x, new_building.size.y, new_building.facing_direction);
 
             // Építendő épület alaphelyzetbe állítása
             new_building.category = nothing;
@@ -1207,7 +1209,7 @@ void Bulldoze_Mode_Handler()
             {
                 // 1 : Épület
             case 1:
-                Bulldoze_Building_OLD(v_cursor, buildings);
+                Bulldoze_Building_OLD(v_cursor);
                 break;
                 // 2: út Node
             case 2:
@@ -1232,7 +1234,27 @@ void Simulation()
     {
         if (vehicles[i].exists == true)
         {
-            Vehicle_Cruise(&vehicles[i], road_nodes);
+            if (vehicles[i].speed == 0 && vehicles[i].current_tile->pos.x == vehicles[i].destination_node->pos.x && vehicles[i].current_tile->pos.y == vehicles[i].destination_node->pos.y)
+            {
+                if (vehicles[i].status == at_destination)
+                {
+                    Building* destination_building = Get_Building_From_Entry_Point(vehicles[i].current_tile->pos.x, vehicles[i].current_tile->pos.y);
+                    if (destination_building != NULL)
+                    {
+                        Unload_Vehicle_Into_Building(&vehicles[i], destination_building);
+                    }
+
+                    // IDEIGLENES : útvonal keresése vissza ki
+                    vehicles[i].destination_node = &road_nodes[104][299];
+                    vehicles[i].max_speed = 0.025f;
+                    Find_Path(&vehicles[i], road_nodes);
+                    vehicles[i].status = leaving_world;
+                }
+            }
+            else
+            {
+                Vehicle_Cruise(&vehicles[i], road_nodes);
+            }
         }
 
     }
@@ -1249,6 +1271,8 @@ void Simulation()
             {
                 buildings[i].order_cooldown -= Get_Elapsed_Time();
             }
+
+            tiles[buildings[i].entry_point.x][buildings[i].entry_point.y].highlighted = false;
         }
     }
 
@@ -1269,6 +1293,9 @@ void Simulation()
                 {
                     vehicles[new_vehicle_index].destination_node = &road_nodes[buildings[i].entry_point.x][buildings[i].entry_point.y];
                     Find_Path(&vehicles[new_vehicle_index], road_nodes);
+                    vehicles[new_vehicle_index].status = going_to_destination;
+
+                    Transfer_Material(order, vehicles[new_vehicle_index].cargo[i]);
                 }
             }
         }
