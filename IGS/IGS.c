@@ -20,6 +20,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include <float.h>
+#include <time.h>
 #include <windows.h>
 
 //SDL, OpenGL, SOIL
@@ -196,6 +197,7 @@ int main(int argc, char* args[])
     // UI inicializálása
     Initialize_Interface();
 
+    srand(time(0));
 
     camera.pos.x = player_zone_start_x + player_zone_width / 2;
     camera.pos.y = player_zone_start_y + player_zone_length / 2;
@@ -1227,6 +1229,8 @@ void Bulldoze_Mode_Handler()
 
 void Simulation()
 {
+    long elapsed_time = Get_Elapsed_Time();
+
     mouse_left_clicked = false;
 
     // Szimuláció
@@ -1246,10 +1250,20 @@ void Simulation()
                     }
 
                     // IDEIGLENES : útvonal keresése vissza ki
-                    vehicles[i].destination_node = &road_nodes[104][299];
-                    vehicles[i].max_speed = 0.025f;
-                    Find_Path(&vehicles[i], road_nodes);
-                    vehicles[i].status = leaving_world;
+                    if (randInRange(0, 1) == 0)
+                    {
+                        vehicles[i].destination_node = &road_nodes[104][299];
+                        vehicles[i].max_speed = 0.025f;
+                        Find_Path(&vehicles[i], road_nodes);
+                        vehicles[i].status = leaving_world;
+                    }
+                    else
+                    {
+                        vehicles[i].destination_node = &road_nodes[110][0];
+                        vehicles[i].max_speed = 0.025f;
+                        Find_Path(&vehicles[i], road_nodes);
+                        vehicles[i].status = leaving_world;
+                    }
                 }
             }
             else
@@ -1270,7 +1284,7 @@ void Simulation()
             }
             else
             {
-                buildings[i].order_cooldown -= Get_Elapsed_Time();
+                buildings[i].order_cooldown -= elapsed_time;
             }
 
             tiles[buildings[i].entry_point.x][buildings[i].entry_point.y].highlighted = false;
@@ -1288,6 +1302,14 @@ void Simulation()
             {
                 int spawn_pos_x = 110;
                 int spawn_pos_y = 1;
+
+                if (randInRange(0, 1) == 0)
+                {
+                    spawn_pos_x = 104;
+                    spawn_pos_y = 299;
+                }
+
+
                 int new_vehicle_index = Place_Vehicle(vehicles, &test_vehicle, spawn_pos_x, spawn_pos_y, road_segments, road_nodes);
 
                 if (new_vehicle_index != -1)
@@ -1298,7 +1320,7 @@ void Simulation()
 
                     //Transfer_Material(order, vehicles[new_vehicle_index].cargo[1]);
                     vehicles[new_vehicle_index].cargo[0] = Transfer_Material(order);
-                    Print_Vehicle_Cargo(&vehicles[new_vehicle_index]);
+                    //Print_Vehicle_Cargo(&vehicles[new_vehicle_index]);
                 }
             }
         }

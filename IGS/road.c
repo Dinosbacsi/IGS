@@ -83,8 +83,8 @@ void Place_Road_Segment(Road_Segment road_segments[], Node road_nodes[map_width]
     }
 
     // Node-ok típusának frissítése
-    Update_Road_Node(&road_nodes[a_x][a_y], tiles);
-    Update_Road_Node(&road_nodes[b_x][b_y], tiles);
+    Update_Road_Node(&road_nodes[a_x][a_y]);
+    Update_Road_Node(&road_nodes[b_x][b_y]);
 
     // Útszakasz létrehozása, node-ok hozzárendelése
     road_segments[new_road_index].exists = true;

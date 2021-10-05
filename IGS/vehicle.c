@@ -285,10 +285,13 @@ void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length])
     }
     vehicle->current_tile = &tiles[(int)roundf(vehicle->pos.x)][(int)roundf(vehicle->pos.y)];
 
-    float distance_to_destinetion = Distance(vehicle->pos.x, (float)vehicle->destination_node->pos.x, vehicle->pos.y, (float)vehicle->destination_node->pos.y);
-    if (distance_to_destinetion < 5.0f)
+    if (vehicle->destination_node != NULL)
     {
-        vehicle->max_speed = distance_to_destinetion / 250;
+        float distance_to_destinetion = Distance(vehicle->pos.x, (float)vehicle->destination_node->pos.x, vehicle->pos.y, (float)vehicle->destination_node->pos.y);
+        if (distance_to_destinetion < 5.0f)
+        {
+            vehicle->max_speed = distance_to_destinetion / 250;
+        }
     }
 }
 

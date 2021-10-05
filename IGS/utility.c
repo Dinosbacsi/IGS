@@ -383,3 +383,12 @@ float Distance(float x1, float x2, float y1, float y2)
     float distance = sqrtf(powf(x1 - x2, 2) + powf(y1 - y2, 2));
     return distance;
 }
+
+int randInRange(int min, int max)
+{
+    int randomInt  = (rand() % (max - min + 1)) + min;
+
+    printf("\nRandom szam: %d", randomInt);
+    
+    return randomInt;
+}

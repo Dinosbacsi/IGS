@@ -10,6 +10,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include <float.h>
+#include <time.h>
 #include <windows.h>
 
     //SDL, OpenGL, SOIL
@@ -128,4 +129,5 @@ void Render_Bitmap_String_With_Backdrop(int x, int y, int z, void* font, char* s
     Random matek
 */
 float Distance(float x1, float x2, float y1, float y2);
+int randInRange(int min, int max);
 #endif // UTILITY_H_INCLUDED

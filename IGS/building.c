@@ -83,6 +83,9 @@ void Place_Building_OLD(struct Model building_model, building_category category,
 		buildings[i].building_model = building_model;
 		buildings[i].category = category;
 
+		
+		sprintf(buildings[i].name, "%d", i);
+
 		buildings[i].pos.x = x;
 		buildings[i].size.x = size_x;
 		buildings[i].pos.y = y;
@@ -298,7 +301,7 @@ void Building_Produce(Building* building)
 			if (building->order_list[i] == NULL)
 			{
 				building->order_list[i] = building->produces->requirement1;
-				printf("\n%s. epulet rendelt %s alapanyagot a rendelesi lista %d. helyere!", building->name, building->produces->requirement1->name, i);
+				printf("\n%s epulet rendelt %s alapanyagot a rendelesi lista %d. helyere!", building->name, building->produces->requirement1->name, i);
 				break;
 			}
 		}
@@ -310,7 +313,7 @@ void Building_Produce(Building* building)
 			if (building->order_list[i] == NULL)
 			{
 				building->order_list[i] = building->produces->requirement2;
-				printf("\n%s. epulet rendelt %s alapanyagot a rendelesi lista %d. helyere!", building->name, building->produces->requirement2->name, i);
+				printf("\n%s epulet rendelt %s alapanyagot a rendelesi lista %d. helyere!", building->name, building->produces->requirement2->name, i);
 				break;
 			}
 		}
