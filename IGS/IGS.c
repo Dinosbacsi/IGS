@@ -1241,6 +1241,7 @@ void Simulation()
                     Building* destination_building = Get_Building_From_Entry_Point(vehicles[i].current_tile->pos.x, vehicles[i].current_tile->pos.y);
                     if (destination_building != NULL)
                     {
+                        Print_Vehicle_Cargo(&vehicles[i]);
                         Unload_Vehicle_Into_Building(&vehicles[i], destination_building);
                     }
 
@@ -1295,7 +1296,9 @@ void Simulation()
                     Find_Path(&vehicles[new_vehicle_index], road_nodes);
                     vehicles[new_vehicle_index].status = going_to_destination;
 
-                    Transfer_Material(order, vehicles[new_vehicle_index].cargo[i]);
+                    //Transfer_Material(order, vehicles[new_vehicle_index].cargo[1]);
+                    vehicles[new_vehicle_index].cargo[0] = Transfer_Material(order);
+                    Print_Vehicle_Cargo(&vehicles[new_vehicle_index]);
                 }
             }
         }

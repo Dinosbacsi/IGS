@@ -1,6 +1,7 @@
 ﻿#ifndef BUILDING_H_INCLUDED
 #define BUILDING_H_INCLUDED
 
+#include <string.h>
 #include <math.h>
 
 #include "map.h"
@@ -71,5 +72,6 @@ void Building_Produce(Building* building);
 Material* Get_Order(Building* building);
 Material* Get_Storage_Space(Building* building);
 Building* Get_Building_From_Entry_Point(int x, int y);
+void Print_Building_Storage(Building* building);
 
 #endif // BUILDING_H_INCLUDED

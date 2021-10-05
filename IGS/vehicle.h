@@ -78,4 +78,5 @@ void Vehicle_Accelerate(Vehicle* vehicle);
 void Vehicle_Decelerate(Vehicle* vehicle);
 void Find_Path(Vehicle* vehicle, Node road_nodes[map_width][map_length]);
 
+void Print_Vehicle_Cargo(Vehicle* vehicle);
 #endif // VEHICLE_H_INCLUDED

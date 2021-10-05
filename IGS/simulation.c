@@ -15,8 +15,16 @@ long Get_Elapsed_Time()
 
 void Unload_Vehicle_Into_Building(Vehicle* vehicle, Building* building)
 {
+	printf("\nJarmu rakomanyanak atrakodasa epuletbe: \n");
 	for (int i = 0; i < sizeof(vehicle->cargo) / sizeof(Material*); i++)
 	{
-		Transfer_Material(vehicle->cargo[i], Get_Storage_Space(building));
+		for (int j = 0; j < sizeof(building->storage) / sizeof(Material*); j++)
+		{
+			if (vehicle->cargo[i] != NULL && building->storage[j] == NULL)
+			{
+				//Transfer_Material(vehicle->cargo[i], building->storage[j]);
+				building->storage[j] = Transfer_Material(vehicle->cargo[i]);
+			}
+		}
 	}
 }

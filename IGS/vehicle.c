@@ -942,3 +942,19 @@ void Find_Path(Vehicle* vehicle, Node road_nodes[map_width][map_length])
         vehicle->current_node_in_path = 0;
     }
 }
+
+void Print_Vehicle_Cargo(Vehicle* vehicle)
+{
+    printf("\nJarmu rakomany info: \n");
+    for (int i = 0; i < sizeof(vehicle->cargo) / sizeof(Material*); i++)
+    {
+        if (vehicle->cargo[i] != NULL)
+        {
+            printf("%d tarhely: %s \n", i + 1, vehicle->cargo[i]->name);
+        }
+        else
+        {
+            printf("%d tarhely: [ures] \n", i + 1);
+        }
+    }
+}
