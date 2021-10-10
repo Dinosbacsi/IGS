@@ -1245,7 +1245,7 @@ void Simulation()
                     Building* destination_building = Get_Building_From_Entry_Point(vehicles[i].current_tile->pos.x, vehicles[i].current_tile->pos.y);
                     if (destination_building != NULL)
                     {
-                        Print_Vehicle_Cargo(&vehicles[i]);
+                        //Print_Vehicle_Cargo(&vehicles[i]);
                         Unload_Vehicle_Into_Building(&vehicles[i], destination_building);
                     }
 

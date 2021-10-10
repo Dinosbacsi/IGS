@@ -24,6 +24,7 @@ void Unload_Vehicle_Into_Building(Vehicle* vehicle, Building* building)
 			{
 				//Transfer_Material(vehicle->cargo[i], building->storage[j]);
 				building->storage[j] = Transfer_Material(vehicle->cargo[i]);
+				vehicle->cargo[i] = NULL;
 			}
 		}
 	}
