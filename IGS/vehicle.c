@@ -60,6 +60,7 @@ int Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int til
         new_vehicle->wheel[3] = vehicle_type->wheel[3];
         new_vehicle->wheel_rotate = 0;
         new_vehicle->max_speed = vehicle_type->max_speed;
+        new_vehicle->target_speed = new_vehicle->max_speed;
         new_vehicle->acceleration_rate = vehicle_type->acceleration_rate;
 
         // Jármű elhelyezése
@@ -190,10 +191,19 @@ void Delete_Vehicle(Vehicle* vehicle)
 
 void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length])
 {
-    if (vehicle->speed < vehicle->max_speed)
+    if (vehicle->destination_node != NULL)
+    {
+        float distance_to_destinetion = Distance(vehicle->pos.x, (float)vehicle->destination_node->pos.x, vehicle->pos.y, (float)vehicle->destination_node->pos.y);
+        if (distance_to_destinetion < 5.0f && (distance_to_destinetion / 250) < vehicle->target_speed)
+        {
+            vehicle->target_speed = distance_to_destinetion / 250;
+        }
+    }
+
+    if (vehicle->speed < vehicle->target_speed)
         vehicle->speed += vehicle->acceleration_rate;
-    else if (vehicle->speed > vehicle->max_speed)
-        vehicle->speed -= vehicle->acceleration_rate;
+    else if (vehicle->speed > vehicle->target_speed)
+        vehicle->speed -= vehicle->acceleration_rate * 4;
 
     if (vehicle->current_tile->pos.x == vehicle->next_node->pos.x)
     {
@@ -284,15 +294,6 @@ void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length])
         Vehicle_Steer_Straight(vehicle);
     }
     vehicle->current_tile = &tiles[(int)roundf(vehicle->pos.x)][(int)roundf(vehicle->pos.y)];
-
-    if (vehicle->destination_node != NULL)
-    {
-        float distance_to_destinetion = Distance(vehicle->pos.x, (float)vehicle->destination_node->pos.x, vehicle->pos.y, (float)vehicle->destination_node->pos.y);
-        if (distance_to_destinetion < 5.0f)
-        {
-            vehicle->max_speed = distance_to_destinetion / 250;
-        }
-    }
 }
 
 void Vehicle_Cruise_Choose_Direction(Vehicle* vehicle, Node road_nodes[map_width][map_length])
@@ -944,6 +945,130 @@ void Find_Path(Vehicle* vehicle, Node road_nodes[map_width][map_length])
         printf("\nUtvonal talalva!");
         vehicle->current_node_in_path = 0;
     }
+}
+
+void Check_For_Traffic_Ahead(Vehicle* this_vehicle)
+{
+    float distance_between_vehicles = 5.0f;
+    bool slow_down = false;
+
+    for (int i = 0; i < sizeof(vehicles) / sizeof(Vehicle); i++)
+    {
+        if (&vehicles[i] != this_vehicle && (vehicles[i].facing == this_vehicle->facing || vehicles[i].previous_facing == this_vehicle->facing) && fabsf(vehicles[i].rotate.z - this_vehicle->rotate.z) < 90)
+        {
+            float this_distance_between_vehicles = fminf(Distance(this_vehicle->pos.x, vehicles[i].pos.x, this_vehicle->pos.y, vehicles[i].pos.y), distance_between_vehicles);
+
+            if (this_distance_between_vehicles < 5.0f)
+            {
+                switch (this_vehicle->facing)
+                {
+                case north:
+                    if (vehicles[i].pos.y < this_vehicle->pos.y && this_distance_between_vehicles < distance_between_vehicles)
+                    {
+                        slow_down = true;
+                        distance_between_vehicles = this_distance_between_vehicles;
+                    }
+                    break;
+                case east:
+                    if (vehicles[i].pos.x > this_vehicle->pos.x && this_distance_between_vehicles < distance_between_vehicles)
+                    {
+                        slow_down = true;
+                        distance_between_vehicles = this_distance_between_vehicles;
+                    }
+                    break;
+                case south:
+                    if (vehicles[i].pos.y > this_vehicle->pos.y && this_distance_between_vehicles < distance_between_vehicles)
+                    {
+                        slow_down = true;
+                        distance_between_vehicles = this_distance_between_vehicles;
+                    }
+                    break;
+                case west:
+                    if (vehicles[i].pos.x < this_vehicle->pos.x && this_distance_between_vehicles < distance_between_vehicles)
+                    {
+                        slow_down = true;
+                        distance_between_vehicles = this_distance_between_vehicles;
+                    }
+                    break;
+                }
+            }
+        }
+    }
+
+    if (slow_down)
+    {
+        this_vehicle->target_speed = fmaxf(((distance_between_vehicles - 1.0f) / 200), 0.0001);
+    }
+    else
+    {
+        this_vehicle->target_speed = this_vehicle->max_speed;
+    }
+
+    /*bool slow_down = false;
+    float distance_between_vehicles = 5.0f;
+
+    for (int i = 0; i < sizeof(vehicles) / sizeof(Vehicle); i++)
+    {
+        if (&vehicles[i] != this_vehicle && vehicles[i].facing == this_vehicle->facing)
+        {
+            switch (this_vehicle->facing)
+            {
+            case north:
+                if (vehicles[i].pos.x == this_vehicle->pos.x && vehicles[i].pos.y < this_vehicle->pos.y)
+                {
+                    float this_distance_between_vehicles = Distance(this_vehicle->pos.x, vehicles[i].pos.x, this_vehicle->pos.y, vehicles[i].pos.y);
+                    if (this_distance_between_vehicles < 5.0f && this_distance_between_vehicles < distance_between_vehicles)
+                    {
+                        distance_between_vehicles = this_distance_between_vehicles;
+                        this_vehicle->target_speed = (distance_between_vehicles - 1.0f) / 250;
+                        slow_down = true;
+                    }
+                }
+                break;
+            case east: 
+                if (vehicles[i].pos.y == this_vehicle->pos.y && vehicles[i].pos.x > this_vehicle->pos.x)
+                {
+                    float this_distance_between_vehicles = Distance(this_vehicle->pos.x, vehicles[i].pos.x, this_vehicle->pos.y, vehicles[i].pos.y);
+                    if (this_distance_between_vehicles < 5.0f && this_distance_between_vehicles < distance_between_vehicles)
+                    {
+                        distance_between_vehicles = this_distance_between_vehicles;
+                        this_vehicle->target_speed = (distance_between_vehicles - 1.0f) / 250;
+                        slow_down = true;
+                    }
+                }
+                break;
+            case south:
+                if (vehicles[i].pos.x == this_vehicle->pos.x && vehicles[i].pos.y > this_vehicle->pos.y)
+                {
+                    float this_distance_between_vehicles = Distance(this_vehicle->pos.x, vehicles[i].pos.x, this_vehicle->pos.y, vehicles[i].pos.y);
+                    if (this_distance_between_vehicles < 5.0f && this_distance_between_vehicles < distance_between_vehicles)
+                    {
+                        distance_between_vehicles = this_distance_between_vehicles;
+                        this_vehicle->target_speed = (distance_between_vehicles - 1.0f) / 250;
+                        slow_down = true;
+                    }
+                }
+                break;
+            case west:
+                if (vehicles[i].pos.y == this_vehicle->pos.y && vehicles[i].pos.x < this_vehicle->pos.x)
+                {
+                    float this_distance_between_vehicles = Distance(this_vehicle->pos.x, vehicles[i].pos.x, this_vehicle->pos.y, vehicles[i].pos.y);
+                    if (this_distance_between_vehicles < 5.0f && this_distance_between_vehicles < distance_between_vehicles)
+                    {
+                        distance_between_vehicles = this_distance_between_vehicles;
+                        this_vehicle->target_speed = (distance_between_vehicles - 1.0f) / 250;
+                        slow_down = true;
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    if(!slow_down)
+    {
+        this_vehicle->target_speed = fmaxf(this_vehicle->max_speed, 0);
+    }*/
 }
 
 void Print_Vehicle_Cargo(Vehicle* vehicle)

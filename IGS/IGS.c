@@ -1253,14 +1253,14 @@ void Simulation()
                     if (randInRange(0, 1) == 0)
                     {
                         vehicles[i].destination_node = &road_nodes[104][299];
-                        vehicles[i].max_speed = 0.025f;
+                        vehicles[i].target_speed = vehicles[i].max_speed;
                         Find_Path(&vehicles[i], road_nodes);
                         vehicles[i].status = leaving_world;
                     }
                     else
                     {
                         vehicles[i].destination_node = &road_nodes[110][0];
-                        vehicles[i].max_speed = 0.025f;
+                        vehicles[i].target_speed = vehicles[i].max_speed;
                         Find_Path(&vehicles[i], road_nodes);
                         vehicles[i].status = leaving_world;
                     }
@@ -1268,6 +1268,7 @@ void Simulation()
             }
             else
             {
+                Check_For_Traffic_Ahead(&vehicles[i]);
                 Vehicle_Cruise(&vehicles[i], road_nodes);
             }
         }
@@ -1292,13 +1293,14 @@ void Simulation()
     }
 
     // Majd mehetne simulation-be saját függvényként
+    bool vehicle_spawned_this_loop = false;;
     for (int i = 0; i < building_limit; i++)
     {
         if (buildings[i].exists == true && buildings[i].category == factory)
         {
             Material* order = Get_Order(&buildings[i]);
 
-            if (order != NULL)
+            if (order != NULL && !vehicle_spawned_this_loop)
             {
                 int spawn_pos_x = 110;
                 int spawn_pos_y = 1;
@@ -1311,6 +1313,7 @@ void Simulation()
 
 
                 int new_vehicle_index = Place_Vehicle(vehicles, &test_vehicle, spawn_pos_x, spawn_pos_y, road_segments, road_nodes);
+                vehicle_spawned_this_loop = true;
 
                 if (new_vehicle_index != -1)
                 {

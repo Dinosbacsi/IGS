@@ -388,7 +388,7 @@ int randInRange(int min, int max)
 {
     int randomInt  = (rand() % (max - min + 1)) + min;
 
-    printf("\nRandom szam: %d", randomInt);
+    //printf("\nRandom szam: %d", randomInt);
     
     return randomInt;
 }
