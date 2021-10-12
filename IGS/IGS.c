@@ -626,10 +626,7 @@ void Initialize_Interface()
     printf("\n========== UI inicializalas ==========\n");
     for (int i = 0; i < sizeof(buttons) / sizeof(Button); i++)
     {
-        if (buttons[i].exsists)
-        {
-            Delete_Button(&buttons[i]);
-        }
+        Delete_Button(&buttons[i]);
     }
 
     char button_name[50];
@@ -644,6 +641,11 @@ void Initialize_Interface()
 
     sprintf(button_name, "BULLDOZE");
     Create_Button(button_name, button_group, 10, 80, 205, 50, text_color_white, bg_color, text_color_white, bg_color_hover);
+
+    for (int i = 0; i < sizeof(panels) / sizeof(Panel); i++)
+    {
+        Delete_Panel(&panels[i]);
+    }
 }
 
 void Event_Handler()
@@ -1566,7 +1568,7 @@ void Render_Interface()
     glDisable(GL_LIGHTING);
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    // ÚJ GOMBOK TESZT
+    // Gombok kirajzolása
     for (int i = 0; i < sizeof(buttons) / sizeof(Button); i++)
     {
         if (buttons[i].exsists)
@@ -1582,6 +1584,15 @@ void Render_Interface()
             }
 
             Render_Button(&buttons[i], highlight);
+        }
+    }
+
+    // Panelek kirajzolása
+    for (int i = 0; i < sizeof(panels) / sizeof(Panel); i++)
+    {
+        if (panels[i].exsists)
+        {
+            Render_Panel(&panels[i]);
         }
     }
 

@@ -173,3 +173,53 @@ void Delete_Button_List(char group_name[50])
 		}
 	}
 }
+
+void Create_Panel(char name[50], char title[150], int pos_x, int pos_y, int size_x, int size_y)
+{
+	for (int i = 1; i < sizeof(panels) / sizeof(Panel); i++)
+	{
+		if (!panels[i].exsists)
+		{
+			sprintf(panels[i].name, name);
+			sprintf(panels[i].title, title);
+
+			panels[i].position.x = pos_x;
+			panels[i].position.y = pos_y;
+			panels[i].size.x = size_x;
+			panels[i].size.y = size_y;
+
+			for (int j = 0; j < 4; j++)
+			{
+				panels[i].background_color[j] = bg_color[j];
+			}
+
+			panels[i].exsists = true;
+		}
+	}
+}
+
+void Delete_Panel(Panel* panel)
+{
+	panel->exsists = false;
+
+	sprintf(panel->name, "");
+	sprintf(panel->title, "");
+	panel->position.x = 0;
+	panel->position.y = 0;
+	panel->size.x = 0;
+	panel->size.y = 0;
+
+	bool visible;
+}
+
+void Render_Panel(Panel* panel)
+{
+	glLoadIdentity();
+	// Kirajzolás
+	glBegin(GL_QUADS);
+	glVertex3i(panel->position.x, panel->position.y, 0);
+	glVertex3i(panel->position.x, panel->position.y, 0);
+	glVertex3i(panel->position.x + panel->size.x, panel->position.y, 0);
+	glVertex3i(panel->position.x + panel->size.x, panel->position.y, 0);
+	glEnd();
+}
