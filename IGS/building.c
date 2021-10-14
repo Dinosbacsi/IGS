@@ -66,7 +66,7 @@ void Make_Building_Type(Building* building_type, char name[50], char model_file_
 	printf("Epulet tipus letrehozva! \n");
 }
 
-void Place_Building_OLD(struct Model building_model, building_category category, int x, int y, int size_x, int size_y, direction direction)
+void Place_Building_OLD(struct Model building_model, building_category category, char name[50], int x, int y, int size_x, int size_y, direction direction)
 {
 	int i = 0;
 
@@ -83,8 +83,9 @@ void Place_Building_OLD(struct Model building_model, building_category category,
 		buildings[i].building_model = building_model;
 		buildings[i].category = category;
 
-		
-		sprintf(buildings[i].name, "%d", i);
+		char building_index[10] = "";
+		sprintf(building_index, "_%d", i);
+		sprintf(buildings[i].name, strcat(name, building_index));
 
 		buildings[i].pos.x = x;
 		buildings[i].size.x = size_x;
@@ -182,7 +183,7 @@ void Place_Building_By_Name(char building_name[], int x, int y, direction direct
 	{
 		if (strcmp(building_types[i].name, building_name) == 0)
 		{
-			Place_Building_OLD(building_types[i].building_model, building_types[i].category, x, y, building_types[i].size.x, building_types[i].size.y, direction);
+			Place_Building_OLD(building_types[i].building_model, building_types[i].category, building_name, x, y, building_types[i].size.x, building_types[i].size.y, direction);
 			printf("\nEpulel elhelyezve!");
 		}
 	}
@@ -257,6 +258,20 @@ building_category Building_Type_Enum(char* sval)
 	for (int i = 0; building_category_table[i] != NULL; ++i, ++result)
 		if (0 == strcmp(sval, building_category_table[i])) return result;
 	return -1;
+}
+
+char* Building_Type_String(building_category category)
+{
+	char result[50] = "";
+	for (int i = 0; building_category_table[i] != NULL; ++i)
+	{
+		if (building_category_list[i] == category)
+		{
+			sprintf(result, building_category_table[i]);
+		}
+	}
+
+	return result;
 }
 
 /*

@@ -194,8 +194,31 @@ void Create_Panel(char name[50], char title[150], int pos_x, int pos_y, int size
 			}
 
 			panels[i].exsists = true;
+			panels[i].visible = true;
+
+			return;
 		}
 	}
+}
+
+Panel* Get_Panel_By_Name(char panel_name[50])
+{
+	Panel* panel = NULL;
+
+	for (int i = 0; i < sizeof(panels) / sizeof(Panel); i++)
+	{
+		if (!strcmp(panels[i].name, panel_name))
+		{
+			panel = &panels[i];
+		}
+	}
+
+	return panel;
+}
+
+void Set_Building_For_Panel(Panel* panel, Building* building)
+{
+	panel->building = building;
 }
 
 void Delete_Panel(Panel* panel)
@@ -209,17 +232,82 @@ void Delete_Panel(Panel* panel)
 	panel->size.x = 0;
 	panel->size.y = 0;
 
-	bool visible;
+	panel->visible = false;
+	panel->building = NULL;
+}
+
+void Delete_Panel_By_Name(char panel_name_to_delete[50])
+{
+	for (int i = 0; i < sizeof(panels) / sizeof(Panel); i++)
+	{
+		if (!strcmp(panels[i].name, panel_name_to_delete))
+		{
+			Delete_Panel(&panels[i]);
+		}
+	}
+}
+
+Panel* Clicked_Panel(int cursor_x, int cursor_y)
+{
+	for (int i = 0; i < sizeof(panels) / sizeof(Panel); i++)
+	{
+		if (cursor_x > panels[i].position.x &&
+			cursor_x < panels[i].position.x + panels[i].size.x &&
+			cursor_y > panels[i].position.y &&
+			cursor_y < panels[i].position.y + panels[i].size.y)
+		{
+			return &panels[i];
+		}
+	}
+
+	return NULL;
 }
 
 void Render_Panel(Panel* panel)
 {
+	// Háttér kirajzolása
+	glColor4f(panel->background_color[0], panel->background_color[1], panel->background_color[2], panel->background_color[3]);
 	glLoadIdentity();
-	// Kirajzolás
+
 	glBegin(GL_QUADS);
 	glVertex3i(panel->position.x, panel->position.y, 0);
-	glVertex3i(panel->position.x, panel->position.y, 0);
 	glVertex3i(panel->position.x + panel->size.x, panel->position.y, 0);
-	glVertex3i(panel->position.x + panel->size.x, panel->position.y, 0);
+	glVertex3i(panel->position.x + panel->size.x, panel->position.y + panel->size.y, 0);
+	glVertex3i(panel->position.x, panel->position.y + panel->size.y, 0);
 	glEnd();
+
+	// Panel címsorának kiíratása
+	Render_Bitmap_String(panel->position.x + 2, panel->position.y + 18, 1, GLUT_BITMAP_HELVETICA_18, panel->title, text_color_yellow[0], text_color_yellow[1], text_color_yellow[2]);
+
+	// Tartalom kiíratása
+	int line_break = 0;
+
+	// Épület raktárának kiíratása
+	Building* building = panel->building;
+	if (building != NULL)
+	{
+		char category[50] = "Category: ";
+		Render_Bitmap_String(panel->position.x + 2, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, strcat(category, Building_Type_String(building->category)), text_color_white[0], text_color_white[1], text_color_white[2]);
+		line_break++;
+
+		if (building->category == factory)
+		{
+			Render_Bitmap_String(panel->position.x + 2, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, "Storage:", text_color_white[0], text_color_white[1], text_color_white[2]);
+			for (int i = 0; i < sizeof(building->storage) / sizeof(Material*); i++)
+			{
+				char material_name_in_storage[50] = "[empty]";
+
+				if (building->storage[i] != NULL)
+				{
+					sprintf(material_name_in_storage, building->storage[i]->name);
+				}
+
+				Render_Bitmap_String(panel->position.x + 80, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, material_name_in_storage, text_color_white[0], text_color_white[1], text_color_white[2]);
+				line_break++;
+			}
+		}
+	}
+
+	// Szín visszaállítása
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 }

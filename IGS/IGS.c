@@ -511,11 +511,12 @@ void Initialize_Map()
 
     // Anyagtípusok inicializáláas
     printf("\n========== Anyagtipusok letrehozasa ==========\n");
-    Make_Material_Type(&material_types[0], "Alapanyag", solid, raw, NULL, NULL);
-    Make_Material_Type(&material_types[1], "Kesztermek", solid, finished, &material_types[0], NULL);
+    Make_Material_Type(&material_types[0], "Raw material", solid, raw, NULL, NULL);
+    Make_Material_Type(&material_types[1], "Finished product", solid, finished, &material_types[0], NULL);
+    Make_Material_Type(&material_types[2], "Nothing", solid, finished, NULL, NULL);
 
     // Porta
-    char kis_porta[50] = "SMALL_GATE";
+    char kis_porta[50] = "Small_gate";
     Place_Building_By_Name(kis_porta, 99, 149, north, building_types);
 
     // JÁRMŰ STRUKTÚRA TESZT
@@ -579,7 +580,8 @@ void Initialize_Map()
     }
 
     // Fúót elhelyezése
-    Place_Road_Segment(road_segments, road_nodes, &road_main, 104, 60, 104, 299);
+    Place_Road_Segment(road_segments, road_nodes, &road_main, 104, 60, 104, 159);
+    Place_Road_Segment(road_segments, road_nodes, &road_main, 104, 159, 104, 299);
     Place_Road_Segment(road_segments, road_nodes, &road_main, 104, 60, 110, 60);
     Place_Road_Segment(road_segments, road_nodes, &road_main, 110, 0, 110, 60);
     Place_Road_Segment(road_segments, road_nodes, &road_main, 104, 149, 98, 149);
@@ -772,6 +774,7 @@ void Event_Handler()
                             {
                                 // A megtalált indexű épülettípus behelyezése az új épületbe
                                 new_building.category = building_types[i].category;
+                                sprintf(new_building.name, building_types[i].name);
                                 new_building.building_model = building_types[i].building_model;
                                 new_building.size.x = building_types[i].size.x;
                                 new_building.size.y = building_types[i].size.y;
@@ -795,6 +798,29 @@ void Event_Handler()
                 else
                 {
                     mouse_left_clicked = true;
+
+                    Panel* clicked_panel = Clicked_Panel(cursor.pos.x, cursor.pos.y);
+                    if (clicked_panel == NULL || strcmp(clicked_panel->name, "building_info_panel"))
+                    {
+                        Delete_Panel_By_Name("building_info_panel");
+                    }
+
+                    // Ha épületre kattintva, akkor épület info panel felhozatala
+                    int click_pos_x = (int)roundf(v_cursor.pos.x);
+                    int click_pos_y = (int)roundf(v_cursor.pos.y);
+                    if (Check_Tile(click_pos_x, click_pos_y) == 1)
+                    {
+                        Building* clicked_building = tiles[click_pos_x][click_pos_y].occupied_by_building;
+
+                        Delete_Panel_By_Name("building_info_panel");
+
+                        char panel_name[150] = "building_info_panel";
+                        char panel_title[150] = "";
+                        sprintf(panel_title, clicked_building->name);
+                        strcat(panel_title, " building info");
+                        Create_Panel(panel_name, panel_title, 200, 200, 300, 300);
+                        Set_Building_For_Panel(Get_Panel_By_Name(panel_name) , clicked_building);
+                    }
                 }
             }
             else if (e.button.button == SDL_BUTTON_RIGHT)
@@ -1009,6 +1035,7 @@ void Build_Mode_Handler()
 
             // A megtalált indexű épülettípus behelyezése az új épületbe
             new_building.category = building_types[bt_i - 1].category;
+            sprintf(new_building.name, building_types[bt_i - 1].name);
             new_building.building_model = building_types[bt_i - 1].building_model;
             new_building.size.x = building_types[bt_i - 1].size.x;
             new_building.size.y = building_types[bt_i - 1].size.y;
@@ -1075,7 +1102,7 @@ void Build_Mode_Handler()
         if (mouse_left_clicked && tile_is_free)
         {
             // Épület elhelyezése
-            Place_Building_OLD(new_building.building_model, new_building.category, new_building.pos.x, new_building.pos.y, new_building.size.x, new_building.size.y, new_building.facing_direction);
+            Place_Building_OLD(new_building.building_model, new_building.category, new_building.name, new_building.pos.x, new_building.pos.y, new_building.size.x, new_building.size.y, new_building.facing_direction);
 
             // Építendő épület alaphelyzetbe állítása
             new_building.category = nothing;

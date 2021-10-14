@@ -2,6 +2,8 @@
 #define GUI_H_INCLUDED
 
 #include "utility.h"
+#include "building.h"
+#include "material.h"
 
 typedef struct Button {
 	char name[50];
@@ -33,6 +35,8 @@ typedef struct Panel {
 	float background_color[4];
 	bool exsists;
 	bool visible;
+
+	Building* building;
 }Panel;
 
 // Panelek
@@ -49,7 +53,11 @@ void Add_To_Button_List(char* button_name, char* group_name, int pos_x, int pos_
 void Delete_Button_List(char group_name[50]);
 
 void Create_Panel(char name[50], char title[150], int pos_x, int pos_y, int size_x, int size_y);
+Panel* Get_Panel_By_Name(char panel_name[50]);
+void Set_Building_For_Panel(Panel* panel, Building* building);
 void Delete_Panel(Panel* panel);
+void Delete_Panel_By_Name(char panel_name_to_delete[50]);
+Panel* Clicked_Panel(int cursor_x, int cursor_y);
 void Render_Panel(Panel* panel);
 
 #endif // GUI_H_INCLUDED
