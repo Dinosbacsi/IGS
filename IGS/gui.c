@@ -78,10 +78,10 @@ void Render_Button(Button* button, bool hightlight)
 	glLoadIdentity();
 	// Kirajzolás
 	glBegin(GL_QUADS);
-	glVertex3i(button->position.x - 5, button->position.y - 20, 0);
-	glVertex3i(button->position.x - 5, button->position.y + 5, 0);
-	glVertex3i(button->position.x + button->size.x, button->position.y + 5, 0);
-	glVertex3i(button->position.x + button->size.x, button->position.y - 20, 0);
+	glVertex3i(button->position.x - 5, button->position.y - 20, 1);
+	glVertex3i(button->position.x - 5, button->position.y + 5, 1);
+	glVertex3i(button->position.x + button->size.x, button->position.y + 5, 1);
+	glVertex3i(button->position.x + button->size.x, button->position.y - 20, 1);
 	glEnd();
 
 	// FELIRAT
@@ -97,7 +97,7 @@ void Render_Button(Button* button, bool hightlight)
 	
 	// Pozícionálás
 	glLoadIdentity();
-	glRasterPos3i(button->position.x, button->position.y, 0);
+	glRasterPos3i(button->position.x, button->position.y, 1);
 	// Kiíratás
 	for (c = button->name; *c != '\0'; c++)
 	{
@@ -161,6 +161,28 @@ void Add_To_Button_List(char* button_name, char* group_name, int pos_x, int pos_
 	strcpy(group, group_name);
 
 	Create_Button(name, group, pos_x, pos_y + previous_buttons * 25, 205, 50, text_color_white, bg_color, text_color_white, bg_color_hover);
+}
+
+Button* Get_Button_List_Element_By_Index(char* group_name, int index)
+{
+	int button_index = 0;
+	Button* found_button = NULL;
+
+	for (int i = 0; i < sizeof(buttons) / sizeof(Button); i++)
+	{
+		if (!strcmp(buttons[i].group, group_name))
+		{
+			if (button_index == index)
+			{
+				found_button = &buttons[i];
+				return found_button;
+			}
+
+			button_index++;
+		}
+	}
+
+	return found_button;
 }
 
 void Delete_Button_List(char group_name[50])
@@ -281,9 +303,8 @@ void Render_Panel(Panel* panel)
 
 	// Tartalom kiíratása
 	int line_break = 0;
-
-	// Épület raktárának kiíratása
 	Building* building = panel->building;
+
 	if (building != NULL)
 	{
 		char category[50] = "Category: ";
@@ -292,6 +313,33 @@ void Render_Panel(Panel* panel)
 
 		if (building->category == factory)
 		{
+			// Termelés infó
+			Render_Bitmap_String(panel->position.x + 2, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, "Produces:", text_color_white[0], text_color_white[1], text_color_white[2]);
+			line_break++;
+
+			int material_types_listed = 0;
+			Delete_Button_List("building_produces");
+			for (int i = 0; i < sizeof(material_types) / sizeof(Material); i++)
+			{
+				if (material_types[i].category == finished)
+				{
+					Add_To_Button_List(material_types[i].name, "building_produces", panel->position.x + 95, panel->position.y + (line_break * 20));
+					
+					if (&material_types[i] == building->produces)
+					{
+						Button* this_button = Get_Button_List_Element_By_Index("building_produces", material_types_listed);
+						if (this_button != NULL)
+						{
+							Change_Button_Text(this_button, text_color_yellow, text_color_yellow);
+						}
+					}
+					
+					material_types_listed++;
+				}
+			}
+			line_break += material_types_listed;
+
+			// Raktár infó
 			Render_Bitmap_String(panel->position.x + 2, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, "Storage:", text_color_white[0], text_color_white[1], text_color_white[2]);
 			for (int i = 0; i < sizeof(building->storage) / sizeof(Material*); i++)
 			{
@@ -307,6 +355,8 @@ void Render_Panel(Panel* panel)
 			}
 		}
 	}
+
+	panel->size.y = 40 + (line_break * 20);
 
 	// Szín visszaállítása
 	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);

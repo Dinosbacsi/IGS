@@ -93,11 +93,6 @@ void Place_Building_OLD(struct Model building_model, building_category category,
 		buildings[i].size.y = size_y;
 		buildings[i].facing_direction = direction;
 
-		// IDEGLENES - ha gyár, akkor termel készterméket
-		if (category == factory)
-		{
-			buildings[i].produces = &material_types[1];
-		}
 		// Tárhely lista nullázása
 		for (int j = 0; j < sizeof(buildings[i].storage) / sizeof(Material*); j++)
 		{
@@ -281,7 +276,6 @@ char* Building_Type_String(building_category category)
 void Building_Produce(Building* building)
 {
 	printf("\n\n========== Epulet termeles / rendeles ==========\n");
-	Print_Building_Storage(building);
 
 	// Készlet ellenőrzése
 	int requirement1_i;

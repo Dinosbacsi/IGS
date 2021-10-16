@@ -22,13 +22,13 @@ Material* Transfer_Material(Material* material)
 	return material;
 }
 
-Material* Material_Type_From_Name(Material** material_types, char material_name[50])
+Material* Material_Type_From_Name(char material_name[50])
 {
 	for (int i = 0; i < sizeof(material_types); i++)
 	{
-		if (material_types[i]->name == material_name)
+		if (!strcmp(material_types[i].name, material_name))
 		{
-			return material_types[i];
+			return &material_types[i];
 		}
 	}
 

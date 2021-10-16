@@ -50,6 +50,7 @@ Button* Clicked_Button(int cursor_x, int cursor_y);
 
 void Create_Button_List(char** list, int list_size, char* group_name, int pos_x, int pos_y);
 void Add_To_Button_List(char* button_name, char* group_name, int pos_x, int pos_y);
+Button* Get_Button_List_Element_By_Index(char* group_name, int index);
 void Delete_Button_List(char group_name[50]);
 
 void Create_Panel(char name[50], char title[150], int pos_x, int pos_y, int size_x, int size_y);
