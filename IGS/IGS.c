@@ -1297,19 +1297,9 @@ void Simulation()
 					}
 
 					// IDEIGLENES : útvonal keresése vissza ki
-					if (randInRange(0, 1) == 0)
+					if (Vehicle_Is_Empty(&vehicles[i]))
 					{
-						vehicles[i].destination_node = &road_nodes[104][299];
-						vehicles[i].target_speed = vehicles[i].max_speed;
-						Find_Path(&vehicles[i], road_nodes);
-						vehicles[i].status = leaving_world;
-					}
-					else
-					{
-						vehicles[i].destination_node = &road_nodes[110][0];
-						vehicles[i].target_speed = vehicles[i].max_speed;
-						Find_Path(&vehicles[i], road_nodes);
-						vehicles[i].status = leaving_world;
+						Vehicle_Leave_World(&vehicles[i]);
 					}
 				}
 			}

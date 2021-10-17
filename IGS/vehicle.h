@@ -77,7 +77,9 @@ void Move_Vehicle(Vehicle* vehicle);
 void Vehicle_Accelerate(Vehicle* vehicle);
 void Vehicle_Decelerate(Vehicle* vehicle);
 void Find_Path(Vehicle* vehicle, Node road_nodes[map_width][map_length]);
+void Vehicle_Leave_World(Vehicle* vehicle);
 void Check_For_Traffic_Ahead(Vehicle* this_vehicle);
+bool Vehicle_Is_Empty(Vehicle* vehicle);
 
 void Print_Vehicle_Cargo(Vehicle* vehicle);
 #endif // VEHICLE_H_INCLUDED

@@ -947,6 +947,18 @@ void Find_Path(Vehicle* vehicle, Node road_nodes[map_width][map_length])
     }
 }
 
+void Vehicle_Leave_World(Vehicle* vehicle)
+{
+    if (randInRange(0, 1) == 0)
+        vehicle->destination_node = &road_nodes[104][299];
+    else
+        vehicle->destination_node = &road_nodes[110][0];
+
+    vehicle->target_speed = vehicle->max_speed;
+    Find_Path(vehicle, road_nodes);
+    vehicle->status = leaving_world;
+}
+
 void Check_For_Traffic_Ahead(Vehicle* this_vehicle)
 {
     float distance_between_vehicles = 5.0f;
@@ -997,78 +1009,28 @@ void Check_For_Traffic_Ahead(Vehicle* this_vehicle)
 
     if (slow_down)
     {
-        this_vehicle->target_speed = fmaxf(((distance_between_vehicles - 1.0f) / 200), 0.0001);
+        this_vehicle->target_speed = fmaxf(((distance_between_vehicles - 1.0f) / 200), 0.0001f);
     }
     else
     {
         this_vehicle->target_speed = this_vehicle->max_speed;
     }
+}
 
-    /*bool slow_down = false;
-    float distance_between_vehicles = 5.0f;
+bool Vehicle_Is_Empty(Vehicle* vehicle)
+{
+    bool empty = true;
 
-    for (int i = 0; i < sizeof(vehicles) / sizeof(Vehicle); i++)
+    for (int i = 0; i < sizeof(vehicle->cargo) / sizeof(Material*); i++)
     {
-        if (&vehicles[i] != this_vehicle && vehicles[i].facing == this_vehicle->facing)
+        if (vehicle->cargo[i] != NULL)
         {
-            switch (this_vehicle->facing)
-            {
-            case north:
-                if (vehicles[i].pos.x == this_vehicle->pos.x && vehicles[i].pos.y < this_vehicle->pos.y)
-                {
-                    float this_distance_between_vehicles = Distance(this_vehicle->pos.x, vehicles[i].pos.x, this_vehicle->pos.y, vehicles[i].pos.y);
-                    if (this_distance_between_vehicles < 5.0f && this_distance_between_vehicles < distance_between_vehicles)
-                    {
-                        distance_between_vehicles = this_distance_between_vehicles;
-                        this_vehicle->target_speed = (distance_between_vehicles - 1.0f) / 250;
-                        slow_down = true;
-                    }
-                }
-                break;
-            case east: 
-                if (vehicles[i].pos.y == this_vehicle->pos.y && vehicles[i].pos.x > this_vehicle->pos.x)
-                {
-                    float this_distance_between_vehicles = Distance(this_vehicle->pos.x, vehicles[i].pos.x, this_vehicle->pos.y, vehicles[i].pos.y);
-                    if (this_distance_between_vehicles < 5.0f && this_distance_between_vehicles < distance_between_vehicles)
-                    {
-                        distance_between_vehicles = this_distance_between_vehicles;
-                        this_vehicle->target_speed = (distance_between_vehicles - 1.0f) / 250;
-                        slow_down = true;
-                    }
-                }
-                break;
-            case south:
-                if (vehicles[i].pos.x == this_vehicle->pos.x && vehicles[i].pos.y > this_vehicle->pos.y)
-                {
-                    float this_distance_between_vehicles = Distance(this_vehicle->pos.x, vehicles[i].pos.x, this_vehicle->pos.y, vehicles[i].pos.y);
-                    if (this_distance_between_vehicles < 5.0f && this_distance_between_vehicles < distance_between_vehicles)
-                    {
-                        distance_between_vehicles = this_distance_between_vehicles;
-                        this_vehicle->target_speed = (distance_between_vehicles - 1.0f) / 250;
-                        slow_down = true;
-                    }
-                }
-                break;
-            case west:
-                if (vehicles[i].pos.y == this_vehicle->pos.y && vehicles[i].pos.x < this_vehicle->pos.x)
-                {
-                    float this_distance_between_vehicles = Distance(this_vehicle->pos.x, vehicles[i].pos.x, this_vehicle->pos.y, vehicles[i].pos.y);
-                    if (this_distance_between_vehicles < 5.0f && this_distance_between_vehicles < distance_between_vehicles)
-                    {
-                        distance_between_vehicles = this_distance_between_vehicles;
-                        this_vehicle->target_speed = (distance_between_vehicles - 1.0f) / 250;
-                        slow_down = true;
-                    }
-                }
-                break;
-            }
+            empty = false;
+            return empty;
         }
     }
 
-    if(!slow_down)
-    {
-        this_vehicle->target_speed = fmaxf(this_vehicle->max_speed, 0);
-    }*/
+    return empty;
 }
 
 void Print_Vehicle_Cargo(Vehicle* vehicle)
