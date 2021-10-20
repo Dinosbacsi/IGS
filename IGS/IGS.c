@@ -804,6 +804,7 @@ void Event_Handler()
 									material_to_produce = NULL;
 								}
 								building_info_panel->building->produces = material_to_produce;
+								Clear_Order_List(building_info_panel->building);
 							}
 						}
 					}

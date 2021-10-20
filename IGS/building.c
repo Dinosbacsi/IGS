@@ -241,20 +241,23 @@ void Bulldoze_Building_OLD(struct Virtual_Cursor v_cursor)
 	int y = (int)roundf(v_cursor.pos.y);
 	Building* bulldozed_building = tiles[x][y].occupied_by_building;
 
-	// Tile-ok felszabadítása
-	for (int w = 0; w < map_width; w++)
+	if (bulldozed_building != NULL)
 	{
-		for (int l = 0; l < map_length; l++)
+		// Tile-ok felszabadítása
+		for (int w = 0; w < map_width; w++)
 		{
-			if (tiles[w][l].occupied_by_building == bulldozed_building)
-				tiles[w][l].occupied_by_building = NULL;
+			for (int l = 0; l < map_length; l++)
+			{
+				if (tiles[w][l].occupied_by_building == bulldozed_building)
+					tiles[w][l].occupied_by_building = NULL;
+			}
 		}
-	}
 
-	// Épület lebontása
-	free(bulldozed_building->storage);
-	bulldozed_building->exists = 0;
-	bulldozed_building->category = none;
+		// Épület lebontása
+		free(bulldozed_building->storage);
+		bulldozed_building->exists = 0;
+		bulldozed_building->category = none;
+	}
 }
 
 building_category Building_Type_Enum(char* sval)
@@ -371,6 +374,14 @@ Material* Get_Order(Building* building)
 	}
 
 	return order;
+}
+
+void Clear_Order_List(Building* building)
+{
+	for (int i = 0; i < sizeof(building->order_list) / sizeof(Material*); i++)
+	{
+		building->order_list[i] = NULL;
+	}
 }
 
 Material* Get_Storage_Space(Building* building)

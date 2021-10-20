@@ -72,6 +72,7 @@ char* Building_Type_String(building_category category);
 */
 void Building_Produce(Building* building);
 Material* Get_Order(Building* building);
+void Clear_Order_List(Building* building);
 Material* Get_Storage_Space(Building* building);
 Building* Get_Building_From_Entry_Point(int x, int y);
 void Print_Building_Storage(Building* building);

@@ -48,7 +48,7 @@ typedef struct Vehicle
 
     // Anyag kapacitás
     int capacity;
-    Material* cargo[10];
+    Material* cargo[2];
 }Vehicle;
 
 //Járművek
