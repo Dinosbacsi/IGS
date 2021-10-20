@@ -341,7 +341,7 @@ void Render_Panel(Panel* panel)
 
 			// Raktár infó
 			Render_Bitmap_String(panel->position.x + 2, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, "Storage:", text_color_white[0], text_color_white[1], text_color_white[2]);
-			for (int i = 0; i < sizeof(building->storage) / sizeof(Material*); i++)
+			for (int i = 0; i < sizeof(building->storage); i++)
 			{
 				char material_name_in_storage[50] = "[empty]";
 

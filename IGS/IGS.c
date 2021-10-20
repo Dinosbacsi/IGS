@@ -496,11 +496,6 @@ void Initialize_Map()
 		buildings[i].exists = false;
 		buildings[i].category = nothing;
 
-		for (int l = 0; l < sizeof(buildings[i].storage) / sizeof(Material*); l++)
-		{
-			buildings[i].storage[l] = NULL;
-		}
-
 		for (int l = 0; l < sizeof(buildings[i].order_list) / sizeof(Material*); l++)
 		{
 			buildings[i].order_list[l] = NULL;
@@ -776,6 +771,7 @@ void Event_Handler()
 								new_building.category = building_types[i].category;
 								sprintf(new_building.name, building_types[i].name);
 								new_building.building_model = building_types[i].building_model;
+								new_building.storage_capacity = building_types[i].storage_capacity;
 								new_building.size.x = building_types[i].size.x;
 								new_building.size.y = building_types[i].size.y;
 							}
@@ -1120,7 +1116,7 @@ void Build_Mode_Handler()
 		if (mouse_left_clicked && tile_is_free)
 		{
 			// Épület elhelyezése
-			Place_Building_OLD(new_building.building_model, new_building.category, new_building.name, new_building.pos.x, new_building.pos.y, new_building.size.x, new_building.size.y, new_building.facing_direction);
+			Place_Building_OLD(new_building.building_model, new_building.category, new_building.storage_capacity, new_building.name, new_building.pos.x, new_building.pos.y, new_building.size.x, new_building.size.y, new_building.facing_direction);
 
 			// Építendő épület alaphelyzetbe állítása
 			new_building.category = nothing;

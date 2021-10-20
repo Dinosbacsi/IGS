@@ -25,12 +25,13 @@ void Building_Types_From_File(char* filename)
 			char building_category_name[50];
 			int building_size_x;
 			int building_size_y;
+			int storage_size;
 
-			if (sscanf(bc_line, "%s\t%s\t%s\t%d\t%d\t%s", building_name, model_name, texture_name, &building_size_x, &building_size_y, building_category_name))
+			if (sscanf(bc_line, "%s\t%s\t%s\t%d\t%d\t%s\t%d", building_name, model_name, texture_name, &building_size_x, &building_size_y, building_category_name, &storage_size))
 			{
 				building_category new_building_type_category = Building_Type_Enum(building_category_name);
 
-				Make_Building_Type(&building_types[i + 1], building_name, model_name, texture_name, new_building_type_category, building_size_x, building_size_y);
+				Make_Building_Type(&building_types[i + 1], building_name, model_name, texture_name, new_building_type_category, storage_size, building_size_x, building_size_y);
 			}
 
 			i++;
@@ -47,7 +48,7 @@ void Make_Building_Type(Building* building_type, char name[50], struct Model bui
 	building_type->size.y = size_y;
 }
 */
-void Make_Building_Type(Building* building_type, char name[50], char model_file_name[50], char texture_name[50], building_category category, int size_x, int size_y)
+void Make_Building_Type(Building* building_type, char name[50], char model_file_name[50], char texture_name[50], building_category category, int storage_size, int size_x, int size_y)
 {
 	GLuint building_texture = SOIL_load_OGL_texture
 	(
@@ -60,13 +61,14 @@ void Make_Building_Type(Building* building_type, char name[50], char model_file_
 
 	sprintf(building_type->name, name);
 	building_type->category = category;
+	building_type->storage_capacity = storage_size;
 	building_type->size.x = size_x;
 	building_type->size.y = size_y;
 
 	printf("Epulet tipus letrehozva! \n");
 }
 
-void Place_Building_OLD(struct Model building_model, building_category category, char name[50], int x, int y, int size_x, int size_y, direction direction)
+void Place_Building_OLD(struct Model building_model, building_category category, int storage_capacity, char name[50], int x, int y, int size_x, int size_y, direction direction)
 {
 	int i = 0;
 
@@ -93,8 +95,15 @@ void Place_Building_OLD(struct Model building_model, building_category category,
 		buildings[i].size.y = size_y;
 		buildings[i].facing_direction = direction;
 
+		buildings[i].storage_capacity = storage_capacity;
+		buildings[i].storage = malloc(storage_capacity * sizeof(Material*));
+		for (int j = 0; j < storage_capacity; j++)
+		{
+			buildings[i].storage[j] = NULL;
+		}
+
 		// Tárhely lista nullázása
-		for (int j = 0; j < sizeof(buildings[i].storage) / sizeof(Material*); j++)
+		for (int j = 0; j < sizeof(buildings[i].storage); j++)
 		{
 			buildings[i].storage[j] = NULL;
 		}
@@ -152,7 +161,7 @@ void Place_Building_OLD(struct Model building_model, building_category category,
 			if (direction == east)
 			{
 				buildings[i].entry_point.x = x;
-				buildings[i].entry_point.y = roundf(y - size_x / 2) - 1;
+				buildings[i].entry_point.y = (int)roundf(y - size_x / 2) - 1;
 				if (size_x % 2 == 0)
 				{
 					buildings[i].entry_point.y++;
@@ -161,7 +170,7 @@ void Place_Building_OLD(struct Model building_model, building_category category,
 			else if (direction == west)
 			{
 				buildings[i].entry_point.x = x;
-				buildings[i].entry_point.y = roundf(y + size_x / 2) + 1;
+				buildings[i].entry_point.y = (int)roundf(y + size_x / 2) + 1;
 			}
 		}
 
@@ -178,7 +187,7 @@ void Place_Building_By_Name(char building_name[], int x, int y, direction direct
 	{
 		if (strcmp(building_types[i].name, building_name) == 0)
 		{
-			Place_Building_OLD(building_types[i].building_model, building_types[i].category, building_name, x, y, building_types[i].size.x, building_types[i].size.y, direction);
+			Place_Building_OLD(building_types[i].building_model, building_types[i].category, building_types[i].storage_capacity, building_name, x, y, building_types[i].size.x, building_types[i].size.y, direction);
 			printf("\nEpulel elhelyezve!");
 		}
 	}
@@ -243,6 +252,7 @@ void Bulldoze_Building_OLD(struct Virtual_Cursor v_cursor)
 	}
 
 	// Épület lebontása
+	free(bulldozed_building->storage);
 	bulldozed_building->exists = 0;
 	bulldozed_building->category = none;
 }
@@ -282,7 +292,7 @@ void Building_Produce(Building* building)
 	int requirement2_i;
 	bool requirement1_fulfilled = false;
 	bool requirement2_fulfilled = false;
-	for (int i = 0; i < sizeof(building->storage) / sizeof(Material*); i++)
+	for (int i = 0; i < sizeof(building->storage); i++)
 	{
 		if (building->produces->requirement1 != NULL && building->storage[i] == building->produces->requirement1)
 		{
@@ -367,7 +377,7 @@ Material* Get_Storage_Space(Building* building)
 {
 	Material* storage_space = NULL;
 
-	for (int i = 0; i < sizeof(building->storage) / sizeof(Material*); i++)
+	for (int i = 0; i < sizeof(building->storage); i++)
 	{
 		if (building->storage[i] == NULL)
 			storage_space = building->storage[i];
@@ -392,7 +402,7 @@ Building* Get_Building_From_Entry_Point(int x, int y)
 void Print_Building_Storage(Building* building)
 {
 	printf("\nEpulet raktar info: \n");
-	for (int i = 0; i < sizeof(building->storage) / sizeof(Material*); i++)
+	for (int i = 0; i < sizeof(building->storage); i++)
 	{
 		if (building->storage[i] != NULL)
 		{
