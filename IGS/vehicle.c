@@ -62,6 +62,7 @@ int Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int til
         new_vehicle->max_speed = vehicle_type->max_speed;
         new_vehicle->target_speed = new_vehicle->max_speed;
         new_vehicle->acceleration_rate = vehicle_type->acceleration_rate;
+        new_vehicle->capacity = vehicle_type->capacity;
 
         // Jármű elhelyezése
         if (Check_Tile(tile_x, tile_y) == 3)
@@ -182,11 +183,11 @@ void Delete_Vehicle(Vehicle* vehicle)
     vehicle->vehicle_model = NULL;
     vehicle->wheel_model = NULL;
 
-    vehicle->capacity = 0;
     for (int i = 0; i < sizeof(vehicle->cargo) / sizeof(Material*); i++)
     {
         vehicle->cargo[i] = NULL;
     }
+    vehicle->capacity = 0;
 }
 
 void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length])

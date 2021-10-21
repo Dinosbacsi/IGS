@@ -311,37 +311,40 @@ void Render_Panel(Panel* panel)
 		Render_Bitmap_String(panel->position.x + 2, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, strcat(category, Building_Type_String(building->category)), text_color_white[0], text_color_white[1], text_color_white[2]);
 		line_break++;
 
-		if (building->category == factory)
+		if (building->category == factory ||building->category == warehouse)
 		{
-			// Termelés infó
-			Render_Bitmap_String(panel->position.x + 2, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, "Produces:", text_color_white[0], text_color_white[1], text_color_white[2]);
-			line_break++;
-
-			int material_types_listed = 0;
-			Delete_Button_List("building_produces");
-			for (int i = 0; i < sizeof(material_types) / sizeof(Material); i++)
+			if (building->category == factory)
 			{
-				if (material_types[i].category == finished)
+				// Termelés infó
+				Render_Bitmap_String(panel->position.x + 2, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, "Produces:", text_color_white[0], text_color_white[1], text_color_white[2]);
+				line_break++;
+
+				int material_types_listed = 0;
+				Delete_Button_List("building_produces");
+				for (int i = 0; i < sizeof(material_types) / sizeof(Material); i++)
 				{
-					Add_To_Button_List(material_types[i].name, "building_produces", panel->position.x + 95, panel->position.y + (line_break * 20));
-					
-					if (&material_types[i] == building->produces)
+					if (material_types[i].category == finished)
 					{
-						Button* this_button = Get_Button_List_Element_By_Index("building_produces", material_types_listed);
-						if (this_button != NULL)
+						Add_To_Button_List(material_types[i].name, "building_produces", panel->position.x + 95, panel->position.y + (line_break * 20));
+
+						if (&material_types[i] == building->produces)
 						{
-							Change_Button_Text(this_button, text_color_yellow, text_color_yellow);
+							Button* this_button = Get_Button_List_Element_By_Index("building_produces", material_types_listed);
+							if (this_button != NULL)
+							{
+								Change_Button_Text(this_button, text_color_yellow, text_color_yellow);
+							}
 						}
+
+						material_types_listed++;
 					}
-					
-					material_types_listed++;
 				}
+				line_break += material_types_listed;
 			}
-			line_break += material_types_listed;
 
 			// Raktár infó
 			Render_Bitmap_String(panel->position.x + 2, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, "Storage:", text_color_white[0], text_color_white[1], text_color_white[2]);
-			for (int i = 0; i < sizeof(building->storage); i++)
+			for (int i = 0; i < building->storage_capacity; i++)
 			{
 				char material_name_in_storage[50] = "[empty]";
 

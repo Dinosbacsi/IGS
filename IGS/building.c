@@ -96,14 +96,14 @@ void Place_Building_OLD(struct Model building_model, building_category category,
 		buildings[i].facing_direction = direction;
 
 		buildings[i].storage_capacity = storage_capacity;
-		buildings[i].storage = malloc(storage_capacity * sizeof(Material*));
+		//buildings[i].storage = malloc(storage_capacity * sizeof(Material*));
 		for (int j = 0; j < storage_capacity; j++)
 		{
 			buildings[i].storage[j] = NULL;
 		}
 
 		// Tárhely lista nullázása
-		for (int j = 0; j < sizeof(buildings[i].storage); j++)
+		for (int j = 0; j < storage_capacity; j++)
 		{
 			buildings[i].storage[j] = NULL;
 		}
@@ -295,7 +295,7 @@ void Building_Produce(Building* building)
 	int requirement2_i;
 	bool requirement1_fulfilled = false;
 	bool requirement2_fulfilled = false;
-	for (int i = 0; i < sizeof(building->storage); i++)
+	for (int i = 0; i < building->storage_capacity; i++)
 	{
 		if (building->produces->requirement1 != NULL && building->storage[i] == building->produces->requirement1)
 		{
@@ -388,7 +388,7 @@ Material* Get_Storage_Space(Building* building)
 {
 	Material* storage_space = NULL;
 
-	for (int i = 0; i < sizeof(building->storage); i++)
+	for (int i = 0; i < building->storage_capacity; i++)
 	{
 		if (building->storage[i] == NULL)
 			storage_space = building->storage[i];
@@ -413,7 +413,7 @@ Building* Get_Building_From_Entry_Point(int x, int y)
 void Print_Building_Storage(Building* building)
 {
 	printf("\nEpulet raktar info: \n");
-	for (int i = 0; i < sizeof(building->storage); i++)
+	for (int i = 0; i < building->storage_capacity; i++)
 	{
 		if (building->storage[i] != NULL)
 		{

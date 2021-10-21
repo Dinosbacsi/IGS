@@ -523,6 +523,7 @@ void Initialize_Map()
 	test_vehicle.rotate.z = -10.0f;
 	test_vehicle.max_speed = 0.02f;
 	test_vehicle.acceleration_rate = 0.0001f;
+	test_vehicle.capacity = 2;
 
 	test_vehicle.wheel[0].x = 0.32f;
 	test_vehicle.wheel[1].x = 0.32f;
