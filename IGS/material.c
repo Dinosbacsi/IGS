@@ -18,7 +18,7 @@ void Make_Material_Type(Material* material_type, char name[50], material_state s
 
 Material* Transfer_Material(Material* material)
 {
-	printf("\n%s. alapanyag athelyezve!", material->name);
+	//printf("\n%s. alapanyag athelyezve!", material->name);
 	return material;
 }
 

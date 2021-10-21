@@ -1286,16 +1286,17 @@ void Simulation()
 			{
 				if (vehicles[i].status == at_destination)
 				{
+					// Ha jármű megérkezett, akkor kipakolás
 					Building* destination_building = Get_Building_From_Entry_Point(vehicles[i].current_tile->pos.x, vehicles[i].current_tile->pos.y);
 					if (destination_building != NULL)
 					{
-						//Print_Vehicle_Cargo(&vehicles[i]);
 						Unload_Vehicle_Into_Building(&vehicles[i], destination_building);
 					}
 
-					// IDEIGLENES : útvonal keresése vissza ki
+					// Felrakodás és pálya elhagyása
 					if (Vehicle_Is_Empty(&vehicles[i]))
 					{
+						Load_Building_Into_Vehicle(destination_building, &vehicles[i]);
 						Vehicle_Leave_World(&vehicles[i]);
 					}
 				}
