@@ -253,8 +253,12 @@ void Bulldoze_Building_OLD(struct Virtual_Cursor v_cursor)
 			}
 		}
 
+		// Épület változók nullázása
+		bulldozed_building->source_from = NULL;
+		bulldozed_building->deliver_to = NULL;
+
 		// Épület lebontása
-		free(bulldozed_building->storage);
+		//free(bulldozed_building->storage);
 		bulldozed_building->exists = 0;
 		bulldozed_building->category = none;
 	}
@@ -316,7 +320,7 @@ void Building_Produce(Building* building)
 	}
 
 	// Ha nincs készlet, rendelés
-	if (!requirement1_fulfilled)
+	if (!requirement1_fulfilled && building->produces->requirement1 != NULL)
 	{
 		for (int i = 0; i < sizeof(building->order_list) / sizeof(Material*); i++)
 		{

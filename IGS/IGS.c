@@ -61,7 +61,7 @@ bool running = 1;
 //Egérgomb lenyomás változó
 bool mouse_left_clicked = false;
 //Játékmód változók
-enum mode { normal, build, road, bulldoze };
+enum mode { normal, build, road, bulldoze, select_source_from, select_deliver_to };
 enum mode game_mode;
 //Debug mód változó
 bool debug = false;
@@ -197,7 +197,7 @@ int main(int argc, char* args[])
 	// UI inicializálása
 	Initialize_Interface();
 
-	srand(time(0));
+	srand((unsigned int)time(0));
 
 	camera.pos.x = player_zone_start_x + player_zone_width / 2;
 	camera.pos.y = player_zone_start_y + player_zone_length / 2;
@@ -809,33 +809,103 @@ void Event_Handler()
 							}
 						}
 					}
+					else if (!strcmp(clicked_button->group, "building_source_from"))
+					{
+						if (game_mode != select_source_from)
+						{
+							game_mode = select_source_from;
+						}
+						else
+						{
+							Panel* building_info_panel = Get_Panel_By_Name("building_info_panel");
+							if (building_info_panel != NULL)
+							{
+								if (building_info_panel->building != NULL)
+								{
+									building_info_panel->building->source_from->deliver_to = NULL;
+									building_info_panel->building->source_from = NULL;
+								}
+							}
+							game_mode = normal;
+						}
+						
+					}
+					else if (!strcmp(clicked_button->group, "building_source_to"))
+					{
+						if (game_mode != select_deliver_to)
+						{
+							game_mode = select_deliver_to;
+						}
+						else
+						{
+							Panel* building_info_panel = Get_Panel_By_Name("building_info_panel");
+							if (building_info_panel != NULL)
+							{
+								if (building_info_panel->building != NULL)
+								{
+									building_info_panel->building->deliver_to->source_from = NULL;
+									building_info_panel->building->deliver_to = NULL;
+								}
+							}
+							game_mode = normal;
+						}
+					}
 				}
 				else
 				{
-					mouse_left_clicked = true;
-
-					Panel* clicked_panel = Clicked_Panel(cursor.pos.x, cursor.pos.y);
-					if (clicked_panel == NULL || strcmp(clicked_panel->name, "building_info_panel"))
-					{
-						Delete_Panel_By_Name("building_info_panel");
-						Delete_Button_List("building_produces");
-					}
-
-					// Ha épületre kattintva, akkor épület info panel felhozatala
 					int click_pos_x = (int)roundf(v_cursor.pos.x);
 					int click_pos_y = (int)roundf(v_cursor.pos.y);
-					if (Check_Tile(click_pos_x, click_pos_y) == 1)
+
+					if(game_mode != select_source_from && game_mode != select_deliver_to)
+					{
+						mouse_left_clicked = true;
+
+						Panel* clicked_panel = Clicked_Panel(cursor.pos.x, cursor.pos.y);
+						if (clicked_panel == NULL || strcmp(clicked_panel->name, "building_info_panel"))
+						{
+							Delete_Panel_By_Name("building_info_panel");
+							Delete_Button_List("building_produces");
+							Delete_Button_List("building_source_from");
+							Delete_Button_List("building_source_to");
+						}
+
+						// Ha épületre kattintva, akkor épület info panel felhozatala
+						if (Check_Tile(click_pos_x, click_pos_y) == 1 && game_mode != bulldoze)
+						{
+							Building* clicked_building = tiles[click_pos_x][click_pos_y].occupied_by_building;
+
+							Delete_Panel_By_Name("building_info_panel");
+
+							char panel_name[150] = "building_info_panel";
+							char panel_title[150] = "";
+							sprintf(panel_title, clicked_building->name);
+							strcat(panel_title, " building info");
+							Create_Panel(panel_name, panel_title, 200, 200, 300, 300);
+							Set_Building_For_Panel(Get_Panel_By_Name(panel_name), clicked_building);
+						}
+					}
+					else if((game_mode == select_source_from || game_mode == select_deliver_to) && Check_Tile(click_pos_x, click_pos_y) == 1)
 					{
 						Building* clicked_building = tiles[click_pos_x][click_pos_y].occupied_by_building;
-
-						Delete_Panel_By_Name("building_info_panel");
-
-						char panel_name[150] = "building_info_panel";
-						char panel_title[150] = "";
-						sprintf(panel_title, clicked_building->name);
-						strcat(panel_title, " building info");
-						Create_Panel(panel_name, panel_title, 200, 200, 300, 300);
-						Set_Building_For_Panel(Get_Panel_By_Name(panel_name), clicked_building);
+						Panel* building_info_panel = Get_Panel_By_Name("building_info_panel");
+						
+						if (clicked_building != NULL && building_info_panel != NULL)
+						{
+							switch (game_mode)
+							{
+							case select_source_from:
+								building_info_panel->building->source_from = clicked_building;
+								clicked_building->deliver_to = building_info_panel->building;
+								game_mode = normal;
+								break;
+							case select_deliver_to:
+								building_info_panel->building->deliver_to = clicked_building;
+								clicked_building->source_from = building_info_panel->building;
+								game_mode = normal;
+								break;
+							}
+							
+						}
 					}
 				}
 			}

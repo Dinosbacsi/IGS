@@ -16,6 +16,7 @@ static const char* const building_category_table[50] = { "NOTHING", "WAREHOUSE",
 static char* building_category_names_UPPER_CASE[] = { "NOTHING", "WAREHOUSE", "PROCESSING_PLANT", "FACTORY", "OFFICE" };
 static building_category building_category_list[] = { nothing, warehouse, processing_plant, factory, office };
 
+typedef struct Building Building;
 typedef struct Building
 {
     // Épület pozíciója, mérete, iránya
@@ -39,6 +40,9 @@ typedef struct Building
     Material* produces;
     Material* order_list[10];
     long order_cooldown;
+
+    Building* source_from;
+    Building* deliver_to;
 }Building;
 
 Building building_types[50];

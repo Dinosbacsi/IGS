@@ -124,6 +124,21 @@ Button* Clicked_Button(int cursor_x, int cursor_y)
 	return NULL;
 }
 
+Button* Get_Button_By_Name(char name[50])
+{
+	Button* button = NULL;
+
+	for (int i = 0; i < sizeof(buttons) / sizeof(Button); i++)
+	{
+		if (!strcmp(buttons[i].name, name))
+		{
+			button = &buttons[i];
+		}
+	}
+
+	return button;
+}
+
 void Create_Button_List(char** list, int list_size, char* group_name, int pos_x, int pos_y)
 {
 	Delete_Button_List(group_name);
@@ -313,33 +328,70 @@ void Render_Panel(Panel* panel)
 
 		if (building->category == factory ||building->category == warehouse)
 		{
-			if (building->category == factory)
+			if (building->category == factory || building->category == warehouse)
 			{
 				// Termelés infó
-				Render_Bitmap_String(panel->position.x + 2, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, "Produces:", text_color_white[0], text_color_white[1], text_color_white[2]);
+				if (building->category == factory)
+				{
+					Render_Bitmap_String(panel->position.x + 2, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, "Produces:", text_color_white[0], text_color_white[1], text_color_white[2]);
+					line_break++;
+
+					int material_types_listed = 0;
+					Delete_Button_List("building_produces");
+					for (int i = 0; i < sizeof(material_types) / sizeof(Material); i++)
+					{
+						if (material_types[i].category == finished)
+						{
+							Add_To_Button_List(material_types[i].name, "building_produces", panel->position.x + 95, panel->position.y + (line_break * 20));
+
+							if (&material_types[i] == building->produces)
+							{
+								Button* this_button = Get_Button_List_Element_By_Index("building_produces", material_types_listed);
+								if (this_button != NULL)
+								{
+									Change_Button_Text(this_button, text_color_yellow, text_color_yellow);
+								}
+							}
+
+							material_types_listed++;
+						}
+					}
+					line_break += material_types_listed;
+				}
+
+				// Beszállító/vevõ épületek választó
+				Render_Bitmap_String(panel->position.x + 2, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, "Src. from:", text_color_white[0], text_color_white[1], text_color_white[2]);
+				Button* source_from_button = Get_Button_List_Element_By_Index("building_source_from", 0);
+				if (source_from_button == NULL)
+				{
+					Create_Button("Not selected", "building_source_from", panel->position.x + 95, panel->position.y + 42 + (line_break * 20), 205, 50, text_color_white, bg_color, text_color_white, bg_color_hover);
+				}
+
+				if (source_from_button != NULL)
+				{
+					if(building->source_from != NULL)
+						sprintf(source_from_button->name, building->source_from->name);
+					else
+						sprintf(source_from_button->name, "Not selected");
+				}
 				line_break++;
 
-				int material_types_listed = 0;
-				Delete_Button_List("building_produces");
-				for (int i = 0; i < sizeof(material_types) / sizeof(Material); i++)
+				Render_Bitmap_String(panel->position.x + 2, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, "Src. to:", text_color_white[0], text_color_white[1], text_color_white[2]);
+				Button* source_to_button = Get_Button_List_Element_By_Index("building_source_to", 0);
+				if (source_to_button == NULL)
 				{
-					if (material_types[i].category == finished)
-					{
-						Add_To_Button_List(material_types[i].name, "building_produces", panel->position.x + 95, panel->position.y + (line_break * 20));
-
-						if (&material_types[i] == building->produces)
-						{
-							Button* this_button = Get_Button_List_Element_By_Index("building_produces", material_types_listed);
-							if (this_button != NULL)
-							{
-								Change_Button_Text(this_button, text_color_yellow, text_color_yellow);
-							}
-						}
-
-						material_types_listed++;
-					}
+					Create_Button("Not selected", "building_source_to", panel->position.x + 95, panel->position.y + 42 + (line_break * 20), 205, 50, text_color_white, bg_color, text_color_white, bg_color_hover);
 				}
-				line_break += material_types_listed;
+
+				if (source_to_button != NULL)
+				{
+					if (building->deliver_to != NULL)
+						sprintf(source_to_button->name, building->deliver_to->name);
+					else
+						sprintf(source_to_button->name, "Not selected");
+				}
+				line_break++;
+
 			}
 
 			// Raktár infó

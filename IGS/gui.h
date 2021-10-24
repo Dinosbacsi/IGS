@@ -47,6 +47,7 @@ void Delete_Button(Button* button);
 void Change_Button_Text(Button* button, float* text_color, float* text_color_hover);
 void Render_Button(Button* button, bool highlight);
 Button* Clicked_Button(int cursor_x, int cursor_y);
+Button* Get_Button_By_Name(char name[50]);
 
 void Create_Button_List(char** list, int list_size, char* group_name, int pos_x, int pos_y);
 void Add_To_Button_List(char* button_name, char* group_name, int pos_x, int pos_y);
