@@ -5,6 +5,7 @@
 #include "vehicle.h"
 
 long ftime, timebase;
+int delivery_cooldown;
 
 long Get_Elapsed_Time();
 

@@ -38,7 +38,7 @@ typedef struct Building
     Material* storage[100];
     //Material** storage;
     Material* produces;
-    Material* order_list[10];
+    Material* order_list[100];
     long order_cooldown;
 
     Building* source_from;
@@ -75,6 +75,7 @@ char* Building_Type_String(building_category category);
     Épület szimuláció függvények
 */
 void Building_Produce(Building* building);
+bool Building_Has_Orders(Building* building);
 Material* Get_Order(Building* building);
 void Clear_Order_List(Building* building);
 Material* Get_Storage_Space(Building* building);

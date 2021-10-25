@@ -52,7 +52,8 @@ typedef struct Vehicle
 }Vehicle;
 
 //Járművek
-Vehicle test_vehicle;
+//Vehicle test_vehicle;
+Vehicle vehicle_types[20];
 Vehicle vehicles[vehicle_limit];
 
 /*

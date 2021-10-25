@@ -344,6 +344,22 @@ void Building_Produce(Building* building)
 			}
 		}
 	}
+	// Ha van beállított raktára az épületnek, akkor áthelyezés annak a rendelési listájába
+	if (building->source_from != NULL)
+	{
+		for (int i = 0; i < sizeof(building->order_list) / sizeof(Material*); i++)
+		{
+			for (int j = 0; j < sizeof(building->source_from->order_list) / sizeof(Material*); j++)
+			{
+				if (building->order_list[i] != NULL && building->source_from->order_list[j] == NULL)
+				{
+					building->source_from->order_list[j] = building->order_list[i];
+					building->order_list[i] = NULL;
+					printf("\nEpulet rendeles csere.");
+				}
+			}
+		}
+	}
 
 	// Ha van készlet, termelés
 	if (requirement1_fulfilled && requirement2_fulfilled)
@@ -362,6 +378,22 @@ void Building_Produce(Building* building)
 
 		printf("\n%s. epulet eloallitott %s termeket!", building->name, building->produces->name);
 	}
+}
+
+bool Building_Has_Orders(Building* building)
+{
+	bool has_orders = false;
+
+	for (int i = 0; i < sizeof(building->order_list) / sizeof(Material*); i++)
+	{
+		if (building->order_list[i] != NULL)
+		{
+			has_orders = true;
+			return has_orders;
+		}
+	}
+
+	return has_orders;
 }
 
 Material* Get_Order(Building* building)

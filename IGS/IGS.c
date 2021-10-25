@@ -94,6 +94,7 @@ GLuint tex_igs_warehouse_2;
 GLuint tex_igs_factory_1;
 GLuint tex_igs_tank_1;
 GLuint tex_igs_truck_small_box;
+GLuint tex_igs_forklift;
 GLuint tex_igs_road_new;
 GLuint tex_igs_road_new2;
 GLuint tex_igs_road_main;
@@ -106,8 +107,10 @@ struct Model igs_warehouse_1;
 struct Model igs_warehouse_2;
 struct Model igs_factory_1;
 struct Model igs_tank_1;
-struct Model test_truck;
-struct Model test_wheel;
+struct Model vehicle_box_truck_1;
+struct Model wheel_truck_1;
+struct Model vehicle_forklift;
+struct Model wheel_forklift;
 struct Model igs_road_straight;
 struct Model igs_road_curve;
 struct Model igs_road_3_way;
@@ -208,6 +211,8 @@ int main(int argc, char* args[])
 	camera.speed = 0.01f;
 	camera.sensitivity = 0.005f;
 	camera.field_of_view = 30;
+
+	delivery_cooldown = 30000;
 
 	// Program futása
 	while (running)
@@ -405,6 +410,13 @@ void Initialize_Textures()
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB
 	);
+	tex_igs_forklift = SOIL_load_OGL_texture
+	(
+		"textures/igs_forklift.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB
+	);
 	tex_igs_road_new = SOIL_load_OGL_texture
 	(
 		"textures/igs_road_new.png",
@@ -456,8 +468,11 @@ void Initialize_Models()
 	Load_Model("models/igs_warehouse_2.obj", &igs_warehouse_2, tex_igs_warehouse_2);
 	Load_Model("models/igs_factory_1.obj", &igs_factory_1, tex_igs_factory_1);
 	Load_Model("models/igs_tank_1.obj", &igs_tank_1, tex_igs_tank_1);
-	Load_Model("models/igs_truck_small_box.obj", &test_truck, tex_igs_truck_small_box);
-	Load_Model("models/igs_truck_small_wheel.obj", &test_wheel, tex_igs_truck_small_box);
+	Load_Model("models/igs_truck_small_box.obj", &vehicle_box_truck_1, tex_igs_truck_small_box);
+	Load_Model("models/igs_truck_small_wheel.obj", &wheel_truck_1, tex_igs_truck_small_box);
+
+	Load_Model("models/igs_forklift.obj", &vehicle_forklift, tex_igs_forklift);
+	Load_Model("models/igs_forklift_wheel.obj", &wheel_forklift, tex_igs_forklift);
 
 	Load_Model("models/igs_road_straight.obj", &igs_road_straight, tex_igs_road_new);
 	Load_Model("models/igs_road_curve.obj", &igs_road_curve, tex_igs_road_new);
@@ -515,30 +530,57 @@ void Initialize_Map()
 	Place_Building_By_Name(kis_porta, 99, 149, north, building_types);
 
 	// JÁRMŰ STRUKTÚRA TESZT
-	test_vehicle.vehicle_model = &test_truck;
-	test_vehicle.wheel_model = &test_wheel;
-	test_vehicle.pos.x = 25.0f;
-	test_vehicle.pos.y = 50.8f;
-	test_vehicle.pos.z = 0.0f;
-	test_vehicle.rotate.z = -10.0f;
-	test_vehicle.max_speed = 0.02f;
-	test_vehicle.acceleration_rate = 0.0001f;
-	test_vehicle.capacity = 2;
+	// Targonca
+	vehicle_types[0].vehicle_model = &vehicle_forklift;
+	vehicle_types[0].wheel_model = &wheel_forklift;
+	vehicle_types[0].pos.x = 25.0f;
+	vehicle_types[0].pos.y = 50.8f;
+	vehicle_types[0].pos.z = 0.0f;
+	vehicle_types[0].rotate.z = -10.0f;
+	vehicle_types[0].max_speed = 0.006f;
+	vehicle_types[0].acceleration_rate = 0.0001f;
+	vehicle_types[0].capacity = 1;
 
-	test_vehicle.wheel[0].x = 0.32f;
-	test_vehicle.wheel[1].x = 0.32f;
-	test_vehicle.wheel[2].x = 0.0f;
-	test_vehicle.wheel[3].x = 0.0f;
+	vehicle_types[0].wheel[0].x = -0.08f;
+	vehicle_types[0].wheel[1].x = -0.08f;
+	vehicle_types[0].wheel[2].x = 0.0f;
+	vehicle_types[0].wheel[3].x = 0.0f;
 
-	test_vehicle.wheel[0].y = 0.065f;
-	test_vehicle.wheel[1].y = -0.065f;
-	test_vehicle.wheel[2].y = 0.065f;
-	test_vehicle.wheel[3].y = -0.065f;
+	vehicle_types[0].wheel[0].y = 0.0f;
+	vehicle_types[0].wheel[1].y = 0.0f;
+	vehicle_types[0].wheel[2].y = 0.04f;
+	vehicle_types[0].wheel[3].y = -0.04f;
 
-	test_vehicle.wheel[0].z = 0.03f;
-	test_vehicle.wheel[1].z = 0.03f;
-	test_vehicle.wheel[2].z = 0.03f;
-	test_vehicle.wheel[3].z = 0.03f;
+	vehicle_types[0].wheel[0].z = 0.012f;
+	vehicle_types[0].wheel[1].z = 0.012f;
+	vehicle_types[0].wheel[2].z = 0.012f;
+	vehicle_types[0].wheel[3].z = 0.012f;
+
+	// Teherautü
+	vehicle_types[1].vehicle_model = &vehicle_box_truck_1;
+	vehicle_types[1].wheel_model = &wheel_truck_1;
+	vehicle_types[1].pos.x = 25.0f;
+	vehicle_types[1].pos.y = 50.8f;
+	vehicle_types[1].pos.z = 0.0f;
+	vehicle_types[1].rotate.z = -10.0f;
+	vehicle_types[1].max_speed = 0.02f;
+	vehicle_types[1].acceleration_rate = 0.0001f;
+	vehicle_types[1].capacity = 2;
+
+	vehicle_types[1].wheel[0].x = 0.32f;
+	vehicle_types[1].wheel[1].x = 0.32f;
+	vehicle_types[1].wheel[2].x = 0.0f;
+	vehicle_types[1].wheel[3].x = 0.0f;
+
+	vehicle_types[1].wheel[0].y = 0.065f;
+	vehicle_types[1].wheel[1].y = -0.065f;
+	vehicle_types[1].wheel[2].y = 0.065f;
+	vehicle_types[1].wheel[3].y = -0.065f;
+
+	vehicle_types[1].wheel[0].z = 0.03f;
+	vehicle_types[1].wheel[1].z = 0.03f;
+	vehicle_types[1].wheel[2].z = 0.03f;
+	vehicle_types[1].wheel[3].z = 0.03f;
 
 	for (int i = 0; i < sizeof(vehicles) / sizeof(Vehicle); i++)
 	{
@@ -828,7 +870,7 @@ void Event_Handler()
 							}
 							game_mode = normal;
 						}
-						
+
 					}
 					else if (!strcmp(clicked_button->group, "building_source_to"))
 					{
@@ -856,7 +898,7 @@ void Event_Handler()
 					int click_pos_x = (int)roundf(v_cursor.pos.x);
 					int click_pos_y = (int)roundf(v_cursor.pos.y);
 
-					if(game_mode != select_source_from && game_mode != select_deliver_to)
+					if (game_mode != select_source_from && game_mode != select_deliver_to)
 					{
 						mouse_left_clicked = true;
 
@@ -884,11 +926,11 @@ void Event_Handler()
 							Set_Building_For_Panel(Get_Panel_By_Name(panel_name), clicked_building);
 						}
 					}
-					else if((game_mode == select_source_from || game_mode == select_deliver_to) && Check_Tile(click_pos_x, click_pos_y) == 1)
+					else if ((game_mode == select_source_from || game_mode == select_deliver_to) && Check_Tile(click_pos_x, click_pos_y) == 1)
 					{
 						Building* clicked_building = tiles[click_pos_x][click_pos_y].occupied_by_building;
 						Panel* building_info_panel = Get_Panel_By_Name("building_info_panel");
-						
+
 						if (clicked_building != NULL && building_info_panel != NULL)
 						{
 							switch (game_mode)
@@ -904,7 +946,7 @@ void Event_Handler()
 								game_mode = normal;
 								break;
 							}
-							
+
 						}
 					}
 				}
@@ -977,7 +1019,7 @@ void Event_Handler()
 			case SDLK_2:
 				if (debug == 1)
 				{
-					Place_Vehicle(vehicles, &test_vehicle, (int)roundf(v_cursor.pos.x), (int)roundf(v_cursor.pos.y), road_segments, road_nodes);
+					Place_Vehicle(vehicles, &vehicle_types[1], (int)roundf(v_cursor.pos.x), (int)roundf(v_cursor.pos.y), road_segments, road_nodes);
 				}
 				break;
 
@@ -1399,41 +1441,86 @@ void Simulation()
 	}
 
 	// Majd mehetne simulation-be saját függvényként
-	bool vehicle_spawned_this_loop = false;;
-	for (int i = 0; i < building_limit; i++)
+	if (delivery_cooldown < 0)
 	{
-		if (buildings[i].exists == true && buildings[i].category == factory)
+		bool vehicle_spawned_this_loop = false;
+		for (int i = 0; i < sizeof(buildings) / sizeof(Building); i++)
 		{
-			Material* order = Get_Order(&buildings[i]);
-
-			if (order != NULL && !vehicle_spawned_this_loop)
+			if (buildings[i].exists == true && (buildings[i].category == factory || buildings[i].category == warehouse))
 			{
-				int spawn_pos_x = 110;
-				int spawn_pos_y = 1;
-
-				if (randInRange(0, 1) == 0)
+				if (Building_Has_Orders(&buildings[i]) && !vehicle_spawned_this_loop)
 				{
-					spawn_pos_x = 104;
-					spawn_pos_y = 299;
-				}
+					int spawn_pos_x = 110;
+					int spawn_pos_y = 1;
 
+					if (randInRange(0, 1) == 0)
+					{
+						spawn_pos_x = 104;
+						spawn_pos_y = 299;
+					}
 
-				int new_vehicle_index = Place_Vehicle(vehicles, &test_vehicle, spawn_pos_x, spawn_pos_y, road_segments, road_nodes);
-				vehicle_spawned_this_loop = true;
+					int new_vehicle_index = Place_Vehicle(vehicles, &vehicle_types[1], spawn_pos_x, spawn_pos_y, road_segments, road_nodes);
+					vehicle_spawned_this_loop = true;
+					delivery_cooldown = 30000;
 
-				if (new_vehicle_index != -1)
-				{
-					vehicles[new_vehicle_index].destination_node = &road_nodes[buildings[i].entry_point.x][buildings[i].entry_point.y];
+					int destination_x = buildings[i].entry_point.x;
+					int destination_y = buildings[i].entry_point.y;
+
+					vehicles[new_vehicle_index].destination_node = &road_nodes[destination_x][destination_y];
 					Find_Path(&vehicles[new_vehicle_index], road_nodes);
 					vehicles[new_vehicle_index].status = going_to_destination;
 
-					//Transfer_Material(order, vehicles[new_vehicle_index].cargo[1]);
-					vehicles[new_vehicle_index].cargo[0] = Transfer_Material(order);
-					//Print_Vehicle_Cargo(&vehicles[new_vehicle_index]);
+					while (Building_Has_Orders(&buildings[i]) && new_vehicle_index != -1)
+					{
+						for (int j = 0; j < vehicles[new_vehicle_index].capacity; j++)
+						{
+							vehicles[new_vehicle_index].cargo[j] = Get_Order(&buildings[i]);
+						}
+					}
 				}
 			}
 		}
 	}
+	else
+	{
+		delivery_cooldown -= elapsed_time;
+	}
+
+	//bool vehicle_spawned_this_loop = false;
+	//for (int i = 0; i < building_limit; i++)
+	//{
+	//	if (buildings[i].exists == true && buildings[i].category == factory)
+	//	{
+	//		Material* order = Get_Order(&buildings[i]);
+
+	//		if (order != NULL && !vehicle_spawned_this_loop)
+	//		{
+	//			int spawn_pos_x = 110;
+	//			int spawn_pos_y = 1;
+
+	//			if (randInRange(0, 1) == 0)
+	//			{
+	//				spawn_pos_x = 104;
+	//				spawn_pos_y = 299;
+	//			}
+
+
+	//			int new_vehicle_index = Place_Vehicle(vehicles, &test_vehicle, spawn_pos_x, spawn_pos_y, road_segments, road_nodes);
+	//			vehicle_spawned_this_loop = true;
+
+	//			if (new_vehicle_index != -1)
+	//			{
+	//				vehicles[new_vehicle_index].destination_node = &road_nodes[buildings[i].entry_point.x][buildings[i].entry_point.y];
+	//				Find_Path(&vehicles[new_vehicle_index], road_nodes);
+	//				vehicles[new_vehicle_index].status = going_to_destination;
+
+	//				//Transfer_Material(order, vehicles[new_vehicle_index].cargo[1]);
+	//				vehicles[new_vehicle_index].cargo[0] = Transfer_Material(order);
+	//				//Print_Vehicle_Cargo(&vehicles[new_vehicle_index]);
+	//			}
+	//		}
+	//	}
+	//}
 }
 
 void Render_Scene()
@@ -1476,7 +1563,7 @@ void Render_Scene()
 
 	// Objektum Kirajzolása
 	Draw_Building(test_building);
-	Draw_Vehicle(&test_vehicle);
+	//Draw_Vehicle(&vehicles[1]);
 	for (int i = 0; i < building_limit; i++)
 	{
 		if (buildings[i].exists != 0)
