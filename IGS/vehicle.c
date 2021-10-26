@@ -188,6 +188,8 @@ void Delete_Vehicle(Vehicle* vehicle)
         vehicle->cargo[i] = NULL;
     }
     vehicle->capacity = 0;
+
+    vehicle->home = NULL;
 }
 
 void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length])

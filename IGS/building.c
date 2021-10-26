@@ -461,3 +461,19 @@ void Print_Building_Storage(Building* building)
 		}
 	}
 }
+
+bool Building_Spawned_Forklift(Building* building)
+{
+	bool has_forklift = false;
+
+	for (int i = 0; i < sizeof(vehicles) / sizeof(Vehicle); i++)
+	{
+		if (vehicles[i].home == building)
+		{
+			has_forklift = true;
+			return has_forklift;
+		}
+	}
+
+	return has_forklift;
+}

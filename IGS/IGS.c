@@ -1409,8 +1409,17 @@ void Simulation()
 					// Felrakodás és pálya elhagyása
 					if (Vehicle_Is_Empty(&vehicles[i]))
 					{
-						Load_Building_Into_Vehicle(destination_building, &vehicles[i]);
-						Vehicle_Leave_World(&vehicles[i]);
+						if (vehicles[i].home != NULL)
+						{
+							vehicles[i].destination_node = &road_nodes[vehicles[i].home->entry_point.x][vehicles[i].home->entry_point.y];
+							vehicles[i].status = leaving_world;
+							Find_Path(&vehicles[i], road_nodes);
+						}
+						else
+						{
+							Load_Building_Into_Vehicle(destination_building, &vehicles[i]);
+							Vehicle_Leave_World(&vehicles[i]);
+						}
 					}
 				}
 			}
@@ -1448,6 +1457,7 @@ void Simulation()
 		{
 			if (buildings[i].exists == true && (buildings[i].category == factory || buildings[i].category == warehouse))
 			{
+				// Rendelések behozatala
 				if (Building_Has_Orders(&buildings[i]) && !vehicle_spawned_this_loop)
 				{
 					int spawn_pos_x = 110;
@@ -1475,6 +1485,26 @@ void Simulation()
 						for (int j = 0; j < vehicles[new_vehicle_index].capacity; j++)
 						{
 							vehicles[new_vehicle_index].cargo[j] = Get_Order(&buildings[i]);
+						}
+					}
+				}
+
+				if (buildings[i].deliver_to != NULL && !Building_Spawned_Forklift(&buildings[i]))
+				{
+					for (int j = 0; j < buildings[i].storage_capacity; j++)
+					{
+						if (buildings[i].storage[j] != NULL)
+						{
+							int forklift_index = Place_Vehicle(vehicles, &vehicle_types[0], buildings[i].entry_point.x, buildings[i].entry_point.y, road_segments, road_nodes);
+							vehicles[forklift_index].home = &buildings[i];
+							vehicles[forklift_index].destination_node = &road_nodes[buildings[i].deliver_to->entry_point.x][buildings[i].deliver_to->entry_point.y];
+							Find_Path(&vehicles[forklift_index], road_nodes);
+							vehicles[forklift_index].status = going_to_destination;
+
+							vehicles[forklift_index].cargo[0] = buildings[i].storage[j];
+							buildings[i].storage[j] = NULL;
+
+							break;
 						}
 					}
 				}
