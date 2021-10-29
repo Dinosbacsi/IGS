@@ -1318,7 +1318,8 @@ void Road_Mode_Handler()
 
 				for (mid_y = start_y; mid_y < end_y; mid_y++)
 				{
-					if (Check_Tile(new_segment.A->pos.x, mid_y) == 2 || Check_Tile(new_segment.A->pos.x, mid_y) == 3)
+					int tile_is_occupied = Check_Tile(new_segment.A->pos.x, mid_y);
+					if (tile_is_occupied == 2 || tile_is_occupied == 3 || Get_Building_From_Entry_Point(new_segment.A->pos.x, mid_y) != NULL)
 					{
 						Place_Road_Segment(road_segments, road_nodes, &road_normal, new_segment.A->pos.x, start_y, new_segment.A->pos.x, mid_y);
 						start_y = mid_y;
@@ -1334,7 +1335,8 @@ void Road_Mode_Handler()
 
 				for (mid_x = start_x; mid_x < end_x; mid_x++)
 				{
-					if (Check_Tile(mid_x, new_segment.A->pos.y) == 2 || Check_Tile(mid_x, new_segment.A->pos.y) == 3)
+					int tile_is_occupied = Check_Tile(mid_x, new_segment.A->pos.y);
+					if (tile_is_occupied == 2 || tile_is_occupied == 3 || Get_Building_From_Entry_Point(mid_x, new_segment.A->pos.y) != NULL)
 					{
 						Place_Road_Segment(road_segments, road_nodes, &road_normal, start_x, new_segment.A->pos.y, mid_x, new_segment.A->pos.y);
 						start_x = mid_x;
@@ -1484,7 +1486,10 @@ void Simulation()
 					{
 						for (int j = 0; j < vehicles[new_vehicle_index].capacity; j++)
 						{
-							vehicles[new_vehicle_index].cargo[j] = Get_Order(&buildings[i]);
+							if (vehicles[new_vehicle_index].cargo[j] == NULL)
+							{
+								vehicles[new_vehicle_index].cargo[j] = Get_Order(&buildings[i]);
+							}
 						}
 					}
 				}

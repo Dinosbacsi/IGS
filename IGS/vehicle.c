@@ -384,12 +384,15 @@ void Vehicle_Follow_Path(Vehicle* vehicle)
     if (vehicle->path_nodes[vehicle->current_node_in_path + 1] == NULL)
     {
         vehicle->speed = 0;
-
         if (vehicle->status == going_to_destination && vehicle->current_tile->pos.x == vehicle->destination_node->pos.x && vehicle->current_tile->pos.y == vehicle->destination_node->pos.y)
         {
             vehicle->status = at_destination;
         }
-        else if (vehicle->status == leaving_world)
+        if (vehicle->status == going_to_destination && (vehicle->current_tile->pos.x != vehicle->destination_node->pos.x || vehicle->current_tile->pos.y != vehicle->destination_node->pos.y))
+        {
+            Find_Path(vehicle, road_nodes);
+        }
+        if (vehicle->status == leaving_world)
         {
             Delete_Vehicle(vehicle);
         }

@@ -63,8 +63,8 @@ void Rotate_Camera(struct Camera* cam, struct Cursor* cursor, SDL_Window* gWindo
     cam->angle_v -= cursor->dif.y * cam->sensitivity;
 
     // Kamera vertikális szögének szabályozása
-    if (cam->angle_v > (M_PI / 2) - 0.001)
-        cam->angle_v = (M_PI / 2) - 0.001;
+    if (cam->angle_v > (M_PI / 2) - 0.001f)
+        cam->angle_v = (M_PI / 2) - 0.001f;
     else if (cam->angle_v < 0)
         cam->angle_v = 0;
     // Kamera horizontális szögének szabályozása

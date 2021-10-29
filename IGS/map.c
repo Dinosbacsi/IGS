@@ -115,10 +115,8 @@ int Check_Tile(int x, int y)
         tiles[x][y].highlighted = true;
         return 3;
     }
-    else
-    {
-        return 0;
-    }
+
+    return 0;
 }
 
 void Draw_Tile(struct Tile tile, GLuint tile_texture)
