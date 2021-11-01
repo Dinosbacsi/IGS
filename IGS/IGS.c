@@ -94,6 +94,7 @@ GLuint tex_igs_warehouse_2;
 GLuint tex_igs_factory_1;
 GLuint tex_igs_tank_1;
 GLuint tex_igs_truck_small_box;
+GLuint tex_igs_truck_small_tanker;
 GLuint tex_igs_forklift;
 GLuint tex_igs_road_new;
 GLuint tex_igs_road_new2;
@@ -109,6 +110,8 @@ struct Model igs_factory_1;
 struct Model igs_tank_1;
 struct Model vehicle_box_truck_1;
 struct Model wheel_truck_1;
+struct Model vehicle_tanker_truck_1;
+struct Model wheel_truck_tanker;
 struct Model vehicle_forklift;
 struct Model wheel_forklift;
 struct Model igs_road_straight;
@@ -410,6 +413,13 @@ void Initialize_Textures()
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB
 	);
+	tex_igs_truck_small_tanker = SOIL_load_OGL_texture
+	(
+		"textures/igs_truck_small_tanker.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB
+	);
 	tex_igs_forklift = SOIL_load_OGL_texture
 	(
 		"textures/igs_forklift.png",
@@ -470,6 +480,9 @@ void Initialize_Models()
 	Load_Model("models/igs_tank_1.obj", &igs_tank_1, tex_igs_tank_1);
 	Load_Model("models/igs_truck_small_box.obj", &vehicle_box_truck_1, tex_igs_truck_small_box);
 	Load_Model("models/igs_truck_small_wheel.obj", &wheel_truck_1, tex_igs_truck_small_box);
+
+	Load_Model("models/igs_truck_small_tanker.obj", &vehicle_tanker_truck_1, tex_igs_truck_small_tanker);
+	Load_Model("models/igs_truck_small_wheel.obj", &wheel_truck_tanker, tex_igs_truck_small_tanker);
 
 	Load_Model("models/igs_forklift.obj", &vehicle_forklift, tex_igs_forklift);
 	Load_Model("models/igs_forklift_wheel.obj", &wheel_forklift, tex_igs_forklift);
@@ -556,7 +569,7 @@ void Initialize_Map()
 	vehicle_types[0].wheel[2].z = 0.012f;
 	vehicle_types[0].wheel[3].z = 0.012f;
 
-	// Teherautü
+	// Teherautó
 	vehicle_types[1].vehicle_model = &vehicle_box_truck_1;
 	vehicle_types[1].wheel_model = &wheel_truck_1;
 	vehicle_types[1].pos.x = 25.0f;
@@ -581,6 +594,32 @@ void Initialize_Map()
 	vehicle_types[1].wheel[1].z = 0.03f;
 	vehicle_types[1].wheel[2].z = 0.03f;
 	vehicle_types[1].wheel[3].z = 0.03f;
+
+	// Tartályos kocsi
+	vehicle_types[2].vehicle_model = &vehicle_tanker_truck_1;
+	vehicle_types[2].wheel_model = &wheel_truck_tanker;
+	vehicle_types[2].pos.x = 25.0f;
+	vehicle_types[2].pos.y = 50.8f;
+	vehicle_types[2].pos.z = 0.0f;
+	vehicle_types[2].rotate.z = -10.0f;
+	vehicle_types[2].max_speed = 0.02f;
+	vehicle_types[2].acceleration_rate = 0.0001f;
+	vehicle_types[2].capacity = 2;
+
+	vehicle_types[2].wheel[0].x = 0.24f;
+	vehicle_types[2].wheel[1].x = 0.24f;
+	vehicle_types[2].wheel[2].x = 0.0f;
+	vehicle_types[2].wheel[3].x = 0.0f;
+
+	vehicle_types[2].wheel[0].y = 0.065f;
+	vehicle_types[2].wheel[1].y = -0.065f;
+	vehicle_types[2].wheel[2].y = 0.065f;
+	vehicle_types[2].wheel[3].y = -0.065f;
+
+	vehicle_types[2].wheel[0].z = 0.03f;
+	vehicle_types[2].wheel[1].z = 0.03f;
+	vehicle_types[2].wheel[2].z = 0.03f;
+	vehicle_types[2].wheel[3].z = 0.03f;
 
 	for (int i = 0; i < sizeof(vehicles) / sizeof(Vehicle); i++)
 	{
@@ -1471,7 +1510,7 @@ void Simulation()
 						spawn_pos_y = 299;
 					}
 
-					int new_vehicle_index = Place_Vehicle(vehicles, &vehicle_types[1], spawn_pos_x, spawn_pos_y, road_segments, road_nodes);
+					int new_vehicle_index = Place_Vehicle(vehicles, &vehicle_types[2], spawn_pos_x, spawn_pos_y, road_segments, road_nodes);
 					vehicle_spawned_this_loop = true;
 					delivery_cooldown = 30000;
 
