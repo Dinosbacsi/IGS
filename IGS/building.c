@@ -406,6 +406,7 @@ Material* Get_Order(Building* building)
 		{
 			order = building->order_list[i];
 			building->order_list[i] = NULL;
+			return order;
 		}
 	}
 

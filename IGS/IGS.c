@@ -1477,21 +1477,20 @@ void Simulation()
 
 					int destination_x = buildings[i].entry_point.x;
 					int destination_y = buildings[i].entry_point.y;
-
 					vehicles[new_vehicle_index].destination_node = &road_nodes[destination_x][destination_y];
 					Find_Path(&vehicles[new_vehicle_index], road_nodes);
 					vehicles[new_vehicle_index].status = going_to_destination;
 
-					while (Building_Has_Orders(&buildings[i]) && new_vehicle_index != -1)
+					int vehicle_cargo_index = 0;
+					while (Building_Has_Orders(&buildings[i]) && new_vehicle_index != -1 && vehicle_cargo_index < vehicles[new_vehicle_index].capacity)
 					{
-						for (int j = 0; j < vehicles[new_vehicle_index].capacity; j++)
+						if (vehicles[new_vehicle_index].cargo[vehicle_cargo_index] == NULL)
 						{
-							if (vehicles[new_vehicle_index].cargo[j] == NULL)
-							{
-								vehicles[new_vehicle_index].cargo[j] = Get_Order(&buildings[i]);
-							}
+							vehicles[new_vehicle_index].cargo[vehicle_cargo_index] = Get_Order(&buildings[i]);
+							vehicle_cargo_index++;
 						}
 					}
+					//Print_Vehicle_Cargo(&vehicles[new_vehicle_index]);
 				}
 
 				if (buildings[i].deliver_to != NULL && !Building_Spawned_Forklift(&buildings[i]))
