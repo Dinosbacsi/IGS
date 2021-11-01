@@ -590,17 +590,17 @@ void Initialize_Map()
 	vehicle_types[1].wheel[2].y = 0.065f;
 	vehicle_types[1].wheel[3].y = -0.065f;
 
-	vehicle_types[1].wheel[0].z = 0.03f;
-	vehicle_types[1].wheel[1].z = 0.03f;
-	vehicle_types[1].wheel[2].z = 0.03f;
-	vehicle_types[1].wheel[3].z = 0.03f;
+	vehicle_types[1].wheel[0].z = 0.032f;
+	vehicle_types[1].wheel[1].z = 0.032f;
+	vehicle_types[1].wheel[2].z = 0.032f;
+	vehicle_types[1].wheel[3].z = 0.032f;
 
 	// Tartályos kocsi
 	vehicle_types[2].vehicle_model = &vehicle_tanker_truck_1;
 	vehicle_types[2].wheel_model = &wheel_truck_tanker;
 	vehicle_types[2].pos.x = 25.0f;
 	vehicle_types[2].pos.y = 50.8f;
-	vehicle_types[2].pos.z = 0.0f;
+	vehicle_types[2].pos.z = 0.06f;
 	vehicle_types[2].rotate.z = -10.0f;
 	vehicle_types[2].max_speed = 0.02f;
 	vehicle_types[2].acceleration_rate = 0.0001f;
@@ -616,10 +616,10 @@ void Initialize_Map()
 	vehicle_types[2].wheel[2].y = 0.065f;
 	vehicle_types[2].wheel[3].y = -0.065f;
 
-	vehicle_types[2].wheel[0].z = 0.03f;
-	vehicle_types[2].wheel[1].z = 0.03f;
-	vehicle_types[2].wheel[2].z = 0.03f;
-	vehicle_types[2].wheel[3].z = 0.03f;
+	vehicle_types[2].wheel[0].z = 0.032f;
+	vehicle_types[2].wheel[1].z = 0.032f;
+	vehicle_types[2].wheel[2].z = 0.032f;
+	vehicle_types[2].wheel[3].z = 0.032f;
 
 	for (int i = 0; i < sizeof(vehicles) / sizeof(Vehicle); i++)
 	{
