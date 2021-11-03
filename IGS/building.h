@@ -41,6 +41,7 @@ typedef struct Building
     Material* produces;
     Material* order_list[100];
     long order_cooldown;
+    long delivery_cooldown;
 
     Building* source_from;
     Building* source_from2;

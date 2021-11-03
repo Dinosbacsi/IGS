@@ -3,8 +3,8 @@
 
 #include "utility.h"
 
-typedef enum { solid, liquid, gas } material_state;
-static const char* const material_state_table[] = { "solid", "liquid", "gas", NULL };
+typedef enum { solid, liquid, gas, liquid_gas, all} material_state;
+static const char* const material_state_table[] = { "solid", "liquid", "gas", "liquid_gas", "all", NULL};
 
 typedef enum { raw, processed, finished } material_category;
 static const char* const material_category_table[] = { "raw", "processed", "finished", NULL };

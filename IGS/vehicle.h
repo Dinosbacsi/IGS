@@ -49,6 +49,7 @@ typedef struct Vehicle
     // Anyag kapacitás
     int capacity;
     Material* cargo[10];
+    material_state cargo_type;
 
     Building* home;
 }Vehicle;

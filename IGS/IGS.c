@@ -535,8 +535,12 @@ void Initialize_Map()
 	// Anyagtípusok inicializáláas
 	printf("\n========== Creating material types ==========\n");
 	Make_Material_Type(&material_types[0], "Nothing", solid, finished, NULL, NULL);
+
 	Make_Material_Type(&material_types[1], "Lumber", solid, raw, NULL, NULL);
 	Make_Material_Type(&material_types[2], "Box", solid, finished, &material_types[1], NULL);
+
+	Make_Material_Type(&material_types[3], "Bubbly water", liquid, raw, NULL, NULL);
+	Make_Material_Type(&material_types[4], "Cheap soda", liquid, finished, &material_types[3], NULL);
 
 	// Porta
 	char kis_porta[50] = "Small_gate";
@@ -579,6 +583,7 @@ void Initialize_Map()
 	vehicle_types[1].max_speed = 0.02f;
 	vehicle_types[1].acceleration_rate = 0.0001f;
 	vehicle_types[1].capacity = 2;
+	vehicle_types[1].cargo_type = solid;
 
 	vehicle_types[1].wheel[0].x = 0.32f;
 	vehicle_types[1].wheel[1].x = 0.32f;
@@ -605,6 +610,7 @@ void Initialize_Map()
 	vehicle_types[2].max_speed = 0.02f;
 	vehicle_types[2].acceleration_rate = 0.0001f;
 	vehicle_types[2].capacity = 2;
+	vehicle_types[2].cargo_type = liquid_gas;
 
 	vehicle_types[2].wheel[0].x = 0.24f;
 	vehicle_types[2].wheel[1].x = 0.24f;
@@ -887,6 +893,7 @@ void Event_Handler()
 								}
 								building_info_panel->building->produces = material_to_produce;
 								Clear_Order_List(building_info_panel->building);
+								building_info_panel->building->order_cooldown = 10;
 							}
 						}
 					}
@@ -1512,45 +1519,65 @@ void Simulation()
 	}
 
 	// Majd mehetne simulation-be saját függvényként
-	if (delivery_cooldown < 0)
+	//if (delivery_cooldown < 0)
 	{
 		bool vehicle_spawned_this_loop = false;
 		for (int i = 0; i < sizeof(buildings) / sizeof(Building); i++)
 		{
 			if (buildings[i].exists == true && (buildings[i].category == factory || buildings[i].category == warehouse))
 			{
-				// Rendelések behozatala
-				if (Building_Has_Orders(&buildings[i]) && !vehicle_spawned_this_loop)
+				if (buildings[i].delivery_cooldown < 0)
 				{
-					int spawn_pos_x = 110;
-					int spawn_pos_y = 1;
-
-					if (randInRange(0, 1) == 0)
+					// Rendelések behozatala
+					if (Building_Has_Orders(&buildings[i]) && !vehicle_spawned_this_loop)
 					{
-						spawn_pos_x = 104;
-						spawn_pos_y = 299;
-					}
+						int spawn_pos_x = 110;
+						int spawn_pos_y = 1;
 
-					int new_vehicle_index = Place_Vehicle(vehicles, &vehicle_types[2], spawn_pos_x, spawn_pos_y, road_segments, road_nodes);
-					vehicle_spawned_this_loop = true;
-					delivery_cooldown = 30000;
-
-					int destination_x = buildings[i].entry_point.x;
-					int destination_y = buildings[i].entry_point.y;
-					vehicles[new_vehicle_index].destination_node = &road_nodes[destination_x][destination_y];
-					Find_Path(&vehicles[new_vehicle_index], road_nodes);
-					vehicles[new_vehicle_index].status = going_to_destination;
-
-					int vehicle_cargo_index = 0;
-					while (Building_Has_Orders(&buildings[i]) && new_vehicle_index != -1 && vehicle_cargo_index < vehicles[new_vehicle_index].capacity)
-					{
-						if (vehicles[new_vehicle_index].cargo[vehicle_cargo_index] == NULL)
+						if (randInRange(0, 1) == 0)
 						{
-							vehicles[new_vehicle_index].cargo[vehicle_cargo_index] = Get_Order(&buildings[i]);
-							vehicle_cargo_index++;
+							spawn_pos_x = 104;
+							spawn_pos_y = 299;
 						}
+
+						Material* order = Get_Order(&buildings[i]);
+
+						if (order != NULL)
+						{
+							int new_vehicle_index = -1;
+							if (order->state == solid)
+							{
+								new_vehicle_index = Place_Vehicle(vehicles, &vehicle_types[1], spawn_pos_x, spawn_pos_y, road_segments, road_nodes);
+							}
+							else if (order->state == gas || order->state == liquid)
+							{
+								new_vehicle_index = Place_Vehicle(vehicles, &vehicle_types[2], spawn_pos_x, spawn_pos_y, road_segments, road_nodes);
+							}
+							vehicle_spawned_this_loop = true;
+							buildings[i].delivery_cooldown = 30000;
+
+							int destination_x = buildings[i].entry_point.x;
+							int destination_y = buildings[i].entry_point.y;
+							vehicles[new_vehicle_index].destination_node = &road_nodes[destination_x][destination_y];
+							Find_Path(&vehicles[new_vehicle_index], road_nodes);
+							vehicles[new_vehicle_index].status = going_to_destination;
+
+							int vehicle_cargo_index = 1;
+							while (Building_Has_Orders(&buildings[i]) && new_vehicle_index != -1 && vehicle_cargo_index < vehicles[new_vehicle_index].capacity)
+							{
+								if (vehicles[new_vehicle_index].cargo[vehicle_cargo_index] == NULL)
+								{
+									vehicles[new_vehicle_index].cargo[vehicle_cargo_index] = Get_Order(&buildings[i]);
+									vehicle_cargo_index++;
+								}
+							}
+						}
+						//Print_Vehicle_Cargo(&vehicles[new_vehicle_index]);
 					}
-					//Print_Vehicle_Cargo(&vehicles[new_vehicle_index]);
+				}
+				else
+				{
+					buildings[i].delivery_cooldown -= elapsed_time;
 				}
 
 				if (buildings[i].deliver_to != NULL && !Building_Spawned_Forklift(&buildings[i]))
@@ -1575,10 +1602,10 @@ void Simulation()
 			}
 		}
 	}
-	else
+	/*else
 	{
 		delivery_cooldown -= elapsed_time;
-	}
+	}*/
 
 	//bool vehicle_spawned_this_loop = false;
 	//for (int i = 0; i < building_limit; i++)
