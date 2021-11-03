@@ -61,7 +61,7 @@ bool running = 1;
 //Egérgomb lenyomás változó
 bool mouse_left_clicked = false;
 //Játékmód változók
-enum mode { normal, build, road, bulldoze, select_source_from, select_deliver_to };
+enum mode { normal, build, road, bulldoze, select_source_from, select_source_from2, select_deliver_to };
 enum mode game_mode;
 //Debug mód változó
 bool debug = false;
@@ -909,6 +909,27 @@ void Event_Handler()
 							}
 							game_mode = normal;
 						}
+
+					}
+					else if (!strcmp(clicked_button->group, "building_source_from2"))
+					{
+					if (game_mode != select_source_from2)
+					{
+						game_mode = select_source_from2;
+					}
+					else
+					{
+						Panel* building_info_panel = Get_Panel_By_Name("building_info_panel");
+						if (building_info_panel != NULL)
+						{
+							if (building_info_panel->building != NULL)
+							{
+								building_info_panel->building->source_from2->deliver_to = NULL;
+								building_info_panel->building->source_from2 = NULL;
+							}
+						}
+						game_mode = normal;
+					}
 
 					}
 					else if (!strcmp(clicked_button->group, "building_source_to"))

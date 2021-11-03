@@ -360,38 +360,78 @@ void Render_Panel(Panel* panel)
 				}
 
 				// Beszállító/vevõ épületek választó
-				Render_Bitmap_String(panel->position.x + 2, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, "Src. from:", text_color_white[0], text_color_white[1], text_color_white[2]);
-				Button* source_from_button = Get_Button_List_Element_By_Index("building_source_from", 0);
-				if (source_from_button == NULL)
+				if (building->produces != NULL)
 				{
-					Create_Button("Not selected", "building_source_from", panel->position.x + 95, panel->position.y + 42 + (line_break * 20), 205, 50, text_color_white, bg_color, text_color_white, bg_color_hover);
-				}
+					char src_from_text[50];
 
-				if (source_from_button != NULL)
+					if (building->produces->requirement1 != NULL)
+					{
+						sprintf(src_from_text, "Src. %s from:", building->produces->requirement1->name);
+						Render_Bitmap_String(panel->position.x + 2, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, src_from_text, text_color_white[0], text_color_white[1], text_color_white[2]);
+						line_break++;
+
+						Button* source_from_button = Get_Button_List_Element_By_Index("building_source_from", 0);
+						if (source_from_button == NULL)
+						{
+							Create_Button("Not selected", "building_source_from", panel->position.x + 95, panel->position.y + 42 + (line_break * 20), 205, 50, text_color_white, bg_color, text_color_white, bg_color_hover);
+						}
+
+						if (source_from_button != NULL)
+						{
+							if (building->source_from != NULL)
+								sprintf(source_from_button->name, building->source_from->name);
+							else
+								sprintf(source_from_button->name, "Not selected");
+						}
+						line_break++;
+					}
+					if (building->produces->requirement2 != NULL)
+					{
+						sprintf(src_from_text, "Src. %s from:", building->produces->requirement2->name);
+						Render_Bitmap_String(panel->position.x + 2, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, src_from_text, text_color_white[0], text_color_white[1], text_color_white[2]);
+						line_break++;
+
+						Button* source_from_button = Get_Button_List_Element_By_Index("building_source_from2", 0);
+						if (source_from_button == NULL)
+						{
+							Create_Button("Not selected", "building_source_from2", panel->position.x + 95, panel->position.y + 42 + (line_break * 20), 205, 50, text_color_white, bg_color, text_color_white, bg_color_hover);
+						}
+
+						if (source_from_button != NULL)
+						{
+							if (building->source_from != NULL)
+								sprintf(source_from_button->name, building->source_from->name);
+							else
+								sprintf(source_from_button->name, "Not selected");
+						}
+						line_break++;
+					}
+
+					sprintf(src_from_text, "Deliver %s to:", building->produces->name);
+					Render_Bitmap_String(panel->position.x + 2, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, src_from_text, text_color_white[0], text_color_white[1], text_color_white[2]);
+					line_break++;
+
+					Button* source_to_button = Get_Button_List_Element_By_Index("building_source_to", 0);
+					if (source_to_button == NULL)
+					{
+						Create_Button("Not selected", "building_source_to", panel->position.x + 95, panel->position.y + 42 + (line_break * 20), 205, 50, text_color_white, bg_color, text_color_white, bg_color_hover);
+					}
+
+					if (source_to_button != NULL)
+					{
+						if (building->deliver_to != NULL)
+							sprintf(source_to_button->name, building->deliver_to->name);
+						else
+							sprintf(source_to_button->name, "Not selected");
+					}
+					line_break++;
+				}
+				else
 				{
-					if(building->source_from != NULL)
-						sprintf(source_from_button->name, building->source_from->name);
-					else
-						sprintf(source_from_button->name, "Not selected");
+					Delete_Button_List("building_source_from");
+					Delete_Button_List("building_source_from2");
+					Delete_Button_List("building_source_to");
 				}
-				line_break++;
-
-				Render_Bitmap_String(panel->position.x + 2, panel->position.y + 42 + (line_break * 20), 0, GLUT_BITMAP_HELVETICA_18, "Src. to:", text_color_white[0], text_color_white[1], text_color_white[2]);
-				Button* source_to_button = Get_Button_List_Element_By_Index("building_source_to", 0);
-				if (source_to_button == NULL)
-				{
-					Create_Button("Not selected", "building_source_to", panel->position.x + 95, panel->position.y + 42 + (line_break * 20), 205, 50, text_color_white, bg_color, text_color_white, bg_color_hover);
-				}
-
-				if (source_to_button != NULL)
-				{
-					if (building->deliver_to != NULL)
-						sprintf(source_to_button->name, building->deliver_to->name);
-					else
-						sprintf(source_to_button->name, "Not selected");
-				}
-				line_break++;
-
 			}
 
 			// Raktár infó

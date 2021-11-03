@@ -43,6 +43,7 @@ typedef struct Building
     long order_cooldown;
 
     Building* source_from;
+    Building* source_from2;
     Building* deliver_to;
 }Building;
 

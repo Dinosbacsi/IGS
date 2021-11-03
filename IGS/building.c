@@ -255,6 +255,7 @@ void Bulldoze_Building_OLD(struct Virtual_Cursor v_cursor)
 
 		// Épület változók nullázása
 		bulldozed_building->source_from = NULL;
+		bulldozed_building->source_from2 = NULL;
 		bulldozed_building->deliver_to = NULL;
 
 		// Épület lebontása
