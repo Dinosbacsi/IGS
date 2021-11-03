@@ -262,7 +262,7 @@ void Initialize_SDL()
 	//Inicializáció
 	if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
 	{
-		printf("HIBA! SDL nem inicializálódott! \nSDL hibakód: %s \n", SDL_GetError());
+		printf("ERROR! SDL did not inicialize! \nSDL error code: %s \n", SDL_GetError());
 	}
 
 	//Ablak és kontextus létrehozása
@@ -280,7 +280,7 @@ void Initialize_SDL()
 	//VSync beállítása
 	if (SDL_GL_SetSwapInterval(1) < 0)
 	{
-		printf("HIBA! VSync nem állítódott be! \nSDL hibakód: %s \n", SDL_GetError());
+		printf("ERROR! VSync could not be set! \nSDL error code: %s \n", SDL_GetError());
 	}
 }
 
@@ -289,13 +289,13 @@ void Initialize_SDL_Mixer()
 	// Inicializáció
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) < 0)
 	{
-		printf("HIBA! SDL Mixer nem inicializálódott! \nSDL Mixer hibakód: %s\n", Mix_GetError());
+		printf("ERROR! SDL Mixer did not inicialize! \nSDL Mixer error code: %s\n", Mix_GetError());
 	}
 
 	// Csatornák számának beállítása
 	if (Mix_AllocateChannels(mix_channels) < 0)
 	{
-		printf("HIBA! Nem lehetett beállítani a hang csatornák számát! \nSDL hibakód: %s\n", SDL_GetError());
+		printf("ERROR! The sound channel could not be set! \nSDL error code: %s\n", SDL_GetError());
 	}
 
 	// Hangeffekt fájlok betöltése
@@ -314,7 +314,7 @@ void Initialize_OpenGL()
 	error = glGetError();
 	if (error != GL_NO_ERROR)
 	{
-		printf("HIBA! OpenGL nem inicializálódott! \nOpenGL hibakód: %s\n", gluErrorString(error));
+		printf("Error! OpenGL did not inicialize! \nOpenGL error code: %s\n", gluErrorString(error));
 	}
 
 	//OpenGL beállítások
@@ -533,10 +533,10 @@ void Initialize_Map()
 	}
 
 	// Anyagtípusok inicializáláas
-	printf("\n========== Anyagtipusok letrehozasa ==========\n");
+	printf("\n========== Creating material types ==========\n");
 	Make_Material_Type(&material_types[0], "Nothing", solid, finished, NULL, NULL);
-	Make_Material_Type(&material_types[1], "Raw material", solid, raw, NULL, NULL);
-	Make_Material_Type(&material_types[2], "Finished product", solid, finished, &material_types[1], NULL);
+	Make_Material_Type(&material_types[1], "Lumber", solid, raw, NULL, NULL);
+	Make_Material_Type(&material_types[2], "Box", solid, finished, &material_types[1], NULL);
 
 	// Porta
 	char kis_porta[50] = "Small_gate";
@@ -627,14 +627,14 @@ void Initialize_Map()
 	}
 
 	// Út típusok inicializáció
-	sprintf(road_normal.name, "Atlagos ut");
+	sprintf(road_normal.name, "Standard road");
 	road_normal.straight = &igs_road_straight;
 	road_normal.curve = &igs_road_curve;
 	road_normal.intersection_3_way = &igs_road_3_way;
 	road_normal.intersection_4_way = &igs_road_4_way;
 	road_normal.dead_end = &igs_road_dead_end;
 
-	sprintf(road_main.name, "Fo ut");
+	sprintf(road_main.name, "Main road");
 	road_main.straight = &igs_road_main_straight;
 	road_main.curve = &igs_road_main_curve;
 	road_main.intersection_3_way = &igs_road_main_3_way;
@@ -672,7 +672,7 @@ void Initialize_Map()
 	file = fopen(filename, "r");
 	if (!file)
 	{
-		printf("Nem lehetett megnyitni a(z) %s fajlt!\n", filename);
+		printf("ERROR: Could not open %s file!\n", filename);
 	}
 	else
 	{
@@ -702,7 +702,7 @@ void Initialize_Map()
 
 void Initialize_Interface()
 {
-	printf("\n========== UI inicializalas ==========\n");
+	printf("\n========== UI inicialization ==========\n");
 	for (int i = 0; i < sizeof(buttons) / sizeof(Button); i++)
 	{
 		Delete_Button(&buttons[i]);
@@ -1219,7 +1219,7 @@ void Build_Mode_Handler()
 
 		if (bt_selected != 0 && bt_selected < 50)
 		{
-			printf("\n %d. epulettipus kivalasztva!", bt_i - 1);
+			printf("\nBuilding type #%d selected!", bt_i - 1);
 
 			// A megtalált indexű épülettípus behelyezése az új épületbe
 			new_building.category = building_types[bt_i - 1].category;
@@ -1885,9 +1885,9 @@ void Render_Interface()
 	if (debug == true)
 	{
 		// 3D kurzor koordinátáinak kiírása
-		sprintf(text, "Kurzor X = %d", (int)roundf(v_cursor.pos.x));
+		sprintf(text, "Curzor X = %d", (int)roundf(v_cursor.pos.x));
 		Render_Bitmap_String(SCREEN_WIDTH - 150, 40, 0, GLUT_BITMAP_HELVETICA_18, text, 1, 1, 1);
-		sprintf(text, "Kurzor Y = %d", (int)roundf(v_cursor.pos.y));
+		sprintf(text, "Curzor Y = %d", (int)roundf(v_cursor.pos.y));
 		Render_Bitmap_String(SCREEN_WIDTH - 150, 60, 0, GLUT_BITMAP_HELVETICA_18, text, 1, 1, 1);
 
 		// FPS kiszámítása és kiírása

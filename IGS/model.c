@@ -13,9 +13,9 @@ int Load_Model(const char* filename, struct Model* model, GLuint texture)
 {
     // Fájl megnyitása, beolvasása
     FILE* obj_file = fopen(filename, "r");
-    printf("'%s' modell betoltese...\n", filename);
+    printf("Loading '%s' model...\n", filename);
     if (obj_file == NULL) {
-        printf("HIBA! A '%s' modellt nem lehetett betolteni!\n", filename);
+        printf("ERROR! The '%s' model file could not be loaded!\n", filename);
         return FALSE;
     }
 

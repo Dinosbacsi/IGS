@@ -13,7 +13,7 @@ void Make_Material_Type(Material* material_type, char name[50], material_state s
 	material_type->requirement2 = requirement2;
 	material_type->exists = true;
 
-	printf("%s anyagtipus letrehozva!\n", material_type->name);
+	printf("%s material type created!\n", material_type->name);
 }
 
 Material* Transfer_Material(Material* material)

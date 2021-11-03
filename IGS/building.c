@@ -12,7 +12,7 @@ void Building_Types_From_File(char* filename)
 	bc_file = fopen(filename, "r");
 	if (!bc_file)
 	{
-		printf("Nem lehetett megnyitni a(z) %s fajlt!\n", filename);
+		printf("ERROR: %s file could not be opened!\n", filename);
 	}
 	else
 	{
@@ -38,16 +38,7 @@ void Building_Types_From_File(char* filename)
 		}
 	}
 }
-/*
-void Make_Building_Type(Building* building_type, char name[50], struct Model building_model, building_category category, int size_x, int size_y)
-{
-	sprintf(building_type->name, name);
-	building_type->building_model = building_model;
-	building_type->category = category;
-	building_type->size.x = size_x;
-	building_type->size.y = size_y;
-}
-*/
+
 void Make_Building_Type(Building* building_type, char name[50], char model_file_name[50], char texture_name[50], building_category category, int storage_size, int size_x, int size_y)
 {
 	GLuint building_texture = SOIL_load_OGL_texture
@@ -65,7 +56,7 @@ void Make_Building_Type(Building* building_type, char name[50], char model_file_
 	building_type->size.x = size_x;
 	building_type->size.y = size_y;
 
-	printf("Epulet tipus letrehozva! \n");
+	printf("Building type created! \n");
 }
 
 void Place_Building_OLD(struct Model building_model, building_category category, int storage_capacity, char name[50], int x, int y, int size_x, int size_y, direction direction)
@@ -188,7 +179,7 @@ void Place_Building_By_Name(char building_name[], int x, int y, direction direct
 		if (strcmp(building_types[i].name, building_name) == 0)
 		{
 			Place_Building_OLD(building_types[i].building_model, building_types[i].category, building_types[i].storage_capacity, building_name, x, y, building_types[i].size.x, building_types[i].size.y, direction);
-			printf("\nEpulel elhelyezve!");
+			printf("\nBuilding placed!");
 		}
 	}
 }
@@ -293,7 +284,7 @@ char* Building_Type_String(building_category category)
 */
 void Building_Produce(Building* building)
 {
-	printf("\n\n========== Epulet termeles / rendeles ==========\n");
+	printf("\n\n========== Building produce / order ==========");
 
 	// Készlet ellenőrzése
 	int requirement1_i;
@@ -328,7 +319,7 @@ void Building_Produce(Building* building)
 			if (building->order_list[i] == NULL)
 			{
 				building->order_list[i] = building->produces->requirement1;
-				printf("\n%s epulet rendelt %s alapanyagot a rendelesi lista %d. helyere!", building->name, building->produces->requirement1->name, i);
+				printf("\n%s ordered %s material!", building->name, building->produces->requirement1->name);
 				break;
 			}
 		}
@@ -340,7 +331,7 @@ void Building_Produce(Building* building)
 			if (building->order_list[i] == NULL)
 			{
 				building->order_list[i] = building->produces->requirement2;
-				printf("\n%s epulet rendelt %s alapanyagot a rendelesi lista %d. helyere!", building->name, building->produces->requirement2->name, i);
+				printf("\n%s ordered %s material!", building->name, building->produces->requirement2->name);
 				break;
 			}
 		}
@@ -356,7 +347,7 @@ void Building_Produce(Building* building)
 				{
 					building->source_from->order_list[j] = building->order_list[i];
 					building->order_list[i] = NULL;
-					printf("\nEpulet rendeles csere.");
+					printf("\nOrder swap happened.");
 				}
 			}
 		}
@@ -377,7 +368,7 @@ void Building_Produce(Building* building)
 		building->storage[requirement1_i]->exists = true;
 		
 
-		printf("\n%s. epulet eloallitott %s termeket!", building->name, building->produces->name);
+		printf("\n%s. produced %s!", building->name, building->produces->name);
 	}
 }
 
@@ -450,16 +441,16 @@ Building* Get_Building_From_Entry_Point(int x, int y)
 
 void Print_Building_Storage(Building* building)
 {
-	printf("\nEpulet raktar info: \n");
+	printf("\nBuilding storage info: \n");
 	for (int i = 0; i < building->storage_capacity; i++)
 	{
 		if (building->storage[i] != NULL)
 		{
-			printf("%d tarhely: %s \n", i + 1, building->storage[i]->name);
+			printf("Storage #%d: %s \n", i + 1, building->storage[i]->name);
 		}
 		else
 		{
-			printf("%d tarhely: [ures] \n", i + 1);
+			printf("Storage #%d: [empty] \n", i + 1);
 		}
 	}
 }

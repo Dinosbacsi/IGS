@@ -7,7 +7,7 @@
 void Place_Road_Segment(Road_Segment road_segments[], Node road_nodes[map_width][map_length], Road_Type* road_type, int a_x, int a_y, int b_x, int b_y)
 {
     // Debug info kiíratás
-    printf("\n========== Ut letrehozasa ==========\n");
+    printf("\n========== Creating road ==========\n");
 
     //Road_Segment new_road;
     int new_road_index = 0;
@@ -27,7 +27,7 @@ void Place_Road_Segment(Road_Segment road_segments[], Node road_nodes[map_width]
         road_nodes[a_x][a_y].pos.y = a_y;
         road_nodes[a_x][a_y].road_type = road_type;
 
-        printf("A node letrehozva az x = %d, y = %d helyen!\n", road_nodes[a_x][a_y].pos.x, road_nodes[a_x][a_y].pos.y);
+        printf("A node created at coordinates: X = %d, Y = %d!\n", road_nodes[a_x][a_y].pos.x, road_nodes[a_x][a_y].pos.y);
     }
 
     // Megnézni, hogy B node helyén már létezik-e másik
@@ -39,7 +39,7 @@ void Place_Road_Segment(Road_Segment road_segments[], Node road_nodes[map_width]
         road_nodes[b_x][b_y].pos.y = b_y;
         road_nodes[b_x][b_y].road_type = road_type;
 
-        printf("B node letrehozva az x = %d, y = %d helyen!\n", road_nodes[b_x][b_y].pos.x, road_nodes[b_x][b_y].pos.y);
+        printf("B node created at coordinates: X = %d, Y = %d!\n", road_nodes[b_x][b_y].pos.x, road_nodes[b_x][b_y].pos.y);
     }
 
     // Node-ok közötti csatlakozás kialakítása
@@ -91,7 +91,7 @@ void Place_Road_Segment(Road_Segment road_segments[], Node road_nodes[map_width]
     road_segments[new_road_index].A = &road_nodes[a_x][a_y];
     road_segments[new_road_index].B = &road_nodes[b_x][b_y];
     road_segments[new_road_index].road_type = road_type;
-    printf("Ut letrehozva az A(%d; %d), B(%d; %d) helyen!\n", road_segments[new_road_index].A->pos.x, road_segments[new_road_index].A->pos.y, road_segments[new_road_index].B->pos.x, road_segments[new_road_index].B->pos.y);
+    printf("Road created between points: A(%d; %d), B(%d; %d)!\n", road_segments[new_road_index].A->pos.x, road_segments[new_road_index].A->pos.y, road_segments[new_road_index].B->pos.x, road_segments[new_road_index].B->pos.y);
 
     // Út  hosszának meghatározása
     if (a_x == b_x)
@@ -108,7 +108,7 @@ void Place_Road_Segment(Road_Segment road_segments[], Node road_nodes[map_width]
         else
             road_segments[new_road_index].length = b_x - a_x;
     }
-    printf("Ut hossza kiszamolva: %d0m hosszu.\n", road_segments[new_road_index].length);
+    printf("Road length: %d0m.\n", road_segments[new_road_index].length);
 
     // Ha az új Útszakasz bármelyik Node-ja másik útszakaszban van benne, akkor annak az útszakasznak a kettéosztása
     if (tiles[road_segments[new_road_index].A->pos.x][road_segments[new_road_index].A->pos.y].occupied_by_road_segment != NULL)

@@ -944,11 +944,11 @@ void Find_Path(Vehicle* vehicle, Node road_nodes[map_width][map_length])
 
     if (depth >= 100)
     {
-        printf("\nUtvonal keresese nem sikerult :C");
+        printf("\nCould not find a path :C");
     }
     if (path_found == true)
     {
-        printf("\nUtvonal talalva!");
+        printf("\nPath found!");
         vehicle->current_node_in_path = 0;
     }
 }
