@@ -29,7 +29,7 @@ void Unload_Vehicle_Into_Building(Vehicle* vehicle, Building* building)
 	}
 }
 
-void Load_Building_Into_Vehicle(Building* building, Vehicle* vehicle)
+void Load_Building_Into_Vehicle(Building* building, Vehicle* vehicle, material_category category)
 {
 	for (int i = 0; i < building->storage_capacity; i++)
 	{
@@ -37,7 +37,7 @@ void Load_Building_Into_Vehicle(Building* building, Vehicle* vehicle)
 		{
 			if (vehicle->cargo[i] == NULL && building->storage[i] != NULL)
 			{
-				if (building->storage[i]->category == finished)
+				if (building->storage[i]->category == category || category == NULL)
 				{
 					vehicle->cargo[j] = Transfer_Material(building->storage[i]);
 					building->storage[i] = NULL;
