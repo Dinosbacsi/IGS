@@ -82,7 +82,9 @@ bool Building_Has_Orders(Building* building);
 Material* Get_Order(Building* building);
 void Clear_Order_List(Building* building);
 Material* Get_Storage_Space(Building* building);
+Material* Get_Product(Building* building);
 Building* Get_Building_From_Entry_Point(int x, int y);
 void Print_Building_Storage(Building* building);
 bool Building_Spawned_Forklift(Building* building);
+int Building_Has_Finished_Product(Building* building);
 #endif // BUILDING_H_INCLUDED

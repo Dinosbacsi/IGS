@@ -426,6 +426,19 @@ Material* Get_Storage_Space(Building* building)
 	return storage_space;
 }
 
+Material* Get_Product(Building* building)
+{
+	Material* material = NULL;
+
+	for (int i = 0; i < building->storage_capacity && material == NULL; i++)
+	{
+		if (building->storage[i] != NULL)
+			material = building->storage[i];
+	}
+
+	return material;
+}
+
 Building* Get_Building_From_Entry_Point(int x, int y)
 {
 	Building* found_building = NULL;
@@ -469,4 +482,17 @@ bool Building_Spawned_Forklift(Building* building)
 	}
 
 	return has_forklift;
+}
+
+int Building_Has_Finished_Product(Building* building)
+{
+	int finished_products = 0;
+
+	for (int i = 0; i < building->storage_capacity; i++)
+	{
+		if (building->storage[i] != NULL && building->storage[i]->category == finished)
+			finished_products++;
+	}
+
+	return finished_products;
 }

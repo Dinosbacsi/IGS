@@ -1594,6 +1594,43 @@ void Simulation()
 							}
 						}
 					}
+
+					// Késztermékek elvitele
+					if (buildings[i].deliver_to == NULL && Building_Has_Finished_Product(&buildings[i]))
+					{
+						int spawn_pos_x = 110;
+						int spawn_pos_y = 1;
+
+						if (randInRange(0, 1) == 0)
+						{
+							spawn_pos_x = 104;
+							spawn_pos_y = 299;
+						}
+
+						Material* product = Get_Product(&buildings[i]);
+						int new_vehicle_index = -1;
+						if (product->state == solid)
+						{
+							new_vehicle_index = Place_Vehicle(vehicles, &vehicle_types[1], spawn_pos_x, spawn_pos_y, road_segments, road_nodes);
+						}
+						else if (product->state == gas || product->state == liquid)
+						{
+							new_vehicle_index = Place_Vehicle(vehicles, &vehicle_types[2], spawn_pos_x, spawn_pos_y, road_segments, road_nodes);
+						}
+
+						if (new_vehicle_index != -1)
+						{
+							vehicle_spawned_this_loop = true;
+
+							buildings[i].delivery_cooldown = 30000;
+
+							int destination_x = buildings[i].entry_point.x;
+							int destination_y = buildings[i].entry_point.y;
+							vehicles[new_vehicle_index].destination_node = &road_nodes[destination_x][destination_y];
+							Find_Path(&vehicles[new_vehicle_index], road_nodes);
+							vehicles[new_vehicle_index].status = going_to_destination;
+						}
+					}
 				}
 				else
 				{
