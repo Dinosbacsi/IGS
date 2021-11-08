@@ -841,6 +841,12 @@ void Find_Path(Vehicle* vehicle, Node road_nodes[map_width][map_length])
     int i = 0;
     int depth = 1;
     bool path_found = false;
+
+    if (vehicle->path_nodes[0] == vehicle->destination_node)
+    {
+        path_found = true;
+    }
+
     while (path_found == false && depth <= 100)
     {
         //printf("\n");
