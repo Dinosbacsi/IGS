@@ -31,16 +31,18 @@ void Unload_Vehicle_Into_Building(Vehicle* vehicle, Building* building)
 
 void Load_Building_Into_Vehicle(Building* building, Vehicle* vehicle, material_category category)
 {
+	int cargo_in_vehicle = 0;
 	for (int i = 0; i < building->storage_capacity; i++)
 	{
 		for (int j = 0; j < vehicle->capacity; j++)
 		{
-			if (vehicle->cargo[i] == NULL && building->storage[i] != NULL)
+			if (cargo_in_vehicle < vehicle->capacity && vehicle->cargo[i] == NULL && building->storage[i] != NULL)
 			{
 				if (building->storage[i]->category == category || category == NULL)
 				{
 					vehicle->cargo[j] = Transfer_Material(building->storage[i]);
 					building->storage[i] = NULL;
+					cargo_in_vehicle++;
 				}
 			}
 		}
