@@ -6,6 +6,7 @@
 #include "map.h"
 #include "road.h"
 #include "material.h"
+#include "building.h"
 
 #define vehicle_limit 100
 #define vehicle_turning_treshold 2

@@ -849,7 +849,55 @@ void Find_Path(Vehicle* vehicle, Node road_nodes[map_width][map_length])
 
     while (path_found == false && depth <= 100)
     {
-        //printf("\n");
+        
+        //if (vehicle->path_nodes[i]->number_of_connections == 2 && i == 0)
+        //{
+        //    //road_nodes[vehicle->current_tile->pos.x][vehicle->current_tile->pos.y].checked = true;
+        //    switch (vehicle->facing)
+        //    {
+        //    case south:
+        //        road_nodes[vehicle->path_nodes[0]->connection_north.x][vehicle->path_nodes[0]->connection_north.y].checked = true;
+        //        break;
+        //    case north:
+        //        road_nodes[vehicle->path_nodes[0]->connection_south.x][vehicle->path_nodes[0]->connection_south.y].checked = true;
+        //        break;
+        //    case east:
+        //        road_nodes[vehicle->path_nodes[0]->connection_west.x][vehicle->path_nodes[0]->connection_west.y].checked = true;
+        //        break;
+        //    case west:
+        //        road_nodes[vehicle->path_nodes[0]->connection_east.x][vehicle->path_nodes[0]->connection_east.y].checked = true;
+        //        break;
+        //    }
+        //}
+        //else if (vehicle->path_nodes[i]->number_of_connections == 2 && i < 0)
+        //{
+        //    road_nodes[vehicle->path_nodes[i]->connection_east.x][vehicle->path_nodes[i]->connection_east.y].checked = false;
+        //    road_nodes[vehicle->path_nodes[i]->connection_east.x][vehicle->path_nodes[i]->connection_north.y].checked = false;
+        //    road_nodes[vehicle->path_nodes[i]->connection_east.x][vehicle->path_nodes[i]->connection_west.y].checked = false;
+        //    road_nodes[vehicle->path_nodes[i]->connection_east.x][vehicle->path_nodes[i]->connection_south.y].checked = false;
+
+        //    if (vehicle->path_nodes[i - 1] == &road_nodes[vehicle->path_nodes[i]->connection_east.x][vehicle->path_nodes[i]->connection_east.y])
+        //    {
+        //        road_nodes[vehicle->path_nodes[i]->connection_east.x][vehicle->path_nodes[i]->connection_east.y].checked = true;
+        //        road_nodes[vehicle->path_nodes[i]->connection_west.x][vehicle->path_nodes[i]->connection_west.y].checked = false;
+        //    }
+        //    else if (vehicle->path_nodes[i - 1] == &road_nodes[vehicle->path_nodes[i]->connection_north.x][vehicle->path_nodes[i]->connection_north.y])
+        //    {
+        //        road_nodes[vehicle->path_nodes[i]->connection_north.x][vehicle->path_nodes[i]->connection_north.y].checked = true;
+        //        road_nodes[vehicle->path_nodes[i]->connection_south.x][vehicle->path_nodes[i]->connection_south.y].checked = false;
+        //    }
+        //    else if (vehicle->path_nodes[i - 1] == &road_nodes[vehicle->path_nodes[i]->connection_west.x][vehicle->path_nodes[i]->connection_west.y])
+        //    {
+        //        road_nodes[vehicle->path_nodes[i]->connection_west.x][vehicle->path_nodes[i]->connection_west.y].checked = true;
+        //        road_nodes[vehicle->path_nodes[i]->connection_east.x][vehicle->path_nodes[i]->connection_east.y].checked = false;
+        //    }
+        //    else if (vehicle->path_nodes[i - 1] == &road_nodes[vehicle->path_nodes[i]->connection_south.x][vehicle->path_nodes[i]->connection_south.y])
+        //    {
+        //        road_nodes[vehicle->path_nodes[i]->connection_south.x][vehicle->path_nodes[i]->connection_south.y].checked = true;
+        //        road_nodes[vehicle->path_nodes[i]->connection_north.x][vehicle->path_nodes[i]->connection_north.y].checked = false;
+        //    }
+        //}
+        
 
         if (road_nodes[vehicle->path_nodes[i]->connection_east.x][vehicle->path_nodes[i]->connection_east.y].exists &&
             road_nodes[vehicle->path_nodes[i]->connection_east.x][vehicle->path_nodes[i]->connection_east.y].checked == false)
@@ -954,7 +1002,15 @@ void Find_Path(Vehicle* vehicle, Node road_nodes[map_width][map_length])
     }
     if (path_found == true)
     {
-        printf("\nPath found!");
+        Building* destination_building = Get_Building_From_Entry_Point(vehicle->destination_node->pos.x, vehicle->destination_node->pos.y);
+        if (destination_building != NULL)
+        {
+            printf("\nVehicle path found to %s building!", destination_building->name);
+        }
+        else
+        {
+            printf("\nVehicle path found!");
+        }
         vehicle->current_node_in_path = 0;
     }
 }

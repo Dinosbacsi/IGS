@@ -582,7 +582,7 @@ void Initialize_Map()
 	vehicle_types[1].rotate.z = -10.0f;
 	vehicle_types[1].max_speed = 0.02f;
 	vehicle_types[1].acceleration_rate = 0.0001f;
-	vehicle_types[1].capacity = 2;
+	vehicle_types[1].capacity = 4;
 	vehicle_types[1].cargo_type = solid;
 
 	vehicle_types[1].wheel[0].x = 0.32f;
@@ -894,7 +894,7 @@ void Event_Handler()
 								building_info_panel->building->produces = material_to_produce;
 								Clear_Order_List(building_info_panel->building);
 								building_info_panel->building->order_cooldown = 10000;
-								building_info_panel->building->delivery_cooldown = 30000;
+								building_info_panel->building->delivery_cooldown = 50000;
 							}
 						}
 					}
@@ -994,27 +994,49 @@ void Event_Handler()
 							Set_Building_For_Panel(Get_Panel_By_Name(panel_name), clicked_building);
 						}
 					}
-					else if ((game_mode == select_source_from || game_mode == select_deliver_to) && Check_Tile(click_pos_x, click_pos_y) == 1)
+					else if ((game_mode == select_source_from || game_mode == select_source_from2 || game_mode == select_deliver_to) && Check_Tile(click_pos_x, click_pos_y) == 1)
 					{
 						Building* clicked_building = tiles[click_pos_x][click_pos_y].occupied_by_building;
 						Panel* building_info_panel = Get_Panel_By_Name("building_info_panel");
 
 						if (clicked_building != NULL && building_info_panel != NULL)
 						{
+							Building* previous_building = NULL;
+
 							switch (game_mode)
 							{
 							case select_source_from:
+								previous_building = building_info_panel->building->source_from;
 								building_info_panel->building->source_from = clicked_building;
 								clicked_building->deliver_to = building_info_panel->building;
 								game_mode = normal;
 								break;
+							case select_source_from2:
+								previous_building = building_info_panel->building->source_from2;
+								building_info_panel->building->source_from2 = clicked_building;
+								clicked_building->deliver_to = building_info_panel->building;
+								game_mode = normal;
+								break;
 							case select_deliver_to:
+								previous_building = building_info_panel->building->deliver_to;
 								building_info_panel->building->deliver_to = clicked_building;
 								clicked_building->source_from = building_info_panel->building;
 								game_mode = normal;
 								break;
 							}
 
+							// If source_from or deliver_to building has changed, redirect incoming vehicles accordingly
+							if (previous_building != NULL)
+							{
+								for (int i = 0; i < sizeof(vehicles) / sizeof(Vehicle); i++)
+								{
+									if (vehicles[i].exists && vehicles[i].home == NULL && vehicles[i].status == going_to_destination && vehicles[i].destination_node == &road_nodes[previous_building->entry_point.x][previous_building->entry_point.y])
+									{
+										vehicles[i].destination_node = &road_nodes[clicked_building->entry_point.x][clicked_building->entry_point.y];
+										Find_Path(&vehicles[i], road_nodes);
+									}
+								}
+							}
 						}
 					}
 				}
@@ -1503,6 +1525,56 @@ void Simulation()
 								Vehicle_Leave_World(&vehicles[i]);
 							}
 						}
+						else
+						{
+							if ((vehicles[i].home != NULL && vehicles[i].home != destination_building && vehicles[i].home == destination_building->deliver_to) || 
+								(vehicles[i].home == NULL && destination_building->deliver_to == NULL))
+							{
+								//printf("\nAttempting cargo swap");
+
+								Material* material_from_building = NULL;
+								Material* material_from_vehicle = NULL;
+
+								int j = 0;
+								while (j < destination_building->storage_capacity && material_from_building == NULL)
+								{
+									if (destination_building->storage[j] != NULL && destination_building->storage[j]->category == finished)
+									{
+										material_from_building = destination_building->storage[j];
+									}
+									j++;
+								}
+								int k = 0;
+								while (k < vehicles[i].capacity && material_from_vehicle == NULL)
+								{
+									if (vehicles[i].cargo[k] != NULL && vehicles[i].cargo[k] != destination_building->storage[j] && vehicles[i].cargo[k]->category != finished)
+									{
+										material_from_vehicle = vehicles[i].cargo[k];
+									}
+									k++;
+								}
+
+								if (material_from_building != NULL && material_from_vehicle != NULL)
+								{
+									destination_building->storage[j-1] = material_from_vehicle;
+									vehicles[i].cargo[k-1] = material_from_building;
+									printf("\nCargo swap happened.");
+									Print_Vehicle_Cargo(&vehicles[i]);
+								}
+
+								if (k >= vehicles[i].capacity)
+								{
+									if(vehicles[i].home == NULL)
+										Vehicle_Leave_World(&vehicles[i]);
+									else
+									{
+										vehicles[i].destination_node = &road_nodes[vehicles[i].home->entry_point.x][vehicles[i].home->entry_point.y];
+										vehicles[i].status = going_to_destination;
+										Find_Path(&vehicles[i], road_nodes);
+									}
+								}
+							}
+						}
 					}
 				}
 			}
@@ -1571,7 +1643,7 @@ void Simulation()
 							if (new_vehicle_index != -1)
 							{
 								vehicle_spawned_this_loop = true;
-								buildings[i].delivery_cooldown = 30000;
+								buildings[i].delivery_cooldown = 50000;
 
 								int destination_x = buildings[i].entry_point.x;
 								int destination_y = buildings[i].entry_point.y;
@@ -1622,7 +1694,7 @@ void Simulation()
 						{
 							vehicle_spawned_this_loop = true;
 
-							buildings[i].delivery_cooldown = 30000;
+							buildings[i].delivery_cooldown = 50000;
 
 							int destination_x = buildings[i].entry_point.x;
 							int destination_y = buildings[i].entry_point.y;
