@@ -582,7 +582,7 @@ void Initialize_Map()
 	vehicle_types[1].rotate.z = -10.0f;
 	vehicle_types[1].max_speed = 0.02f;
 	vehicle_types[1].acceleration_rate = 0.0001f;
-	vehicle_types[1].capacity = 4;
+	vehicle_types[1].capacity = 2;
 	vehicle_types[1].cargo_type = solid;
 
 	vehicle_types[1].wheel[0].x = 0.32f;
@@ -1592,6 +1592,8 @@ void Simulation()
 		{
 			if (buildings[i].order_cooldown < 0)
 			{
+				Building_Log(&buildings[i]);
+
 				Building_Produce(&buildings[i]);
 				buildings[i].order_cooldown = 10000;
 			}

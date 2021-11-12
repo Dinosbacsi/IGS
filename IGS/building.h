@@ -36,7 +36,7 @@ typedef struct Building
 
     // Termelés
     int storage_capacity;
-    Material* storage[100];
+    Material* storage[10];
     //Material** storage;
     Material* produces;
     Material* order_list[100];
@@ -87,4 +87,6 @@ Building* Get_Building_From_Entry_Point(int x, int y);
 void Print_Building_Storage(Building* building);
 bool Building_Spawned_Forklift(Building* building);
 int Building_Has_Finished_Product(Building* building);
+
+void Building_Log(Building* building);
 #endif // BUILDING_H_INCLUDED

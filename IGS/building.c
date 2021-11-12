@@ -496,3 +496,77 @@ int Building_Has_Finished_Product(Building* building)
 
 	return finished_products;
 }
+
+void Building_Log(Building* building)
+{
+	char building_name[50];
+	strcpy(building_name, building->name);
+
+	// Counting order list
+	int ordered_materials = 0;
+	for (int i = 0; i < sizeof(building->order_list) / sizeof(Material*); i++)
+	{
+		if (building->order_list[i] != NULL)
+			ordered_materials++;
+	}
+	// Counting materials
+	int source_material_1 = 0;
+	int source_material_2 = 0;
+	int finished_materials = 0;
+	int all_materials = 0;
+	for (int i = 0; i < building->storage_capacity; i++)
+	{
+		if (building->storage[i] != NULL)
+		{
+			if (building->storage[i] == building->produces->requirement1)
+			{
+				all_materials++;
+				source_material_1++;
+			}
+			else if (building->storage[i] == building->produces->requirement2)
+			{
+				all_materials++;
+				source_material_2++;
+			}
+			else if (building->storage[i] == building->produces)
+			{
+				all_materials++;
+				finished_materials++;
+			}
+				
+		}
+	}
+
+
+	FILE* fp;
+	char filename[150];
+	strcpy(filename, strcat(building_name, ".txt"));
+
+	bool log_file_empty;
+	fp = fopen(building_name, "r");
+	if (fp == NULL)
+	{
+		log_file_empty = true;
+	}
+	else
+	{
+		log_file_empty = false;
+		fclose(fp);
+	}
+
+	// Write into file
+	fp = fopen(building_name, "a");
+	if(log_file_empty)
+	{
+		fprintf(fp, "%s\t%s\t%s\t%s\t%s\n", "Ordered", building->produces->requirement1->name, building->produces->requirement2->name, building->produces->name, "All");
+		fprintf(fp, "%d\t%d\t%d\t%d\t%d\n", ordered_materials, source_material_1, source_material_2, finished_materials, all_materials);
+		fclose(fp);
+	}
+	else
+	{
+		fp = fopen(building_name, "a");
+		fprintf(fp, "%d\t%d\t%d\t%d\t%d\n", ordered_materials, source_material_1, source_material_2, finished_materials, all_materials);
+		fclose(fp);
+	}
+	
+}
