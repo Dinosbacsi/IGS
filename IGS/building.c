@@ -513,22 +513,20 @@ void Building_Log(Building* building)
 	{
 		if (building->storage[i] != NULL)
 		{
-			if (building->storage[i] == building->produces->requirement1)
+			if (building->produces != NULL && building->storage[i] == building->produces->requirement1)
 			{
-				all_materials++;
 				source_material_1++;
 			}
-			else if (building->storage[i] == building->produces->requirement2)
+			else if (building->produces != NULL && building->storage[i] == building->produces->requirement2)
 			{
-				all_materials++;
 				source_material_2++;
 			}
-			else if (building->storage[i] == building->produces)
+			else if (building->produces != NULL && building->storage[i] == building->produces)
 			{
-				all_materials++;
 				finished_materials++;
 			}
-				
+			
+			all_materials++;
 		}
 	}
 
@@ -553,7 +551,17 @@ void Building_Log(Building* building)
 	fp = fopen(building_name, "a");
 	if(log_file_empty)
 	{
-		fprintf(fp, "%s\t%s\t%s\t%s\t%s\n", "Ordered", building->produces->requirement1->name, building->produces->requirement2->name, building->produces->name, "All");
+		char requirement_1_name[50] = "null";
+		char requirement_2_name[50] = "null";
+		char produces_name[50] = "null";
+		if (building->produces != NULL)
+		{
+			sprintf(requirement_1_name, building->produces->requirement1->name);
+			sprintf(requirement_2_name, building->produces->requirement2->name);
+			sprintf(produces_name, building->produces->name);
+		}
+
+		fprintf(fp, "%s\t%s\t%s\t%s\t%s\n", "Ordered", requirement_1_name, requirement_2_name, produces_name, "All");
 		fprintf(fp, "%d\t%d\t%d\t%d\t%d\n", ordered_materials, source_material_1, source_material_2, finished_materials, all_materials);
 		fclose(fp);
 	}

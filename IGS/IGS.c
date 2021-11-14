@@ -1542,8 +1542,6 @@ void Simulation()
 		{
 			if (buildings[i].order_cooldown < 0)
 			{
-				Building_Log(&buildings[i]);
-
 				Building_Produce(&buildings[i]);
 				buildings[i].order_cooldown = 10000;
 			}
@@ -1701,6 +1699,23 @@ void Simulation()
 				}
 			}
 		}
+	}
+
+	// Vehicle log
+	if (log_cooldown < 0)
+	{
+		for (int i = 0; i < sizeof(buildings) / sizeof(Building); i++)
+		{
+			if (buildings[i].exists && buildings[i].category == factory || buildings[i].category == processing_plant || buildings[i].category == warehouse)
+			{
+				Building_Log(&buildings[i]);
+			}
+		}
+		log_cooldown = log_interval;
+	}
+	else
+	{
+		log_cooldown -= elapsed_time;
 	}
 }
 
