@@ -1528,6 +1528,56 @@ void Simulation()
 								Vehicle_Leave_World(&vehicles[i]);
 							}
 						}
+						else
+						{
+							if ((vehicles[i].home != NULL && vehicles[i].home != destination_building && vehicles[i].home == destination_building->deliver_to) ||
+								(vehicles[i].home == NULL && destination_building->deliver_to == NULL))
+							{
+								//printf("\nAttempting cargo swap");
+
+								Material* material_from_building = NULL;
+								Material* material_from_vehicle = NULL;
+
+								int j = 0;
+								while (j < destination_building->storage_capacity && material_from_building == NULL)
+								{
+									if (destination_building->storage[j] != NULL && destination_building->storage[j]->category == finished)
+									{
+										material_from_building = destination_building->storage[j];
+									}
+									j++;
+								}
+								int k = 0;
+								while (k < vehicles[i].capacity && material_from_vehicle == NULL)
+								{
+									if (vehicles[i].cargo[k] != NULL && vehicles[i].cargo[k] != destination_building->storage[j] && vehicles[i].cargo[k]->category != finished)
+									{
+										material_from_vehicle = vehicles[i].cargo[k];
+									}
+									k++;
+								}
+
+								if (material_from_building != NULL && material_from_vehicle != NULL)
+								{
+									destination_building->storage[j - 1] = material_from_vehicle;
+									vehicles[i].cargo[k - 1] = material_from_building;
+									printf("\nCargo swap happened.");
+									Building_Log(destination_building);
+								}
+
+								if (k >= vehicles[i].capacity)
+								{
+									if (vehicles[i].home == NULL)
+										Vehicle_Leave_World(&vehicles[i]);
+									else
+									{
+										vehicles[i].destination_node = &road_nodes[vehicles[i].home->entry_point.x][vehicles[i].home->entry_point.y];
+										vehicles[i].status = going_to_destination;
+										Find_Path(&vehicles[i], road_nodes);
+									}
+								}
+							}
+						}
 					}
 				}
 			}
