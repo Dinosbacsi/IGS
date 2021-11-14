@@ -1496,6 +1496,7 @@ void Simulation()
 					if (destination_building != NULL)
 					{
 						Unload_Vehicle_Into_Building(&vehicles[i], destination_building);
+						Building_Log(destination_building);
 
 						if (Vehicle_Is_Empty(&vehicles[i]))
 						{
@@ -1510,6 +1511,7 @@ void Simulation()
 									if (vehicles[i].home == destination_building->deliver_to)
 									{
 										Load_Building_Into_Vehicle(destination_building, &vehicles[i], finished);
+										Building_Log(destination_building);
 									}
 									vehicles[i].destination_node = &road_nodes[vehicles[i].home->entry_point.x][vehicles[i].home->entry_point.y];
 									vehicles[i].status = going_to_destination;
@@ -1521,6 +1523,7 @@ void Simulation()
 								if (destination_building->deliver_to == NULL)
 								{
 									Load_Building_Into_Vehicle(destination_building, &vehicles[i], finished);
+									Building_Log(destination_building);
 								}
 								Vehicle_Leave_World(&vehicles[i]);
 							}
@@ -1544,6 +1547,8 @@ void Simulation()
 			{
 				Building_Produce(&buildings[i]);
 				buildings[i].order_cooldown = 10000;
+
+				Building_Log(&buildings[i]);
 			}
 			else
 			{
@@ -1613,6 +1618,8 @@ void Simulation()
 										vehicle_cargo_index++;
 									}
 								}
+
+								Building_Log(&buildings[i]);
 							}
 						}
 					}
@@ -1676,6 +1683,8 @@ void Simulation()
 								vehicles[forklift_index].cargo[0] = buildings[i].storage[j];
 								buildings[i].storage[j] = NULL;
 
+								Building_Log(&buildings[i]);
+
 								break;
 							}
 						}
@@ -1701,8 +1710,8 @@ void Simulation()
 		}
 	}
 
-	// Vehicle log
-	if (log_cooldown < 0)
+	// Building log
+	/*if (log_cooldown < 0)
 	{
 		for (int i = 0; i < sizeof(buildings) / sizeof(Building); i++)
 		{
@@ -1716,7 +1725,7 @@ void Simulation()
 	else
 	{
 		log_cooldown -= elapsed_time;
-	}
+	}*/
 }
 
 void Render_Scene()

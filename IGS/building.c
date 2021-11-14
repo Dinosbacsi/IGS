@@ -579,14 +579,14 @@ void Building_Log(Building* building)
 			sprintf(produces_name, building->produces->name);
 		}
 
-		fprintf(fp, "%s\t%s\t%s\t%s\t%s\n", "Ordered", requirement_1_name, requirement_2_name, produces_name, "All");
-		fprintf(fp, "%d\t%d\t%d\t%d\t%d\n", ordered_materials, source_material_1, source_material_2, finished_materials, all_materials);
+		fprintf(fp, "%s\t%s\t%s\t%s\t%s\t%s\n", "Time", "Ordered", requirement_1_name, requirement_2_name, produces_name, "All");
+		fprintf(fp, "%d\t%d\t%d\t%d\t%d\t%d\n", glutGet(GLUT_ELAPSED_TIME), ordered_materials, source_material_1, source_material_2, finished_materials, all_materials);
 		fclose(fp);
 	}
 	else
 	{
 		fp = fopen(building_name, "a");
-		fprintf(fp, "%d\t%d\t%d\t%d\t%d\n", ordered_materials, source_material_1, source_material_2, finished_materials, all_materials);
+		fprintf(fp, "%d\t%d\t%d\t%d\t%d\t%d\n", glutGet(GLUT_ELAPSED_TIME), ordered_materials, source_material_1, source_material_2, finished_materials, all_materials);
 		fclose(fp);
 	}
 	
