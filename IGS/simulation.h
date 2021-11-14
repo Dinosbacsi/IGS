@@ -7,7 +7,7 @@
 long ftime, timebase;
 int delivery_cooldown;
 int log_cooldown;
-#define log_interval 1000;
+#define log_interval 2000;
 
 long Get_Elapsed_Time();
 

@@ -1661,7 +1661,7 @@ void Simulation()
 
 				if (buildings[i].category == warehouse)
 				{
-					if (buildings[i].deliver_to != NULL && !Building_Spawned_Forklift(&buildings[i]))
+					if (buildings[i].deliver_to != NULL && Building_Has_Storage(buildings[i].deliver_to) && !Building_Spawned_Forklift(&buildings[i]))
 					{
 						for (int j = 0; j < buildings[i].storage_capacity; j++)
 						{
@@ -1680,7 +1680,7 @@ void Simulation()
 							}
 						}
 					}
-					if (buildings[i].source_from != NULL && !Building_Spawned_Forklift(&buildings[i]))
+					if (buildings[i].source_from != NULL && Building_Has_Storage(&buildings[i]) && !Building_Spawned_Forklift(&buildings[i]))
 					{
 						for (int j = 0; j < buildings[i].source_from->storage_capacity; j++)
 						{

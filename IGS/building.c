@@ -421,6 +421,22 @@ Material* Get_Storage_Space(Building* building)
 	return storage_space;
 }
 
+bool Building_Has_Storage(Building* building)
+{
+	bool has_storage = false;
+	
+	for (int i = 0; i < building->storage_capacity; i++)
+	{
+		if (building->storage[i] == NULL)
+		{
+			has_storage = true;
+			break;
+		}
+	}
+
+	return has_storage;
+}
+
 Material* Get_Product(Building* building)
 {
 	Material* material = NULL;
