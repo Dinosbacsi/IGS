@@ -36,7 +36,7 @@ void Load_Building_Into_Vehicle(Building* building, Vehicle* vehicle, material_c
 	{
 		for (int j = 0; j < vehicle->capacity; j++)
 		{
-			if (cargo_in_vehicle < vehicle->capacity && vehicle->cargo[i] == NULL && building->storage[i] != NULL)
+			if (cargo_in_vehicle < vehicle->capacity && vehicle->cargo[j] == NULL && building->storage[i] != NULL)
 			{
 				if (building->storage[i]->category == category || category == NULL)
 				{

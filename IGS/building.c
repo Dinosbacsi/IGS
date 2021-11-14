@@ -87,11 +87,6 @@ void Place_Building_OLD(struct Model building_model, building_category category,
 		buildings[i].facing_direction = direction;
 
 		buildings[i].storage_capacity = storage_capacity;
-		//buildings[i].storage = malloc(storage_capacity * sizeof(Material*));
-		for (int j = 0; j < storage_capacity; j++)
-		{
-			buildings[i].storage[j] = NULL;
-		}
 
 		// Tárhely lista nullázása
 		for (int j = 0; j < storage_capacity; j++)
