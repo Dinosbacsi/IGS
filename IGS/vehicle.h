@@ -65,6 +65,7 @@ Vehicle vehicles[vehicle_limit];
     Jármű kezelõ függvények
 */
 void Draw_Vehicle(Vehicle* vehicle);
+void Draw_Forklift_Box(Vehicle* vehicle, struct Model* box);
 int Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int tile_y, Road_Segment road_segments[], Node road_nodes[map_width][map_length]);
 void Delete_Vehicle(Vehicle* vehicle);
 void Vehicle_Cruise(Vehicle* vehicle, Node road_nodes[map_width][map_length]);

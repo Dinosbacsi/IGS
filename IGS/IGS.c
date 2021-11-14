@@ -101,6 +101,7 @@ GLuint tex_igs_road_new2;
 GLuint tex_igs_road_main;
 GLuint tex_igs_tree_1;
 GLuint tex_igs_shrubline_1;
+GLuint tex_igs_box;
 // Modell változók
 struct Model igs_hills;
 struct Model test_model;
@@ -126,6 +127,7 @@ struct Model igs_road_main_4_way;
 struct Model igs_road_main_dead_end;
 struct Model igs_tree_1;
 struct Model igs_shrubline_1;
+struct Model igs_box;
 
 //Épületek
 Building test_building;
@@ -462,6 +464,13 @@ void Initialize_Textures()
 		SOIL_CREATE_NEW_ID,
 		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB
 	);
+	tex_igs_box = SOIL_load_OGL_texture
+	(
+		"textures/igs_box.png",
+		SOIL_LOAD_AUTO,
+		SOIL_CREATE_NEW_ID,
+		SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB
+	);
 
 	glBindTexture(GL_TEXTURE_2D, tex_grass);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
@@ -500,6 +509,8 @@ void Initialize_Models()
 
 	Load_Model("models/igs_tree_2d_1.obj", &igs_tree_1, tex_igs_tree_1);
 	Load_Model("models/igs_shrubline_1.obj", &igs_shrubline_1, tex_igs_shrubline_1);
+
+	Load_Model("models/igs_box.obj", &igs_box, tex_igs_box);
 }
 
 void Initialize_Map()
@@ -1835,6 +1846,11 @@ void Render_Scene()
 		if (vehicles[i].exists == true)
 		{
 			Draw_Vehicle(&vehicles[i]);
+
+			if (vehicles[i].vehicle_model == &vehicle_forklift && !Vehicle_Is_Empty(&vehicles[i]))
+			{
+				Draw_Forklift_Box(&vehicles[i], &igs_box);
+			}
 		}
 
 	}

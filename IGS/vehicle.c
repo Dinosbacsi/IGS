@@ -38,6 +38,23 @@ void Draw_Vehicle(Vehicle* vehicle)
     }
     glPopMatrix();
 }
+
+void Draw_Forklift_Box(Vehicle* vehicle, struct Model* box)
+{
+    glPushMatrix();
+
+    // Set to vehicle position
+    glTranslatef(vehicle->pos.x, vehicle->pos.y, vehicle->pos.z);
+    glRotatef(vehicle->rotate.z, 0, 0, 1);
+    glRotatef(vehicle->rotate.y, 0, 1, 0);
+    glRotatef(vehicle->rotate.x, 1, 0, 0);
+
+    glTranslatef(0.085f, 0.0f, 0.005f);
+        Draw_Model(box);
+
+    glPopMatrix();
+}
+
 int Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int tile_y, Road_Segment road_segments[], Node road_nodes[map_width][map_length])
 {
     int new_vehicle_index = 0;
@@ -1089,12 +1106,12 @@ bool Vehicle_Is_Empty(Vehicle* vehicle)
 {
     bool empty = true;
 
-    for (int i = 0; i < sizeof(vehicle->cargo) / sizeof(Material*); i++)
+    for (int i = 0; i < vehicle->capacity; i++)
     {
         if (vehicle->cargo[i] != NULL)
         {
             empty = false;
-            return empty;
+            break;
         }
     }
 
