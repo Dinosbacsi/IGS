@@ -1706,7 +1706,7 @@ void Simulation()
 	{
 		for (int i = 0; i < sizeof(buildings) / sizeof(Building); i++)
 		{
-			if (buildings[i].exists && buildings[i].category == factory || buildings[i].category == processing_plant || buildings[i].category == warehouse)
+			if (buildings[i].exists && (buildings[i].category == factory && buildings[i].produces != NULL) || buildings[i].category == processing_plant || buildings[i].category == warehouse)
 			{
 				Building_Log(&buildings[i]);
 			}

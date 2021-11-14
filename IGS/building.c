@@ -572,8 +572,10 @@ void Building_Log(Building* building)
 		char produces_name[50] = "null";
 		if (building->produces != NULL)
 		{
-			sprintf(requirement_1_name, building->produces->requirement1->name);
-			sprintf(requirement_2_name, building->produces->requirement2->name);
+			if(building->produces->requirement1 != NULL)
+				sprintf(requirement_1_name, building->produces->requirement1->name);
+			if(building->produces->requirement2 != NULL)
+				sprintf(requirement_2_name, building->produces->requirement2->name);
 			sprintf(produces_name, building->produces->name);
 		}
 
