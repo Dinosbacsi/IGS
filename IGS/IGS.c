@@ -584,6 +584,8 @@ void Initialize_Map()
 	vehicle_types[0].wheel[2].z = 0.012f;
 	vehicle_types[0].wheel[3].z = 0.012f;
 
+	vehicle_types[0].inverted_steering = true;
+
 	// Teherautó
 	vehicle_types[1].vehicle_model = &vehicle_box_truck_1;
 	vehicle_types[1].wheel_model = &wheel_truck_1;
@@ -611,6 +613,8 @@ void Initialize_Map()
 	vehicle_types[1].wheel[2].z = 0.032f;
 	vehicle_types[1].wheel[3].z = 0.032f;
 
+	vehicle_types[1].inverted_steering = false;
+
 	// Tartályos kocsi
 	vehicle_types[2].vehicle_model = &vehicle_tanker_truck_1;
 	vehicle_types[2].wheel_model = &wheel_truck_tanker;
@@ -637,6 +641,8 @@ void Initialize_Map()
 	vehicle_types[2].wheel[1].z = 0.032f;
 	vehicle_types[2].wheel[2].z = 0.032f;
 	vehicle_types[2].wheel[3].z = 0.032f;
+
+	vehicle_types[2].inverted_steering = false;
 
 	for (int i = 0; i < sizeof(vehicles) / sizeof(Vehicle); i++)
 	{

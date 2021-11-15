@@ -42,6 +42,7 @@ typedef struct Vehicle
     vec3 wheel[4];
     float wheel_rotate;
     int wheel_turn;
+    bool inverted_steering;
 
     // Jármû modelljei
     struct Model* vehicle_model;

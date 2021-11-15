@@ -22,7 +22,10 @@ void Draw_Vehicle(Vehicle* vehicle)
         glTranslatef(vehicle->wheel[i].x, vehicle->wheel[i].y, vehicle->wheel[i].z);
         if (i == 0 || i == 1)
         {
-            glRotatef((float)vehicle->wheel_turn, 0.0f, 0.0f, 1.0f);
+            if(vehicle->inverted_steering == false)
+                glRotatef((float)vehicle->wheel_turn, 0.0f, 0.0f, 1.0f);
+            else
+                glRotatef((float)vehicle->wheel_turn, 0.0f, 0.0f, -1.0f);
         }
         if (i == 1 || i == 3)
         {
@@ -76,6 +79,7 @@ int Place_Vehicle(Vehicle vehicles[], Vehicle* vehicle_type, int tile_x, int til
         new_vehicle->wheel[2] = vehicle_type->wheel[2];
         new_vehicle->wheel[3] = vehicle_type->wheel[3];
         new_vehicle->wheel_rotate = 0;
+        new_vehicle->inverted_steering = vehicle_type->inverted_steering;
         new_vehicle->max_speed = vehicle_type->max_speed;
         new_vehicle->target_speed = new_vehicle->max_speed;
         new_vehicle->acceleration_rate = vehicle_type->acceleration_rate;
@@ -196,6 +200,7 @@ void Delete_Vehicle(Vehicle* vehicle)
 
     vehicle->wheel_rotate = 0.0f;
     vehicle->wheel_turn = 0;
+    vehicle->inverted_steering = false;
 
     vehicle->vehicle_model = NULL;
     vehicle->wheel_model = NULL;
