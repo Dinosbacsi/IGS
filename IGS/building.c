@@ -59,6 +59,122 @@ void Make_Building_Type(Building* building_type, char name[50], char model_file_
 	printf("Building type created! \n");
 }
 
+void Place_Building(Building* new_building, bool place_entry)
+{
+	int i = 0;
+
+	// Első üres rekesz keresése az épületek listájában
+	while (buildings[i].exists != 0 && i <= building_limit)
+	{
+		i++;
+	}
+	// Ha van üres hely az épületek listájában
+	if (i <= building_limit)
+	{
+		// Épület elhelyezése
+		buildings[i].exists = 1;
+		buildings[i].building_model = new_building->building_model;
+		buildings[i].category = new_building->category;
+
+		char building_index[10] = "";
+		sprintf(building_index, "_%d", i);
+		sprintf(buildings[i].name, strcat(new_building->name, building_index));
+
+		buildings[i].pos.x = new_building->pos.x;
+		buildings[i].size.x = new_building->size.x;
+		buildings[i].pos.y = new_building->pos.y;
+		buildings[i].size.y = new_building->size.y;
+		buildings[i].facing_direction = new_building->facing_direction;
+
+		buildings[i].storage_capacity = new_building->storage_capacity;
+
+		// Tárhely lista nullázása
+		for (int j = 0; j < new_building->storage_capacity; j++)
+		{
+			buildings[i].storage[j] = NULL;
+		}
+		// Rendelési lista NULL alapérték
+		for (int j = 0; j < sizeof(buildings[i].order_list) / sizeof(Material*); j++)
+		{
+			buildings[i].order_list[j] = NULL;
+		}
+
+		// Tile-ok lefoglalása
+		if (new_building->facing_direction == north || new_building->facing_direction == south)
+		{
+			int lx = (int)((float)new_building->pos.x - ((float)new_building->size.x) / 2);
+			int ly = (int)((float)new_building->pos.y - ((float)new_building->size.y) / 2);
+
+			for (int ix = 1; ix <= new_building->size.x; ix++)
+			{
+				for (int iy = 1; iy <= new_building->size.y; iy++)
+				{
+					tiles[lx + ix][ly + iy].occupied_by_building = &buildings[i];
+				}
+			}
+
+			// Épület belépőpontjának elhelyezése
+			if (place_entry)
+			{
+				if (new_building->facing_direction == north)
+				{
+					buildings[i].entry_point.x = (int)(roundf((float)(new_building->pos.x + new_building->size.x / 2)) + 1);
+					buildings[i].entry_point.y = new_building->pos.y;
+				}
+				else if (new_building->facing_direction == south)
+				{
+					buildings[i].entry_point.x = (int)(roundf((float)(new_building->pos.x - new_building->size.x / 2)) - 1);
+					if (new_building->size.x % 2 == 0)
+					{
+						buildings[i].entry_point.x++;
+					}
+
+					buildings[i].entry_point.y = new_building->pos.y;
+				}
+			}
+			
+		}
+		else if (new_building->facing_direction == east || new_building->facing_direction == west)
+		{
+			int lx = (int)((float)new_building->pos.x - ((float)new_building->size.y) / 2);
+			int ly = (int)((float)new_building->pos.y - ((float)new_building->size.x) / 2);
+
+			for (int ix = 1; ix <= new_building->size.y; ix++)
+			{
+				for (int iy = 1; iy <= new_building->size.x; iy++)
+				{
+					tiles[lx + ix][ly + iy].occupied_by_building = &buildings[i];
+				}
+			}
+
+			// Épület belépőpontjának elhelyezése
+			if (place_entry)
+			{
+				if (new_building->facing_direction == east)
+				{
+					buildings[i].entry_point.x = new_building->pos.x;
+					buildings[i].entry_point.y = (int)roundf(new_building->pos.y - new_building->size.x / 2) - 1;
+					if (new_building->size.x % 2 == 0)
+					{
+						buildings[i].entry_point.y++;
+					}
+				}
+				else if (new_building->facing_direction == west)
+				{
+					buildings[i].entry_point.x = new_building->pos.x;
+					buildings[i].entry_point.y = (int)roundf(new_building->pos.y + new_building->size.x / 2) + 1;
+				}
+			}
+		}
+
+		if (Check_Tile(buildings[i].entry_point.x, buildings[i].entry_point.y) == 3)
+		{
+			Road_Segment* road_segment_to_split = tiles[buildings[i].entry_point.x][buildings[i].entry_point.y].occupied_by_road_segment;
+			Split_Road_Segment(road_segment_to_split, road_segments, road_nodes, buildings[i].entry_point.x, buildings[i].entry_point.y);
+		}
+	}
+}
+
 void Place_Building_OLD(struct Model building_model, building_category category, int storage_capacity, char name[50], int x, int y, int size_x, int size_y, direction direction)
 {
 	int i = 0;

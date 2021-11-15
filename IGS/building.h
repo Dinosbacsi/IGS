@@ -63,6 +63,7 @@ void Building_Types_From_File(char* filename);
 //void Make_Building_Type(Building* building_type, char name[50], struct Model building_model, building_category category, int size_x, int size_y);
 void Make_Building_Type(Building* building_type, char name[50], char model_file_name[50], char texture_name[50], building_category category, int storage_size, int size_x, int size_y);
 // Épület elhelyezés
+void Place_Building(Building* new_building, bool place_entry);
 void Place_Building_OLD(struct Model building_model, building_category category, int storage_capacity, char name[50], int x, int y, int size_x, int size_y, direction direction);
 void Place_Building_By_Name(char building_name[], int x, int y, direction direction, Building building_types[]);
 // Épület kirajzolása

@@ -1343,14 +1343,17 @@ void Build_Mode_Handler()
 		// Ha bal egérgomb és tile szabad
 		if (mouse_left_clicked && tile_is_free)
 		{
-			// If new building was gate, place road
+			// If new building was gate
 			if (!strcmp(new_building.name, "Small_gate"))
 			{
 				Place_Road_Segment(road_segments, road_nodes, &road_main, 98, new_building.pos.y, 104, new_building.pos.y);
+				Place_Building(&new_building, false);
 			}
-
-			// Place building
-			Place_Building_OLD(new_building.building_model, new_building.category, new_building.storage_capacity, new_building.name, new_building.pos.x, new_building.pos.y, new_building.size.x, new_building.size.y, new_building.facing_direction);
+			else
+			{
+				// Place building
+				Place_Building(&new_building, true);
+			}
 
 			// Reset 'new_building'
 			new_building.category = nothing;
