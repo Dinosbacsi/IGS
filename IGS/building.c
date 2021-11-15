@@ -309,11 +309,24 @@ void Building_Produce(Building* building)
 	// Ha nincs készlet, rendelés
 	if (!requirement1_fulfilled && building->produces->requirement1 != NULL)
 	{
-		for (int i = 0; i < sizeof(building->order_list) / sizeof(Material*); i++)
+		Material** order_list;
+		int order_list_size = 0;
+		if (building->source_from == NULL)
 		{
-			if (building->order_list[i] == NULL)
+			order_list = building->order_list;
+			order_list_size = (int)roundf((float)building->storage_capacity / 2.0f);
+		}
+		else
+		{
+			order_list = building->source_from->order_list;
+			order_list_size = (int)roundf((float)building->source_from->storage_capacity / 2.0f);
+		}
+
+		for (int i = 0; i < order_list_size; i++)
+		{
+			if (order_list[i] == NULL)
 			{
-				building->order_list[i] = building->produces->requirement1;
+				order_list[i] = building->produces->requirement1;
 				printf("\n%s ordered %s material!", building->name, building->produces->requirement1->name);
 				break;
 			}
@@ -321,7 +334,29 @@ void Building_Produce(Building* building)
 	}
 	if (building->produces->requirement2 != NULL && !requirement2_fulfilled)
 	{
-		for (int i = 0; i < sizeof(building->order_list) / sizeof(Material*); i++)
+		Material** order_list;
+		int order_list_size = 0;
+		if (building->source_from2 == NULL)
+		{
+			order_list = building->order_list;
+			order_list_size = (int)roundf((float)building->storage_capacity / 2.0f);
+		}
+		else
+		{
+			order_list = building->source_from2->order_list;
+			order_list_size = (int)roundf((float)building->source_from2->storage_capacity / 2.0f);
+		}
+
+		for (int i = 0; i < order_list_size; i++)
+		{
+			if (order_list[i] == NULL)
+			{
+				order_list[i] = building->produces->requirement2;
+				printf("\n%s ordered %s material!", building->name, building->produces->requirement2->name);
+				break;
+			}
+		}
+		/*for (int i = 0; i < sizeof(building->order_list) / sizeof(Material*); i++)
 		{
 			if (building->order_list[i] == NULL)
 			{
@@ -329,10 +364,10 @@ void Building_Produce(Building* building)
 				printf("\n%s ordered %s material!", building->name, building->produces->requirement2->name);
 				break;
 			}
-		}
+		}*/
 	}
 	// Ha van beállított raktára az épületnek, akkor áthelyezés annak a rendelési listájába
-	if (building->source_from != NULL)
+	/*if (building->source_from != NULL)
 	{
 		for (int i = 0; i < sizeof(building->order_list) / sizeof(Material*); i++)
 		{
@@ -346,7 +381,7 @@ void Building_Produce(Building* building)
 				}
 			}
 		}
-	}
+	}*/
 
 	// Ha van készlet, termelés
 	if (requirement1_fulfilled && requirement2_fulfilled)
