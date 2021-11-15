@@ -1281,7 +1281,7 @@ void Build_Mode_Handler()
 
 	if (new_building.category != nothing)
 	{
-		//Tile-ok ellenőrzése
+		//Checking Tiles
 		bool tile_is_free = true;
 		if (new_building.facing_direction == north || new_building.facing_direction == south)
 		{
@@ -1312,7 +1312,7 @@ void Build_Mode_Handler()
 			}
 		}
 
-		// Új épület pozíciójának meghatározása
+		// New building's position
 		new_building.pos.x = (int)roundf(v_cursor.pos.x);
 		new_building.pos.y = (int)roundf(v_cursor.pos.y);
 
@@ -1333,23 +1333,35 @@ void Build_Mode_Handler()
 			new_building.pos.y = (map_length - 1) - (new_building.size.y / 2);
 		}
 
+		// Reposition if building type is gate
+		if (!strcmp(new_building.name, "Small_gate"))
+		{
+			new_building.pos.x = 99;
+			new_building.facing_direction = north;
+		}
+
 		// Ha bal egérgomb és tile szabad
 		if (mouse_left_clicked && tile_is_free)
 		{
-			// Épület elhelyezése
+			// If new building was gate, place road
+			if (!strcmp(new_building.name, "Small_gate"))
+			{
+				Place_Road_Segment(road_segments, road_nodes, &road_main, 98, new_building.pos.y, 104, new_building.pos.y);
+			}
+
+			// Place building
 			Place_Building_OLD(new_building.building_model, new_building.category, new_building.storage_capacity, new_building.name, new_building.pos.x, new_building.pos.y, new_building.size.x, new_building.size.y, new_building.facing_direction);
 
-			// Építendő épület alaphelyzetbe állítása
+			// Reset 'new_building'
 			new_building.category = nothing;
 			new_building.facing_direction = north;
 
+			// Exit from menu
 			game_mode = normal;
 
-			// Kilépés az adott menüből
 			Delete_Button_List("building types");
 			Delete_Button_List("building categories");
-
-			// Gomb színek visszaállítása alaphelyzetbe
+			// Reset button colors
 			for (int i = 0; i < sizeof(buttons) / sizeof(Button); i++)
 			{
 				Change_Button_Text(&buttons[i], text_color_white, text_color_white);
