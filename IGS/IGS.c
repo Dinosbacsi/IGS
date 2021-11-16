@@ -553,6 +553,12 @@ void Initialize_Map()
 	Make_Material_Type(&material_types[3], "Bubbly water", liquid, raw, NULL, NULL);
 	Make_Material_Type(&material_types[4], "Cheap soda", liquid, finished, &material_types[3], NULL);
 
+	Make_Material_Type(&material_types[5], "Plastic housing", solid, raw, NULL, NULL);
+	Make_Material_Type(&material_types[6], "Electrical parts", solid, raw, NULL, NULL);
+	Make_Material_Type(&material_types[7], "Electrical drives", solid, finished, &material_types[5], &material_types[6]);
+
+	Make_Material_Type(&material_types[8], "Packaged electric drives", solid, finished, &material_types[7], &material_types[2]);
+
 	// Porta
 	char kis_porta[50] = "Small_gate";
 	Place_Building_By_Name(kis_porta, 99, 149, north, building_types);
@@ -938,23 +944,23 @@ void Event_Handler()
 					}
 					else if (!strcmp(clicked_button->group, "building_source_from2"))
 					{
-					if (game_mode != select_source_from2)
-					{
-						game_mode = select_source_from2;
-					}
-					else
-					{
-						Panel* building_info_panel = Get_Panel_By_Name("building_info_panel");
-						if (building_info_panel != NULL)
+						if (game_mode != select_source_from2)
 						{
-							if (building_info_panel->building != NULL)
-							{
-								building_info_panel->building->source_from2->deliver_to = NULL;
-								building_info_panel->building->source_from2 = NULL;
-							}
+							game_mode = select_source_from2;
 						}
-						game_mode = normal;
-					}
+						else
+						{
+							Panel* building_info_panel = Get_Panel_By_Name("building_info_panel");
+							if (building_info_panel != NULL)
+							{
+								if (building_info_panel->building != NULL)
+								{
+									building_info_panel->building->source_from2->deliver_to = NULL;
+									building_info_panel->building->source_from2 = NULL;
+								}
+							}
+							game_mode = normal;
+						}
 
 					}
 					else if (!strcmp(clicked_button->group, "building_source_to"))
@@ -983,7 +989,7 @@ void Event_Handler()
 					int click_pos_x = (int)roundf(v_cursor.pos.x);
 					int click_pos_y = (int)roundf(v_cursor.pos.y);
 
-					if (game_mode != select_source_from && game_mode != select_deliver_to)
+					if (game_mode != select_source_from && game_mode != select_source_from2 && game_mode != select_deliver_to)
 					{
 						mouse_left_clicked = true;
 
@@ -993,6 +999,7 @@ void Event_Handler()
 							Delete_Panel_By_Name("building_info_panel");
 							Delete_Button_List("building_produces");
 							Delete_Button_List("building_source_from");
+							Delete_Button_List("building_source_from2");
 							Delete_Button_List("building_source_to");
 						}
 
@@ -1775,7 +1782,7 @@ void Simulation()
 					{
 						for (int j = 0; j < buildings[i].source_from->storage_capacity; j++)
 						{
-							if (buildings[i].source_from->storage[j] != NULL && buildings[i].source_from->storage[j]->category == finished)
+							if (buildings[i].source_from->storage[j] != NULL && ((buildings[i].source_from->category != factory && buildings[i].source_from->storage[j]->category == finished) || (buildings[i].source_from->category == factory && buildings[i].source_from->storage[j] == buildings[i].source_from->produces)))
 							{
 								int forklift_index = Place_Vehicle(vehicles, &vehicle_types[0], buildings[i].entry_point.x, buildings[i].entry_point.y, road_segments, road_nodes);
 								vehicles[forklift_index].home = &buildings[i];

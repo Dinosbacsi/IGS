@@ -399,8 +399,8 @@ void Render_Panel(Panel* panel)
 
 						if (source_from_button != NULL)
 						{
-							if (building->source_from != NULL)
-								sprintf(source_from_button->name, building->source_from->name);
+							if (building->source_from2 != NULL)
+								sprintf(source_from_button->name, building->source_from2->name);
 							else
 								sprintf(source_from_button->name, "Not selected");
 						}

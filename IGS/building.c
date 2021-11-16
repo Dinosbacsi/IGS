@@ -423,7 +423,7 @@ void Building_Produce(Building* building)
 	}
 
 	// Ha nincs készlet, rendelés
-	if (!requirement1_fulfilled && building->produces->requirement1 != NULL)
+	if (!requirement1_fulfilled && building->produces->requirement1 != NULL && building->produces->requirement1->category == raw)
 	{
 		Material** order_list;
 		int order_list_size = 0;
@@ -448,7 +448,7 @@ void Building_Produce(Building* building)
 			}
 		}
 	}
-	if (building->produces->requirement2 != NULL && !requirement2_fulfilled)
+	if (building->produces->requirement2 != NULL && !requirement2_fulfilled && building->produces->requirement2->category == raw)
 	{
 		Material** order_list;
 		int order_list_size = 0;
