@@ -26,12 +26,13 @@ void Building_Types_From_File(char* filename)
 			int building_size_x;
 			int building_size_y;
 			int storage_size;
+			int milkrun_vehicle_limit;
 
-			if (sscanf(bc_line, "%s\t%s\t%s\t%d\t%d\t%s\t%d", building_name, model_name, texture_name, &building_size_x, &building_size_y, building_category_name, &storage_size))
+			if (sscanf(bc_line, "%s\t%s\t%s\t%d\t%d\t%s\t%d\t%d", building_name, model_name, texture_name, &building_size_x, &building_size_y, building_category_name, &storage_size, &milkrun_vehicle_limit))
 			{
 				building_category new_building_type_category = Building_Type_Enum(building_category_name);
 
-				Make_Building_Type(&building_types[i + 1], building_name, model_name, texture_name, new_building_type_category, storage_size, building_size_x, building_size_y);
+				Make_Building_Type(&building_types[i + 1], building_name, model_name, texture_name, new_building_type_category, storage_size, milkrun_vehicle_limit, building_size_x, building_size_y);
 			}
 
 			i++;
@@ -39,7 +40,7 @@ void Building_Types_From_File(char* filename)
 	}
 }
 
-void Make_Building_Type(Building* building_type, char name[50], char model_file_name[50], char texture_name[50], building_category category, int storage_size, int size_x, int size_y)
+void Make_Building_Type(Building* building_type, char name[50], char model_file_name[50], char texture_name[50], building_category category, int storage_size, int milkrun_vehicle_limit, int size_x, int size_y)
 {
 	GLuint building_texture = SOIL_load_OGL_texture
 	(
@@ -53,6 +54,7 @@ void Make_Building_Type(Building* building_type, char name[50], char model_file_
 	sprintf(building_type->name, name);
 	building_type->category = category;
 	building_type->storage_capacity = storage_size;
+	building_type->milkrun_vehicle_limit = milkrun_vehicle_limit;
 	building_type->size.x = size_x;
 	building_type->size.y = size_y;
 
@@ -87,6 +89,7 @@ void Place_Building(Building* new_building, bool place_entry)
 		buildings[i].facing_direction = new_building->facing_direction;
 
 		buildings[i].storage_capacity = new_building->storage_capacity;
+		buildings[i].milkrun_vehicle_limit = new_building->milkrun_vehicle_limit;
 
 		// Tárhely lista nullázása
 		for (int j = 0; j < new_building->storage_capacity; j++)
@@ -283,6 +286,7 @@ void Place_Building_OLD(struct Model building_model, building_category category,
 		}
 	}
 }
+
 void Place_Building_By_Name(char building_name[], int x, int y, direction direction, Building building_types[])
 {
 	for (int i = 0; i < 50; i++)
@@ -345,6 +349,9 @@ void Bulldoze_Building_OLD(struct Virtual_Cursor v_cursor)
 
 	if (bulldozed_building != NULL)
 	{
+		// Buidling info delete
+		bulldozed_building->milkrun_vehicle_limit = 0;
+
 		// Tile-ok felszabadítása
 		for (int w = 0; w < map_width; w++)
 		{
@@ -644,6 +651,21 @@ bool Building_Spawned_Forklift(Building* building)
 	}
 
 	return has_forklift;
+}
+
+int Building_Milkrun_Spawned(Building* building)
+{
+	int number_of_vehicles = 0;
+
+	for (int i = 0; i < sizeof(vehicles) / sizeof(Vehicle); i++)
+	{
+		if (vehicles[i].home == building)
+		{
+			number_of_vehicles++;
+		}
+	}
+
+	return number_of_vehicles;
 }
 
 int Building_Has_Finished_Product(Building* building)

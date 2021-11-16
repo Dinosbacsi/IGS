@@ -883,6 +883,7 @@ void Event_Handler()
 								sprintf(new_building.name, building_types[i].name);
 								new_building.building_model = building_types[i].building_model;
 								new_building.storage_capacity = building_types[i].storage_capacity;
+								new_building.milkrun_vehicle_limit = building_types[i].milkrun_vehicle_limit;
 								new_building.size.x = building_types[i].size.x;
 								new_building.size.y = building_types[i].size.y;
 							}
@@ -1757,17 +1758,18 @@ void Simulation()
 
 				if (buildings[i].category == warehouse)
 				{
-					if (buildings[i].deliver_to != NULL && Building_Has_Storage(buildings[i].deliver_to) && !Building_Spawned_Forklift(&buildings[i]))
+					if (buildings[i].deliver_to != NULL && Building_Has_Storage(buildings[i].deliver_to) && Building_Milkrun_Spawned(&buildings[i]) < buildings[i].milkrun_vehicle_limit)
 					{
 						for (int j = 0; j < buildings[i].storage_capacity; j++)
 						{
-							if (!Building_Spawned_Forklift(&buildings[i]) && buildings[i].storage[j] != NULL)
+							if (Building_Milkrun_Spawned(&buildings[i]) < buildings[i].milkrun_vehicle_limit && !vehicle_spawned_this_loop && buildings[i].storage[j] != NULL)
 							{
 								int forklift_index = Place_Vehicle(vehicles, &vehicle_types[0], buildings[i].entry_point.x, buildings[i].entry_point.y, road_segments, road_nodes);
 								vehicles[forklift_index].home = &buildings[i];
 								vehicles[forklift_index].destination_node = &road_nodes[buildings[i].deliver_to->entry_point.x][buildings[i].deliver_to->entry_point.y];
 								Find_Path(&vehicles[forklift_index], road_nodes);
 								vehicles[forklift_index].status = going_to_destination;
+								vehicle_spawned_this_loop = true;
 
 								vehicles[forklift_index].cargo[0] = buildings[i].storage[j];
 								buildings[i].storage[j] = NULL;
@@ -1778,7 +1780,7 @@ void Simulation()
 							}
 						}
 					}
-					if (buildings[i].source_from != NULL && Building_Has_Storage(&buildings[i]) && !Building_Spawned_Forklift(&buildings[i]))
+					if (buildings[i].source_from != NULL && Building_Has_Storage(&buildings[i]) && Building_Milkrun_Spawned(&buildings[i]) < buildings[i].milkrun_vehicle_limit)
 					{
 						for (int j = 0; j < buildings[i].source_from->storage_capacity; j++)
 						{
@@ -1789,6 +1791,7 @@ void Simulation()
 								vehicles[forklift_index].destination_node = &road_nodes[buildings[i].source_from->entry_point.x][buildings[i].source_from->entry_point.y];
 								Find_Path(&vehicles[forklift_index], road_nodes);
 								vehicles[forklift_index].status = going_to_destination;
+								vehicle_spawned_this_loop = true;
 
 								break;
 							}

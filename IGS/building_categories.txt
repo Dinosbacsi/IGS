@@ -1,5 +1,5 @@
-Small_warehouse	models/igs_warehouse_1.obj	textures/igs_warehouse_1.png	1	1	WAREHOUSE	10
-Medium_warehouse	models/igs_warehouse_2.obj	textures/igs_warehouse_2.png	3	3	WAREHOUSE	50
-Small_tank	models/igs_tank_1.obj	textures/igs_tank_1.png	1	1	WAREHOUSE	4
-Small_factory	models/igs_factory_1.obj	textures/igs_factory_1.png	2	2	FACTORY	4
-Small_gate	models/igs_gate_1.obj	textures/igs_gate_1.png	1	3	OFFICE	0
+Small_warehouse	models/igs_warehouse_1.obj	textures/igs_warehouse_1.png	1	1	WAREHOUSE	10	1
+Medium_warehouse	models/igs_warehouse_2.obj	textures/igs_warehouse_2.png	3	3	WAREHOUSE	50	3
+Small_tank	models/igs_tank_1.obj	textures/igs_tank_1.png	1	1	WAREHOUSE	4	0
+Small_factory	models/igs_factory_1.obj	textures/igs_factory_1.png	2	2	FACTORY	4	0
+Small_gate	models/igs_gate_1.obj	textures/igs_gate_1.png	1	3	OFFICE	0	0
