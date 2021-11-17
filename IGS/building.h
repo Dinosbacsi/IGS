@@ -42,6 +42,7 @@ typedef struct Building
     Material* order_list[100];
     long order_cooldown;
     long delivery_cooldown;
+    long milkrun_cooldown;
     int milkrun_vehicle_limit;
 
     Building* source_from;
