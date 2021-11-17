@@ -1065,28 +1065,28 @@ void Check_For_Traffic_Ahead(Vehicle* this_vehicle)
                 switch (this_vehicle->facing)
                 {
                 case north:
-                    if (vehicles[i].pos.y < this_vehicle->pos.y && this_distance_between_vehicles < distance_between_vehicles)
+                    if (fabsf(vehicles[i].pos.x - this_vehicle->pos.x) < 0.5f && vehicles[i].pos.y < this_vehicle->pos.y && this_distance_between_vehicles < distance_between_vehicles)
                     {
                         slow_down = true;
                         distance_between_vehicles = this_distance_between_vehicles;
                     }
                     break;
                 case east:
-                    if (vehicles[i].pos.x > this_vehicle->pos.x && this_distance_between_vehicles < distance_between_vehicles)
+                    if (fabsf(vehicles[i].pos.y - this_vehicle->pos.y) < 0.5f && vehicles[i].pos.x > this_vehicle->pos.x && this_distance_between_vehicles < distance_between_vehicles)
                     {
                         slow_down = true;
                         distance_between_vehicles = this_distance_between_vehicles;
                     }
                     break;
                 case south:
-                    if (vehicles[i].pos.y > this_vehicle->pos.y && this_distance_between_vehicles < distance_between_vehicles)
+                    if (fabsf(vehicles[i].pos.x - this_vehicle->pos.x) < 0.5f && vehicles[i].pos.y > this_vehicle->pos.y && this_distance_between_vehicles < distance_between_vehicles)
                     {
                         slow_down = true;
                         distance_between_vehicles = this_distance_between_vehicles;
                     }
                     break;
                 case west:
-                    if (vehicles[i].pos.x < this_vehicle->pos.x && this_distance_between_vehicles < distance_between_vehicles)
+                    if (fabsf(vehicles[i].pos.y - this_vehicle->pos.y) < 0.5f && vehicles[i].pos.x < this_vehicle->pos.x && this_distance_between_vehicles < distance_between_vehicles)
                     {
                         slow_down = true;
                         distance_between_vehicles = this_distance_between_vehicles;
