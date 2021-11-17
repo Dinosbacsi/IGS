@@ -738,29 +738,30 @@ void Building_Log(Building* building)
 
 	// Write into file
 	fp = fopen(building_name, "a");
-	if(log_file_empty)
+	if (fp != NULL)
 	{
-		char requirement_1_name[50] = "null";
-		char requirement_2_name[50] = "null";
-		char produces_name[50] = "null";
-		if (building->produces != NULL)
+		if (log_file_empty)
 		{
-			if(building->produces->requirement1 != NULL)
-				sprintf(requirement_1_name, building->produces->requirement1->name);
-			if(building->produces->requirement2 != NULL)
-				sprintf(requirement_2_name, building->produces->requirement2->name);
-			sprintf(produces_name, building->produces->name);
-		}
+			char requirement_1_name[50] = "null";
+			char requirement_2_name[50] = "null";
+			char produces_name[50] = "null";
+			if (building->produces != NULL)
+			{
+				if (building->produces->requirement1 != NULL)
+					sprintf(requirement_1_name, building->produces->requirement1->name);
+				if (building->produces->requirement2 != NULL)
+					sprintf(requirement_2_name, building->produces->requirement2->name);
+				sprintf(produces_name, building->produces->name);
+			}
 
-		fprintf(fp, "%s\t%s\t%s\t%s\t%s\t%s\n", "Time", "Ordered", requirement_1_name, requirement_2_name, produces_name, "All");
-		fprintf(fp, "%d\t%d\t%d\t%d\t%d\t%d\n", glutGet(GLUT_ELAPSED_TIME), ordered_materials, source_material_1, source_material_2, finished_materials, all_materials);
-		fclose(fp);
+			fprintf(fp, "%s\t%s\t%s\t%s\t%s\t%s\n", "Time", "Ordered", requirement_1_name, requirement_2_name, produces_name, "All");
+			fprintf(fp, "%d\t%d\t%d\t%d\t%d\t%d\n", glutGet(GLUT_ELAPSED_TIME), ordered_materials, source_material_1, source_material_2, finished_materials, all_materials);
+			fclose(fp);
+		}
+		else
+		{
+			fprintf(fp, "%d\t%d\t%d\t%d\t%d\t%d\n", glutGet(GLUT_ELAPSED_TIME), ordered_materials, source_material_1, source_material_2, finished_materials, all_materials);
+			fclose(fp);
+		}
 	}
-	else
-	{
-		fp = fopen(building_name, "a");
-		fprintf(fp, "%d\t%d\t%d\t%d\t%d\t%d\n", glutGet(GLUT_ELAPSED_TIME), ordered_materials, source_material_1, source_material_2, finished_materials, all_materials);
-		fclose(fp);
-	}
-	
 }
